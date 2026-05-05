@@ -1,0 +1,112 @@
+.sensor .sensor-inner {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sensor .sensor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sensor .sensor-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #64748b);
+  letter-spacing: 0.06em;
+}
+
+.sensor .sensor-badge {
+  font-size: 11px;
+  padding: 2px 10px;
+  border-radius: 99px;
+  background: #EAF3DE;
+  color: #3B6D11;
+}
+
+.sensor .sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.sensor .sensor-card {
+  border-radius: 8px;
+  padding: 14px 16px;
+  border: 1px solid transparent;
+}
+
+.sensor .sensor-card--co2 {
+  background: #E6F1FB;
+  border-color: #85B7EB;
+}
+
+.sensor .sensor-card--temp {
+  background: #FAEEDA;
+  border-color: #EF9F27;
+}
+
+.sensor .sensor-card--hum {
+  background: #E1F5EE;
+  border-color: #5DCAA5;
+}
+
+.sensor .sensor-card-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.sensor .sensor-card--co2 .sensor-card-icon  { background: #185FA5; }
+.sensor .sensor-card--temp .sensor-card-icon { background: #854F0B; }
+.sensor .sensor-card--hum .sensor-card-icon  { background: #0F6E56; }
+
+.sensor .sensor-card-label {
+  font-size: 11px;
+  margin: 0 0 4px;
+}
+
+.sensor .sensor-card--co2  .sensor-card-label { color: #185FA5; }
+.sensor .sensor-card--temp .sensor-card-label { color: #854F0B; }
+.sensor .sensor-card--hum  .sensor-card-label { color: #0F6E56; }
+
+.sensor .sensor-card-value {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1;
+}
+
+.sensor .sensor-card--co2  .sensor-card-value { color: #0C447C; }
+.sensor .sensor-card--temp .sensor-card-value { color: #633806; }
+.sensor .sensor-card--hum  .sensor-card-value { color: #085041; }
+
+.sensor .sensor-card-unit {
+  font-size: 12px;
+  margin: 4px 0 0;
+}
+
+.sensor .sensor-card--co2  .sensor-card-unit { color: #185FA5; }
+.sensor .sensor-card--temp .sensor-card-unit { color: #854F0B; }
+.sensor .sensor-card--hum  .sensor-card-unit { color: #0F6E56; }
+
+.sensor .sensor-timestamp {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 12px 0 0;
+}
+
+@media (max-width: 600px) {
+  .sensor .sensor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sensor .sensor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

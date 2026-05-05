@@ -1,0 +1,65 @@
+name: Sync Sensor Data from Google Sheets
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # 30分毎に実行
+  workflow_dispatch:          # 手動実行も可能
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch latest row from Google Sheets
+        id: fetch
+        run: |
+          SHEET_ID="1JAXzFAG-A3xWqFsaElJ4JwyKfBit8_81auWlJ39Z09k"
+          SHEET_NAME="シート1"
+          URL="https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}"
+
+          # CSVを取得
+          curl -s "$URL" -o /tmp/sheet.csv
+
+          # 最新行（2行目）を取得・パース
+          LATEST=$(tail -n +2 /tmp/sheet.csv | tail -1)
+          echo "Latest row: $LATEST"
+
+          # カンマ区切りで各値を取得（ダブルクォートを除去）
+          TIMESTAMP=$(echo "$LATEST" | cut -d',' -f1 | tr -d '"')
+          CO2=$(echo "$LATEST"      | cut -d',' -f2 | tr -d '"')
+          TEMP=$(echo "$LATEST"     | cut -d',' -f3 | tr -d '"')
+          HUMIDITY=$(echo "$LATEST" | cut -d',' -f4 | tr -d '"')
+
+          echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+          echo "co2=$CO2"             >> $GITHUB_OUTPUT
+          echo "temperature=$TEMP"    >> $GITHUB_OUTPUT
+          echo "humidity=$HUMIDITY"   >> $GITHUB_OUTPUT
+
+      - name: Update sensor-data.json
+        run: |
+          cat > blocks/cards/sensor-data.json << EOF
+          {
+            "timestamp": "${{ steps.fetch.outputs.timestamp }}",
+            "co2": ${{ steps.fetch.outputs.co2 }},
+            "temperature": ${{ steps.fetch.outputs.temperature }},
+            "humidity": ${{ steps.fetch.outputs.humidity }},
+            "updatedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          }
+          EOF
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add blocks/cards/sensor-data.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update sensor data $(date -u +"%Y-%m-%d %H:%M") UTC"
+            git push
+          fi
