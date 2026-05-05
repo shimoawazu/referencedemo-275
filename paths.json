@@ -1,8 +1,8 @@
 {
   "mappings": [
-    "/content/aem-boilerplate/:/"
+    "/content/referencedemo-275/:/"
   ],
   "includes": [
-    "/content/aem-boilerplate/"
+    "/content/referencedemo-275/"
   ]
 }
