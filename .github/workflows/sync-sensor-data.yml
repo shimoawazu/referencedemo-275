@@ -2,8 +2,8 @@ name: Sync Sensor Data from Google Sheets
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # 30分毎に実行
-  workflow_dispatch:          # 手動実行も可能
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
 
 jobs:
   sync:
@@ -19,21 +19,22 @@ jobs:
         id: fetch
         run: |
           SHEET_ID="1JAXzFAG-A3xWqFsaElJ4JwyKfBit8_81auWlJ39Z09k"
-          SHEET_NAME="シート1"
-          URL="https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}"
+          ENCODED_SHEET="%E3%82%B7%E3%83%BC%E3%83%881"
+          URL="https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${ENCODED_SHEET}"
 
-          # CSVを取得
-          curl -s "$URL" -o /tmp/sheet.csv
+          echo "Fetching: $URL"
+          curl -L -s -A "Mozilla/5.0" "$URL" -o /tmp/sheet.csv
+          echo "--- CSV content ---"
+          cat /tmp/sheet.csv
+          echo "-------------------"
 
-          # 最新行（2行目）を取得・パース
-          LATEST=$(tail -n +2 /tmp/sheet.csv | tail -1)
+          LATEST=$(tail -n +2 /tmp/sheet.csv | grep -v '^$' | tail -1)
           echo "Latest row: $LATEST"
 
-          # カンマ区切りで各値を取得（ダブルクォートを除去）
           TIMESTAMP=$(echo "$LATEST" | cut -d',' -f1 | tr -d '"')
-          CO2=$(echo "$LATEST"      | cut -d',' -f2 | tr -d '"')
-          TEMP=$(echo "$LATEST"     | cut -d',' -f3 | tr -d '"')
-          HUMIDITY=$(echo "$LATEST" | cut -d',' -f4 | tr -d '"')
+          CO2=$(echo "$LATEST"       | cut -d',' -f2 | tr -d '"')
+          TEMP=$(echo "$LATEST"      | cut -d',' -f3 | tr -d '"')
+          HUMIDITY=$(echo "$LATEST"  | cut -d',' -f4 | tr -d '"')
 
           echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
           echo "co2=$CO2"             >> $GITHUB_OUTPUT
@@ -42,7 +43,7 @@ jobs:
 
       - name: Update sensor-data.json
         run: |
-          cat > blocks/cards/sensor-data.json << EOF
+          cat > blocks/cards/sensor-data.json << JSONEOF
           {
             "timestamp": "${{ steps.fetch.outputs.timestamp }}",
             "co2": ${{ steps.fetch.outputs.co2 }},
@@ -50,7 +51,7 @@ jobs:
             "humidity": ${{ steps.fetch.outputs.humidity }},
             "updatedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
           }
-          EOF
+          JSONEOF
 
       - name: Commit and push if changed
         run: |
