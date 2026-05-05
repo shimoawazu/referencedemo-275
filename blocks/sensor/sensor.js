@@ -51,19 +51,19 @@ export default async function decorate(block) {
         <span class="sensor-badge">自動更新 30分毎</span>
       </div>
       <div class="sensor-grid">
-        <div class="sensor-card sensor-card--co2">
+        <div class="sensor-card sensor-card-co2">
           <div class="sensor-card-icon"></div>
           <p class="sensor-card-label">CO₂ 濃度</p>
           <p class="sensor-card-value">${co2Value}</p>
           <p class="sensor-card-unit">ppm — ${co2Status}</p>
         </div>
-        <div class="sensor-card sensor-card--temp">
+        <div class="sensor-card sensor-card-temp">
           <div class="sensor-card-icon"></div>
           <p class="sensor-card-label">温度</p>
           <p class="sensor-card-value">${tempValue}</p>
           <p class="sensor-card-unit">°C — ${tempStatus}</p>
         </div>
-        <div class="sensor-card sensor-card--hum">
+        <div class="sensor-card sensor-card-hum">
           <div class="sensor-card-icon"></div>
           <p class="sensor-card-label">湿度</p>
           <p class="sensor-card-value">${humValue}</p>

@@ -23,8 +23,8 @@
   font-size: 11px;
   padding: 2px 10px;
   border-radius: 99px;
-  background: #EAF3DE;
-  color: #3B6D11;
+  background: #eaf3de;
+  color: #3b6d11;
 }
 
 .sensor .sensor-grid {
@@ -39,19 +39,19 @@
   border: 1px solid transparent;
 }
 
-.sensor .sensor-card--co2 {
-  background: #E6F1FB;
-  border-color: #85B7EB;
+.sensor .sensor-card-co2 {
+  background: #e6f1fb;
+  border-color: #85b7eb;
 }
 
-.sensor .sensor-card--temp {
-  background: #FAEEDA;
-  border-color: #EF9F27;
+.sensor .sensor-card-temp {
+  background: #faeeda;
+  border-color: #ef9f27;
 }
 
-.sensor .sensor-card--hum {
-  background: #E1F5EE;
-  border-color: #5DCAA5;
+.sensor .sensor-card-hum {
+  background: #e1f5ee;
+  border-color: #5dcaa5;
 }
 
 .sensor .sensor-card-icon {
@@ -61,18 +61,34 @@
   margin-bottom: 10px;
 }
 
-.sensor .sensor-card--co2 .sensor-card-icon  { background: #185FA5; }
-.sensor .sensor-card--temp .sensor-card-icon { background: #854F0B; }
-.sensor .sensor-card--hum .sensor-card-icon  { background: #0F6E56; }
+.sensor .sensor-card-co2 .sensor-card-icon {
+  background: #185fa5;
+}
+
+.sensor .sensor-card-temp .sensor-card-icon {
+  background: #854f0b;
+}
+
+.sensor .sensor-card-hum .sensor-card-icon {
+  background: #0f6e56;
+}
 
 .sensor .sensor-card-label {
   font-size: 11px;
   margin: 0 0 4px;
 }
 
-.sensor .sensor-card--co2  .sensor-card-label { color: #185FA5; }
-.sensor .sensor-card--temp .sensor-card-label { color: #854F0B; }
-.sensor .sensor-card--hum  .sensor-card-label { color: #0F6E56; }
+.sensor .sensor-card-co2 .sensor-card-label {
+  color: #185fa5;
+}
+
+.sensor .sensor-card-temp .sensor-card-label {
+  color: #854f0b;
+}
+
+.sensor .sensor-card-hum .sensor-card-label {
+  color: #0f6e56;
+}
 
 .sensor .sensor-card-value {
   font-size: 28px;
@@ -81,18 +97,34 @@
   line-height: 1;
 }
 
-.sensor .sensor-card--co2  .sensor-card-value { color: #0C447C; }
-.sensor .sensor-card--temp .sensor-card-value { color: #633806; }
-.sensor .sensor-card--hum  .sensor-card-value { color: #085041; }
+.sensor .sensor-card-co2 .sensor-card-value {
+  color: #0c447c;
+}
+
+.sensor .sensor-card-temp .sensor-card-value {
+  color: #633806;
+}
+
+.sensor .sensor-card-hum .sensor-card-value {
+  color: #085041;
+}
 
 .sensor .sensor-card-unit {
   font-size: 12px;
   margin: 4px 0 0;
 }
 
-.sensor .sensor-card--co2  .sensor-card-unit { color: #185FA5; }
-.sensor .sensor-card--temp .sensor-card-unit { color: #854F0B; }
-.sensor .sensor-card--hum  .sensor-card-unit { color: #0F6E56; }
+.sensor .sensor-card-co2 .sensor-card-unit {
+  color: #185fa5;
+}
+
+.sensor .sensor-card-temp .sensor-card-unit {
+  color: #854f0b;
+}
+
+.sensor .sensor-card-hum .sensor-card-unit {
+  color: #0f6e56;
+}
 
 .sensor .sensor-timestamp {
   font-size: 11px;
@@ -100,7 +132,7 @@
   margin: 12px 0 0;
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
   .sensor .sensor-grid {
     grid-template-columns: 1fr;
   }
