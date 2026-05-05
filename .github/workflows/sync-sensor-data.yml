@@ -22,19 +22,28 @@ jobs:
           ENCODED_SHEET="%E3%82%B7%E3%83%BC%E3%83%881"
           URL="https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${ENCODED_SHEET}"
 
-          echo "Fetching: $URL"
           curl -L -s -A "Mozilla/5.0" "$URL" -o /tmp/sheet.csv
+
           echo "--- CSV content ---"
           cat /tmp/sheet.csv
-          echo "-------------------"
+          echo ""
+          echo "--- Line count ---"
+          wc -l /tmp/sheet.csv
 
-          LATEST=$(tail -n +2 /tmp/sheet.csv | grep -v '^$' | tail -1)
-          echo "Latest row: $LATEST"
+          LATEST=$(tail -n +2 /tmp/sheet.csv | grep -v '^[,]*$' | tail -1)
+          echo "--- Latest row ---"
+          echo "$LATEST"
 
-          TIMESTAMP=$(echo "$LATEST" | cut -d',' -f1 | tr -d '"')
-          CO2=$(echo "$LATEST"       | cut -d',' -f2 | tr -d '"')
-          TEMP=$(echo "$LATEST"      | cut -d',' -f3 | tr -d '"')
-          HUMIDITY=$(echo "$LATEST"  | cut -d',' -f4 | tr -d '"')
+          TIMESTAMP=$(echo "$LATEST" | cut -d',' -f1 | tr -d '"' | tr -d '\r')
+          CO2=$(echo "$LATEST"       | cut -d',' -f2 | tr -d '"' | tr -d '\r')
+          TEMP=$(echo "$LATEST"      | cut -d',' -f3 | tr -d '"' | tr -d '\r')
+          HUMIDITY=$(echo "$LATEST"  | cut -d',' -f4 | tr -d '"' | tr -d '\r')
+
+          echo "--- Parsed values ---"
+          echo "timestamp: $TIMESTAMP"
+          echo "co2: $CO2"
+          echo "temperature: $TEMP"
+          echo "humidity: $HUMIDITY"
 
           echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
           echo "co2=$CO2"             >> $GITHUB_OUTPUT
