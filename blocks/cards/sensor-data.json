@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026/05/05 15:42:55",
-  "co2": 520,
-  "temperature": 23.1,
-  "humidity": 36.2,
-  "updatedAt": "2026-05-05T06:42:55Z"
+  "timestamp": "  <p>Your client has issued a malformed or illegal request.  <ins>That’s all we know.</ins>",
+  "co2":   <p>Your client has issued a malformed or illegal request.  <ins>That’s all we know.</ins>,
+  "temperature":   <p>Your client has issued a malformed or illegal request.  <ins>That’s all we know.</ins>,
+  "humidity":   <p>Your client has issued a malformed or illegal request.  <ins>That’s all we know.</ins>,
+  "updatedAt": "2026-05-05T07:27:03Z"
 }
