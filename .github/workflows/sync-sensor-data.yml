@@ -24,31 +24,19 @@ jobs:
 
           curl -L -s -A "Mozilla/5.0" "$URL" -o /tmp/sheet.csv
 
-          echo "--- CSV content ---"
-          cat /tmp/sheet.csv
-          echo ""
-          echo "--- Line count ---"
-          wc -l /tmp/sheet.csv
-
           LATEST=$(tail -n +2 /tmp/sheet.csv | grep -v '^[,]*$' | tail -1)
-          echo "--- Latest row ---"
-          echo "$LATEST"
 
           TIMESTAMP=$(echo "$LATEST" | cut -d',' -f1 | tr -d '"' | tr -d '\r')
           CO2=$(echo "$LATEST"       | cut -d',' -f2 | tr -d '"' | tr -d '\r')
           TEMP=$(echo "$LATEST"      | cut -d',' -f3 | tr -d '"' | tr -d '\r')
           HUMIDITY=$(echo "$LATEST"  | cut -d',' -f4 | tr -d '"' | tr -d '\r')
-
-          echo "--- Parsed values ---"
-          echo "timestamp: $TIMESTAMP"
-          echo "co2: $CO2"
-          echo "temperature: $TEMP"
-          echo "humidity: $HUMIDITY"
+          UPDATED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
           echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
           echo "co2=$CO2"             >> $GITHUB_OUTPUT
           echo "temperature=$TEMP"    >> $GITHUB_OUTPUT
           echo "humidity=$HUMIDITY"   >> $GITHUB_OUTPUT
+          echo "updatedAt=$UPDATED_AT" >> $GITHUB_OUTPUT
 
       - name: Update sensor-data.json
         run: |
@@ -58,7 +46,7 @@ jobs:
             "co2": ${{ steps.fetch.outputs.co2 }},
             "temperature": ${{ steps.fetch.outputs.temperature }},
             "humidity": ${{ steps.fetch.outputs.humidity }},
-            "updatedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+            "updatedAt": "${{ steps.fetch.outputs.updatedAt }}"
           }
           JSONEOF
 
@@ -66,6 +54,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
           git add blocks/cards/sensor-data.json
           if git diff --staged --quiet; then
             echo "No changes to commit"
