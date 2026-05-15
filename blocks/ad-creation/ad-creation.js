@@ -1,8 +1,10 @@
 const WORKFLOW_ID = '4ab22ff7-afee-4b8b-afd4-06f3a7a668b1';
 const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
+const STORAGE_URL = 'https://firefly-api.adobe.io/v2/storage/image';
 const API_KEY = 'bulk-automation-web';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
+const IMAGE_NODE_ID = 'node_1773092259_4401688f';
 const POLL_INTERVAL_MS = 3000;
 
 const TEXT_FIELDS = [
@@ -15,19 +17,41 @@ const TEXT_FIELDS = [
   { id: 'sub-heading-2', label: 'Sub-Heading Text 2', type: 'text', placeholder: 'サブタイトル 2', nodeId: 'node_1773207613701_hb43tfsgx_19_dmfuef' },
 ];
 
-function buildPayload(values, imageDataUrl) {
+function buildPayload(values, imagePresignedUrl) {
+  const nodeFor = (id) => TEXT_FIELDS.find((f) => f.id === id).nodeId;
   return {
     workflowId: WORKFLOW_ID,
     inputs: {
-      image_url_1: imageDataUrl,
-      [TEXT_FIELDS.find((f) => f.id === 'prompt-1').nodeId]: values['prompt-1'],
-      [TEXT_FIELDS.find((f) => f.id === 'prompt-2').nodeId]: values['prompt-2'],
-      [TEXT_FIELDS.find((f) => f.id === 'heading-1').nodeId]: values['heading-1'],
-      [TEXT_FIELDS.find((f) => f.id === 'sub-heading-1').nodeId]: values['sub-heading-1'],
-      [TEXT_FIELDS.find((f) => f.id === 'heading-2').nodeId]: values['heading-2'],
-      [TEXT_FIELDS.find((f) => f.id === 'sub-heading-2').nodeId]: values['sub-heading-2'],
+      // Image node — presignedUrl required (template nodes excluded until their URLs are known)
+      [IMAGE_NODE_ID]: { presignedUrl: imagePresignedUrl },
+      [nodeFor('prompt-1')]: values['prompt-1'],
+      [nodeFor('prompt-2')]: values['prompt-2'],
+      [nodeFor('heading-1')]: values['heading-1'],
+      [nodeFor('sub-heading-1')]: values['sub-heading-1'],
+      [nodeFor('heading-2')]: values['heading-2'],
+      [nodeFor('sub-heading-2')]: values['sub-heading-2'],
     },
   };
+}
+
+async function uploadImageToStorage(token, file) {
+  const res = await fetch(STORAGE_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'x-api-key': API_KEY,
+      'Content-Type': file.type || 'image/jpeg',
+    },
+    body: file,
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`画像アップロードエラー ${res.status}: ${text}`);
+  }
+  const data = await res.json();
+  const presignedUrl = data.images?.[0]?.presignedUrl ?? data.presignedUrl ?? data.url;
+  if (!presignedUrl) throw new Error(`presignedUrl が取得できませんでした: ${JSON.stringify(data)}`);
+  return presignedUrl;
 }
 
 async function executeWorkflow(token, payload) {
@@ -100,13 +124,13 @@ function createFileUploadField() {
   dropZone.append(instruction, preview, fileInput);
   wrapper.append(label, dropZone);
 
-  let storedDataUrl = null;
+  let storedFile = null;
 
   const handleFile = async (file) => {
     if (!file || !file.type.startsWith('image/')) return;
     try {
       const dataUrl = await readFileAsDataURL(file);
-      storedDataUrl = dataUrl;
+      storedFile = file;
       preview.src = dataUrl;
       preview.hidden = false;
       instruction.textContent = file.name;
@@ -139,7 +163,7 @@ function createFileUploadField() {
     if (file) handleFile(file);
   });
 
-  wrapper.getImageDataUrl = () => storedDataUrl;
+  wrapper.getImageFile = () => storedFile;
   return wrapper;
 }
 
@@ -293,8 +317,8 @@ export default function decorate(block) {
     e.preventDefault();
     outputEl.innerHTML = '';
 
-    const imageDataUrl = imageUploadField.getImageDataUrl();
-    if (!imageDataUrl) {
+    const imageFile = imageUploadField.getImageFile();
+    if (!imageFile) {
       setStatus(statusEl, '画像をアップロードしてください。', 'error');
       return;
     }
@@ -311,10 +335,13 @@ export default function decorate(block) {
     }
 
     submitBtn.disabled = true;
-    setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
 
     try {
-      const payload = buildPayload(values, imageDataUrl);
+      setStatus(statusEl, '画像をストレージにアップロード中...', 'pending');
+      const presignedUrl = await uploadImageToStorage(values['bearer-token'], imageFile);
+
+      setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
+      const payload = buildPayload(values, presignedUrl);
       const result = await executeWorkflow(values['bearer-token'], payload);
       const jobId = result.jobId || result.id || result.batchId;
 
