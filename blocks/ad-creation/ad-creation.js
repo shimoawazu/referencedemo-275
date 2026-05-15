@@ -1,7 +1,9 @@
 const WORKFLOW_ID = '4ab22ff7-afee-4b8b-afd4-06f3a7a668b1';
 const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
-const STORAGE_URL = 'https://firefly-api.adobe.io/v2/storage/image';
+const FIREFLY_STORAGE_URL = 'https://firefly-api.adobe.io/v2/storage/image';
+const AEM_HOST = 'https://author-p154442-e1620921.adobeaemcloud.com';
+const AEM_DAM_FOLDER = '/content/dam';
 const API_KEY = 'bulk-automation-web';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
 const IMAGE_NODE_ID = 'node_1773092259_4401688f';
@@ -17,12 +19,83 @@ const TEXT_FIELDS = [
   { id: 'sub-heading-2', label: 'Sub-Heading Text 2', type: 'text', placeholder: 'サブタイトル 2', nodeId: 'node_1773207613701_hb43tfsgx_19_dmfuef' },
 ];
 
+// --- Upload methods ---
+
+async function uploadToAemDam(token, file) {
+  // Step 1: Initiate Direct Binary Upload
+  const initRes = await fetch(`${AEM_HOST}${AEM_DAM_FOLDER}/.initiateUpload.json`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({ fileName: file.name, fileSize: String(file.size) }),
+  });
+  if (!initRes.ok) throw new Error(`AEM initiate failed ${initRes.status}: ${await initRes.text()}`);
+  const { files, completeURI } = await initRes.json();
+
+  // Step 2: PUT binary to upload URI
+  const putRes = await fetch(files[0].uploadURIs[0], {
+    method: 'PUT',
+    headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    body: file,
+  });
+  if (!putRes.ok) throw new Error(`AEM PUT binary failed ${putRes.status}`);
+
+  // Step 3: Complete upload
+  const completeBody = new URLSearchParams({
+    fileName: file.name,
+    fileSize: String(file.size),
+    mimeType: file.type,
+    uploadToken: files[0].uploadToken,
+  });
+  const completeUrl = completeURI.startsWith('http') ? completeURI : `${AEM_HOST}${completeURI}`;
+  const completeRes = await fetch(completeUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: completeBody,
+  });
+  if (!completeRes.ok) throw new Error(`AEM complete failed ${completeRes.status}: ${await completeRes.text()}`);
+  const completeData = await completeRes.json();
+
+  const assetPath = completeData?.entity?.['jcr:path'] ?? `${AEM_DAM_FOLDER}/${file.name}`;
+  return `${AEM_HOST}${assetPath}`;
+}
+
+async function uploadToFireflyStorage(token, file) {
+  const res = await fetch(FIREFLY_STORAGE_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'x-api-key': API_KEY,
+      'Content-Type': file.type || 'image/jpeg',
+    },
+    body: file,
+  });
+  if (!res.ok) throw new Error(`Firefly Storage error ${res.status}: ${await res.text()}`);
+  const data = await res.json();
+  // Firefly returns images[0].id (not presignedUrl)
+  const id = data.images?.[0]?.id;
+  if (!id) throw new Error(`images[0].id not found in response: ${JSON.stringify(data)}`);
+  return id;
+}
+
+async function uploadImage(token, file, method) {
+  if (method === 'aem') return uploadToAemDam(token, file);
+  return uploadToFireflyStorage(token, file);
+}
+
+// --- Payload ---
+
 function buildPayload(values, imagePresignedUrl) {
   const nodeFor = (id) => TEXT_FIELDS.find((f) => f.id === id).nodeId;
   return {
     workflowId: WORKFLOW_ID,
     inputs: {
-      // Image node — presignedUrl required (template nodes excluded until their URLs are known)
+      // template nodes excluded until their presignedUrls are available
       [IMAGE_NODE_ID]: { presignedUrl: imagePresignedUrl },
       [nodeFor('prompt-1')]: values['prompt-1'],
       [nodeFor('prompt-2')]: values['prompt-2'],
@@ -34,25 +107,7 @@ function buildPayload(values, imagePresignedUrl) {
   };
 }
 
-async function uploadImageToStorage(token, file) {
-  const res = await fetch(STORAGE_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'x-api-key': API_KEY,
-      'Content-Type': file.type || 'image/jpeg',
-    },
-    body: file,
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`画像アップロードエラー ${res.status}: ${text}`);
-  }
-  const data = await res.json();
-  const presignedUrl = data.images?.[0]?.presignedUrl ?? data.presignedUrl ?? data.url;
-  if (!presignedUrl) throw new Error(`presignedUrl が取得できませんでした: ${JSON.stringify(data)}`);
-  return presignedUrl;
-}
+// --- API calls ---
 
 async function executeWorkflow(token, payload) {
   const res = await fetch(EXECUTE_URL, {
@@ -84,6 +139,8 @@ async function pollStatus(token, jobId) {
   return res.json();
 }
 
+// --- UI helpers ---
+
 function readFileAsDataURL(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -91,6 +148,31 @@ function readFileAsDataURL(file) {
     reader.onerror = () => reject(new Error('ファイルの読み込みに失敗しました'));
     reader.readAsDataURL(file);
   });
+}
+
+function createUploadMethodField() {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'ad-creation-field';
+
+  const label = document.createElement('label');
+  label.htmlFor = 'upload-method';
+  label.textContent = '画像アップロード方法';
+
+  const select = document.createElement('select');
+  select.id = 'upload-method';
+  select.name = 'upload-method';
+  [
+    { value: 'aem', text: 'AEM Assets DAM' },
+    { value: 'firefly', text: 'Firefly Storage' },
+  ].forEach(({ value, text }) => {
+    const opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = text;
+    select.append(opt);
+  });
+
+  wrapper.append(label, select);
+  return wrapper;
 }
 
 function createFileUploadField() {
@@ -144,11 +226,9 @@ function createFileUploadField() {
   dropZone.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') fileInput.click();
   });
-
   fileInput.addEventListener('change', () => {
     if (fileInput.files[0]) handleFile(fileInput.files[0]);
   });
-
   dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZone.classList.add('ad-creation-dropzone--drag-over');
@@ -280,6 +360,8 @@ async function startPolling(token, jobId, statusEl, outputEl, submitBtn) {
   setTimeout(poll, POLL_INTERVAL_MS);
 }
 
+// --- Block entry point ---
+
 export default function decorate(block) {
   block.innerHTML = '';
 
@@ -292,8 +374,9 @@ export default function decorate(block) {
   legend.textContent = 'Ad Creation — Firefly Workflow';
   fieldset.append(legend);
 
+  const uploadMethodField = createUploadMethodField();
   const imageUploadField = createFileUploadField();
-  fieldset.append(imageUploadField);
+  fieldset.append(uploadMethodField, imageUploadField);
 
   TEXT_FIELDS.forEach((field) => fieldset.append(createFormField(field)));
 
@@ -334,11 +417,14 @@ export default function decorate(block) {
       return;
     }
 
+    const uploadMethod = form.querySelector('#upload-method')?.value || 'aem';
+    const methodLabel = uploadMethod === 'aem' ? 'AEM Assets' : 'Firefly Storage';
+
     submitBtn.disabled = true;
 
     try {
-      setStatus(statusEl, '画像をストレージにアップロード中...', 'pending');
-      const presignedUrl = await uploadImageToStorage(values['bearer-token'], imageFile);
+      setStatus(statusEl, `画像を ${methodLabel} にアップロード中...`, 'pending');
+      const presignedUrl = await uploadImage(values['bearer-token'], imageFile, uploadMethod);
 
       setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
       const payload = buildPayload(values, presignedUrl);
