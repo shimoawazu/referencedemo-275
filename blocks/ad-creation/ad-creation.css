@@ -1,0 +1,181 @@
+.ad-creation-form fieldset {
+  border: 1px solid #dadada;
+  border-radius: 8px;
+  padding: 24px;
+  margin: 0;
+}
+
+.ad-creation-form legend {
+  font-size: var(--heading-font-size-s, 1.25rem);
+  font-weight: 700;
+  padding: 0 8px;
+  color: var(--text-color, #1a1a1a);
+}
+
+.ad-creation-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.ad-creation-field label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-color, #1a1a1a);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ad-creation-node-id {
+  font-weight: 400;
+  font-size: 0.7rem;
+  color: #767676;
+  font-family: monospace;
+}
+
+.ad-creation-field input,
+.ad-creation-field textarea {
+  border: 1px solid #dadada;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text-color, #1a1a1a);
+  background: var(--background-color, #fff);
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ad-creation-field input:focus,
+.ad-creation-field textarea:focus {
+  outline: none;
+  border-color: #1473e6;
+  box-shadow: 0 0 0 2px rgb(20 115 230 / 20%);
+}
+
+.ad-creation-field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.ad-creation-submit {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 10px 28px;
+  background: #1473e6;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ad-creation-submit:hover:not(:disabled) {
+  background: #0d66d0;
+}
+
+.ad-creation-submit:disabled {
+  background: #b0b0b0;
+  cursor: not-allowed;
+}
+
+/* Status messages */
+.ad-creation-status {
+  margin: 16px 0;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.ad-creation-status--info {
+  background: #e8f4fd;
+  color: #1473e6;
+}
+
+.ad-creation-status--pending {
+  background: #fff8e7;
+  color: #cb6f10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ad-creation-status--pending::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #cb6f10;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ad-creation-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+.ad-creation-status--success {
+  background: #eaf7ec;
+  color: #147534;
+}
+
+.ad-creation-status--error {
+  background: #fdf0f0;
+  color: #d7373f;
+}
+
+@keyframes ad-creation-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Output area */
+.ad-creation-output {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin-top: 24px;
+}
+
+.ad-creation-output-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ad-creation-output-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin: 0;
+  color: var(--text-color, #1a1a1a);
+}
+
+.ad-creation-output-card img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #dadada;
+  border-radius: 4px;
+  background: #f5f5f5;
+}
+
+.ad-creation-download {
+  font-size: 0.8rem;
+  color: #1473e6;
+  text-decoration: underline;
+}
+
+.ad-creation-download:hover {
+  color: #0d66d0;
+}
+
+/* Responsive: stack output cards on small screens */
+@media (width <= 600px) {
+  .ad-creation-output {
+    flex-direction: column;
+    align-items: center;
+  }
+}
