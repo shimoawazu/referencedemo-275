@@ -5,6 +5,7 @@ const FIREFLY_STORAGE_URL = 'https://firefly-api.adobe.io/v2/storage/image';
 const AEM_HOST = 'https://author-p154442-e1620921.adobeaemcloud.com';
 const AEM_DAM_FOLDER = '/content/dam';
 const API_KEY = 'bulk-automation-web';
+const FIREFLY_API_KEY = 'firefly-recom';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
 const IMAGE_NODE_ID = 'node_1773092259_4401688f';
 const POLL_INTERVAL_MS = 3000;
@@ -70,14 +71,13 @@ async function uploadToFireflyStorage(token, file) {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'x-api-key': API_KEY,
+      'x-api-key': FIREFLY_API_KEY,
       'Content-Type': file.type || 'image/jpeg',
     },
     body: file,
   });
   if (!res.ok) throw new Error(`Firefly Storage error ${res.status}: ${await res.text()}`);
   const data = await res.json();
-  // Firefly returns images[0].id (not presignedUrl)
   const id = data.images?.[0]?.id;
   if (!id) throw new Error(`images[0].id not found in response: ${JSON.stringify(data)}`);
   return id;
@@ -96,7 +96,7 @@ function buildPayload(values, imagePresignedUrl) {
     workflowId: WORKFLOW_ID,
     inputs: {
       // template nodes excluded until their presignedUrls are available
-      [IMAGE_NODE_ID]: { presignedUrl: imagePresignedUrl },
+      [IMAGE_NODE_ID]: { presignedUrl: imagePresignedUrl, storageType: 'firefly' },
       [nodeFor('prompt-1')]: values['prompt-1'],
       [nodeFor('prompt-2')]: values['prompt-2'],
       [nodeFor('heading-1')]: values['heading-1'],
@@ -162,8 +162,8 @@ function createUploadMethodField() {
   select.id = 'upload-method';
   select.name = 'upload-method';
   [
-    { value: 'aem', text: 'AEM Assets DAM' },
     { value: 'firefly', text: 'Firefly Storage' },
+    { value: 'aem', text: 'AEM Assets DAM' },
   ].forEach(({ value, text }) => {
     const opt = document.createElement('option');
     opt.value = value;
