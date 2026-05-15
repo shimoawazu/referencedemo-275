@@ -214,5 +214,66 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "ad-creation",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageUrl1",
+        "label": "Input画像URL 1",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageUrl2",
+        "label": "Input画像URL 2",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "prompt1",
+        "label": "Prompt 1",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "prompt2",
+        "label": "Prompt 2",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "headingText1",
+        "label": "Heading Text 1",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "subHeadingText1",
+        "label": "Sub-Heading Text 1",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "headingText2",
+        "label": "Heading Text 2",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "subHeadingText2",
+        "label": "Sub-Heading Text 2",
+        "value": ""
+      }
+    ]
   }
 ]
