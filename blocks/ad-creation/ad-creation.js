@@ -1,14 +1,19 @@
-const WORKFLOW_ID = '4ab22ff7-afee-4b8b-afd4-06f3a7a668b1';
+const WORKFLOW_ID = '0e4d5280-a18b-4c65-bfe4-6db607765503';
 const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
 const API_KEY = 'bulk-automation-web';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
+const IMS_USER_ID = 'C0F657EB5489DE240A4C98A5@adobe.com';
 const IMAGE_NODE_ID = 'node_1773092259_4401688f';
+const TEMPLATE1_NODE_ID = 'node-1773470661819-ta5z8k4kl';
+const TEMPLATE2_NODE_ID = 'node-1773470732553-pxcrvw7f4';
 const POLL_INTERVAL_MS = 3000;
 
 const FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
-  { id: 'asset-url', label: 'Input画像（AEM Assets URL）', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...' },
+  { id: 'asset-url', label: 'Input画像（AEM Assets URL）', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: true },
+  { id: 'template1-url', label: 'InDesignテンプレート1 URL (300x600)', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: false },
+  { id: 'template2-url', label: 'InDesignテンプレート2 URL (1080x1080)', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: false },
   { id: 'prompt-1', label: 'Prompt 1', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node_1773092259_5cb8c7d8' },
   { id: 'prompt-2', label: 'Prompt 2', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node-1773092472186-j1e8zgjog' },
   { id: 'heading-1', label: 'Heading Text 1', type: 'text', placeholder: 'メインタイトル', nodeId: 'node_1773092491358_7di1in5h1_9_k2gyjz' },
@@ -24,6 +29,12 @@ function buildPayload(values) {
     inputs: {
       [IMAGE_NODE_ID]: {
         content: [{ presignedUrl: values['asset-url'], storageType: 'AEM' }],
+      },
+      [TEMPLATE1_NODE_ID]: {
+        content: [{ presignedUrl: values['template1-url'], storageType: 'AEM' }],
+      },
+      [TEMPLATE2_NODE_ID]: {
+        content: [{ presignedUrl: values['template2-url'], storageType: 'AEM' }],
       },
       [nodeFor('prompt-1')]: values['prompt-1'],
       [nodeFor('prompt-2')]: values['prompt-2'],
@@ -42,6 +53,7 @@ async function executeWorkflow(token, payload) {
       Authorization: `Bearer ${token}`,
       'x-api-key': API_KEY,
       'x-gw-ims-org-id': IMS_ORG_ID,
+      'x-gw-ims-user-id': IMS_USER_ID,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
@@ -93,8 +105,7 @@ function createFormField(field) {
 
   wrapper.append(label, input);
 
-  // URL入力フィールドにはプレビューを追加
-  if (field.id === 'asset-url') {
+  if (field.preview) {
     const preview = document.createElement('img');
     preview.className = 'ad-creation-image-preview';
     preview.hidden = true;
@@ -238,6 +249,14 @@ export default function decorate(block) {
     }
     if (!values['asset-url']) {
       setStatus(statusEl, 'AEM Assets URL を入力してください。', 'error');
+      return;
+    }
+    if (!values['template1-url']) {
+      setStatus(statusEl, 'InDesignテンプレート1 URL を入力してください。', 'error');
+      return;
+    }
+    if (!values['template2-url']) {
+      setStatus(statusEl, 'InDesignテンプレート2 URL を入力してください。', 'error');
       return;
     }
 
