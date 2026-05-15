@@ -219,17 +219,11 @@
     "id": "ad-creation",
     "fields": [
       {
-        "component": "text",
+        "component": "file-upload",
         "valueType": "string",
-        "name": "imageUrl1",
-        "label": "Input画像URL 1",
-        "value": ""
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "imageUrl2",
-        "label": "Input画像URL 2",
+        "name": "inputImage",
+        "label": "Input画像",
+        "mimeTypes": ["image/*"],
         "value": ""
       },
       {

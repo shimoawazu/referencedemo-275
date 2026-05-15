@@ -5,10 +5,8 @@ const API_KEY = 'bulk-automation-web';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
 const POLL_INTERVAL_MS = 3000;
 
-const FIELDS = [
+const TEXT_FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
-  { id: 'image-url-1', label: 'Input画像URL 1', type: 'url', placeholder: 'https://...' },
-  { id: 'image-url-2', label: 'Input画像URL 2', type: 'url', placeholder: 'https://...' },
   { id: 'prompt-1', label: 'Prompt 1', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node_1773092259_5cb8c7d8' },
   { id: 'prompt-2', label: 'Prompt 2', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node-1773092472186-j1e8zgjog' },
   { id: 'heading-1', label: 'Heading Text 1', type: 'text', placeholder: 'メインタイトル', nodeId: 'node_1773092491358_7di1in5h1_9_k2gyjz' },
@@ -17,18 +15,17 @@ const FIELDS = [
   { id: 'sub-heading-2', label: 'Sub-Heading Text 2', type: 'text', placeholder: 'サブタイトル 2', nodeId: 'node_1773207613701_hb43tfsgx_19_dmfuef' },
 ];
 
-function buildPayload(values) {
+function buildPayload(values, imageDataUrl) {
   return {
     workflowId: WORKFLOW_ID,
     inputs: {
-      image_url_1: values['image-url-1'],
-      image_url_2: values['image-url-2'],
-      [FIELDS.find((f) => f.id === 'prompt-1').nodeId]: values['prompt-1'],
-      [FIELDS.find((f) => f.id === 'prompt-2').nodeId]: values['prompt-2'],
-      [FIELDS.find((f) => f.id === 'heading-1').nodeId]: values['heading-1'],
-      [FIELDS.find((f) => f.id === 'sub-heading-1').nodeId]: values['sub-heading-1'],
-      [FIELDS.find((f) => f.id === 'heading-2').nodeId]: values['heading-2'],
-      [FIELDS.find((f) => f.id === 'sub-heading-2').nodeId]: values['sub-heading-2'],
+      image_url_1: imageDataUrl,
+      [TEXT_FIELDS.find((f) => f.id === 'prompt-1').nodeId]: values['prompt-1'],
+      [TEXT_FIELDS.find((f) => f.id === 'prompt-2').nodeId]: values['prompt-2'],
+      [TEXT_FIELDS.find((f) => f.id === 'heading-1').nodeId]: values['heading-1'],
+      [TEXT_FIELDS.find((f) => f.id === 'sub-heading-1').nodeId]: values['sub-heading-1'],
+      [TEXT_FIELDS.find((f) => f.id === 'heading-2').nodeId]: values['heading-2'],
+      [TEXT_FIELDS.find((f) => f.id === 'sub-heading-2').nodeId]: values['sub-heading-2'],
     },
   };
 }
@@ -61,6 +58,89 @@ async function pollStatus(token, jobId) {
   });
   if (!res.ok) throw new Error(`Status check failed: ${res.status}`);
   return res.json();
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => resolve(e.target.result);
+    reader.onerror = () => reject(new Error('ファイルの読み込みに失敗しました'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function createFileUploadField() {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'ad-creation-field';
+
+  const label = document.createElement('label');
+  label.textContent = 'Input画像';
+
+  const dropZone = document.createElement('div');
+  dropZone.className = 'ad-creation-dropzone';
+  dropZone.setAttribute('role', 'button');
+  dropZone.setAttribute('tabindex', '0');
+  dropZone.setAttribute('aria-label', '画像をドロップまたはクリックして選択');
+
+  const instruction = document.createElement('p');
+  instruction.className = 'ad-creation-dropzone-instruction';
+  instruction.textContent = 'ここに画像をドロップ、またはクリックして選択';
+
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.style.display = 'none';
+  fileInput.id = 'image-file-input';
+
+  const preview = document.createElement('img');
+  preview.className = 'ad-creation-image-preview';
+  preview.hidden = true;
+  preview.alt = 'プレビュー';
+
+  dropZone.append(instruction, preview, fileInput);
+  wrapper.append(label, dropZone);
+
+  let storedDataUrl = null;
+
+  const handleFile = async (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    try {
+      const dataUrl = await readFileAsDataURL(file);
+      storedDataUrl = dataUrl;
+      preview.src = dataUrl;
+      preview.hidden = false;
+      instruction.textContent = file.name;
+      dropZone.classList.add('ad-creation-dropzone--has-image');
+    } catch {
+      instruction.textContent = 'ファイルの読み込みに失敗しました';
+    }
+  };
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') fileInput.click();
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) handleFile(fileInput.files[0]);
+  });
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('ad-creation-dropzone--drag-over');
+  });
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('ad-creation-dropzone--drag-over');
+  });
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('ad-creation-dropzone--drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+
+  wrapper.getImageDataUrl = () => storedDataUrl;
+  return wrapper;
 }
 
 function createFormField(field) {
@@ -188,7 +268,10 @@ export default function decorate(block) {
   legend.textContent = 'Ad Creation — Firefly Workflow';
   fieldset.append(legend);
 
-  FIELDS.forEach((field) => fieldset.append(createFormField(field)));
+  const imageUploadField = createFileUploadField();
+  fieldset.append(imageUploadField);
+
+  TEXT_FIELDS.forEach((field) => fieldset.append(createFormField(field)));
 
   const submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
@@ -210,8 +293,14 @@ export default function decorate(block) {
     e.preventDefault();
     outputEl.innerHTML = '';
 
+    const imageDataUrl = imageUploadField.getImageDataUrl();
+    if (!imageDataUrl) {
+      setStatus(statusEl, '画像をアップロードしてください。', 'error');
+      return;
+    }
+
     const values = {};
-    FIELDS.forEach(({ id }) => {
+    TEXT_FIELDS.forEach(({ id }) => {
       const el = form.querySelector(`#${id}`);
       values[id] = el?.value?.trim() || '';
     });
@@ -225,7 +314,7 @@ export default function decorate(block) {
     setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
 
     try {
-      const payload = buildPayload(values);
+      const payload = buildPayload(values, imageDataUrl);
       const result = await executeWorkflow(values['bearer-token'], payload);
       const jobId = result.jobId || result.id || result.batchId;
 
