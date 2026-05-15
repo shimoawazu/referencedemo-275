@@ -3,15 +3,12 @@ const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
 const API_KEY = 'bulk-automation-web';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
-const AEM_HOST = 'https://author-p154442-e1620921.adobeaemcloud.com';
-const AEM_REPO_ID = 'author-p154442-e1620921.adobeaemcloud.com';
 const IMAGE_NODE_ID = 'node_1773092259_4401688f';
 const POLL_INTERVAL_MS = 3000;
 
-const ASSET_SELECTOR_SRC = 'https://experience.adobe.com/solutions/CX-Assets-selectors/static-assets/resources/assets-selectors.js';
-
-const TEXT_FIELDS = [
+const FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
+  { id: 'asset-url', label: 'Input画像（AEM Assets URL）', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...' },
   { id: 'prompt-1', label: 'Prompt 1', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node_1773092259_5cb8c7d8' },
   { id: 'prompt-2', label: 'Prompt 2', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node-1773092472186-j1e8zgjog' },
   { id: 'heading-1', label: 'Heading Text 1', type: 'text', placeholder: 'メインタイトル', nodeId: 'node_1773092491358_7di1in5h1_9_k2gyjz' },
@@ -20,16 +17,13 @@ const TEXT_FIELDS = [
   { id: 'sub-heading-2', label: 'Sub-Heading Text 2', type: 'text', placeholder: 'サブタイトル 2', nodeId: 'node_1773207613701_hb43tfsgx_19_dmfuef' },
 ];
 
-// --- Payload ---
-
-function buildPayload(values, assetUrl) {
-  const nodeFor = (id) => TEXT_FIELDS.find((f) => f.id === id).nodeId;
+function buildPayload(values) {
+  const nodeFor = (id) => FIELDS.find((f) => f.id === id).nodeId;
   return {
     workflowId: WORKFLOW_ID,
     inputs: {
-      // template nodes excluded until their presignedUrls are available
       [IMAGE_NODE_ID]: {
-        content: [{ presignedUrl: assetUrl, storageType: 'AEM' }],
+        content: [{ presignedUrl: values['asset-url'], storageType: 'AEM' }],
       },
       [nodeFor('prompt-1')]: values['prompt-1'],
       [nodeFor('prompt-2')]: values['prompt-2'],
@@ -40,8 +34,6 @@ function buildPayload(values, assetUrl) {
     },
   };
 }
-
-// --- API calls ---
 
 async function executeWorkflow(token, payload) {
   const res = await fetch(EXECUTE_URL, {
@@ -73,132 +65,6 @@ async function pollStatus(token, jobId) {
   return res.json();
 }
 
-// --- Asset Picker ---
-
-function loadAssetSelectorScript() {
-  if (window.PureJSSelectors) return Promise.resolve();
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = ASSET_SELECTOR_SRC;
-    script.onload = resolve;
-    script.onerror = () => reject(new Error('Asset Selector スクリプトの読み込みに失敗しました'));
-    document.head.append(script);
-  });
-}
-
-function openAssetPicker(token, onSelect) {
-  const overlay = document.createElement('div');
-  overlay.className = 'ad-creation-asset-overlay';
-
-  const dialog = document.createElement('div');
-  dialog.className = 'ad-creation-asset-dialog';
-  dialog.setAttribute('role', 'dialog');
-  dialog.setAttribute('aria-modal', 'true');
-  dialog.setAttribute('aria-label', 'AEM Assets 選択');
-
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'ad-creation-asset-close';
-  closeBtn.textContent = '✕';
-  closeBtn.setAttribute('aria-label', '閉じる');
-
-  const selectorRoot = document.createElement('div');
-  selectorRoot.className = 'ad-creation-asset-selector-root';
-
-  const close = () => overlay.remove();
-  closeBtn.addEventListener('click', close);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
-  document.addEventListener('keydown', function onEsc(e) {
-    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onEsc); }
-  });
-
-  dialog.append(closeBtn, selectorRoot);
-  overlay.append(dialog);
-  document.body.append(overlay);
-
-  window.PureJSSelectors.renderAssetSelector(selectorRoot, {
-    imsOrg: IMS_ORG_ID,
-    repositoryId: AEM_REPO_ID,
-    imsToken: token,
-    env: 'prod',
-    handleSelection: (assets) => {
-      const asset = assets?.[0];
-      if (!asset) return;
-      const repoPath = asset['repo:path'] || asset.path || '';
-      const url = repoPath ? `${AEM_HOST}${repoPath}` : (asset.id || asset.url || '');
-      onSelect(url, asset);
-      close();
-    },
-    onClose: close,
-  });
-}
-
-function createAssetPickerField() {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'ad-creation-field';
-
-  const label = document.createElement('label');
-  label.htmlFor = 'asset-url';
-  label.textContent = 'Input画像（AEM Assets）';
-
-  const row = document.createElement('div');
-  row.className = 'ad-creation-asset-row';
-
-  const urlInput = document.createElement('input');
-  urlInput.type = 'url';
-  urlInput.id = 'asset-url';
-  urlInput.name = 'asset-url';
-  urlInput.placeholder = `${AEM_HOST}/content/dam/...`;
-  urlInput.className = 'ad-creation-asset-url-input';
-
-  const pickBtn = document.createElement('button');
-  pickBtn.type = 'button';
-  pickBtn.textContent = 'アセットを選択';
-  pickBtn.className = 'ad-creation-asset-pick-btn';
-
-  const preview = document.createElement('img');
-  preview.className = 'ad-creation-image-preview';
-  preview.hidden = true;
-  preview.alt = 'プレビュー';
-
-  urlInput.addEventListener('input', () => {
-    const val = urlInput.value.trim();
-    if (val) { preview.src = val; preview.hidden = false; }
-    else preview.hidden = true;
-  });
-
-  pickBtn.addEventListener('click', async () => {
-    const tokenEl = document.querySelector('#bearer-token');
-    const token = tokenEl?.value?.trim();
-    if (!token) { alert('先に Bearer Token を入力してください。'); return; }
-
-    pickBtn.disabled = true;
-    pickBtn.textContent = '読み込み中...';
-    try {
-      await loadAssetSelectorScript();
-      openAssetPicker(token, (url, asset) => {
-        urlInput.value = url;
-        urlInput.dispatchEvent(new Event('input'));
-        if (asset?.['repo:name'] || asset?.name) {
-          urlInput.title = asset['repo:name'] || asset.name;
-        }
-      });
-    } catch (err) {
-      alert(`Asset Picker エラー: ${err.message}`);
-    } finally {
-      pickBtn.disabled = false;
-      pickBtn.textContent = 'アセットを選択';
-    }
-  });
-
-  row.append(urlInput, pickBtn);
-  wrapper.append(label, row, preview);
-
-  wrapper.getAssetUrl = () => urlInput.value.trim();
-  return wrapper;
-}
-
-// --- Form fields ---
-
 function createFormField(field) {
   const wrapper = document.createElement('div');
   wrapper.className = 'ad-creation-field';
@@ -226,10 +92,23 @@ function createFormField(field) {
   input.placeholder = field.placeholder || '';
 
   wrapper.append(label, input);
+
+  // URL入力フィールドにはプレビューを追加
+  if (field.id === 'asset-url') {
+    const preview = document.createElement('img');
+    preview.className = 'ad-creation-image-preview';
+    preview.hidden = true;
+    preview.alt = 'プレビュー';
+    input.addEventListener('input', () => {
+      const val = input.value.trim();
+      preview.hidden = !val;
+      if (val) preview.src = val;
+    });
+    wrapper.append(preview);
+  }
+
   return wrapper;
 }
-
-// --- Status / output ---
 
 function setStatus(statusEl, message, type = 'info') {
   statusEl.textContent = message;
@@ -313,8 +192,6 @@ async function startPolling(token, jobId, statusEl, outputEl, submitBtn) {
   setTimeout(poll, POLL_INTERVAL_MS);
 }
 
-// --- Block entry point ---
-
 export default function decorate(block) {
   block.innerHTML = '';
 
@@ -327,10 +204,7 @@ export default function decorate(block) {
   legend.textContent = 'Ad Creation — Firefly Workflow';
   fieldset.append(legend);
 
-  const assetPickerField = createAssetPickerField();
-  fieldset.append(assetPickerField);
-
-  TEXT_FIELDS.forEach((field) => fieldset.append(createFormField(field)));
+  FIELDS.forEach((field) => fieldset.append(createFormField(field)));
 
   const submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
@@ -352,14 +226,8 @@ export default function decorate(block) {
     e.preventDefault();
     outputEl.innerHTML = '';
 
-    const assetUrl = assetPickerField.getAssetUrl();
-    if (!assetUrl) {
-      setStatus(statusEl, 'AEM Assets から画像を選択してください。', 'error');
-      return;
-    }
-
     const values = {};
-    TEXT_FIELDS.forEach(({ id }) => {
+    FIELDS.forEach(({ id }) => {
       const el = form.querySelector(`#${id}`);
       values[id] = el?.value?.trim() || '';
     });
@@ -368,12 +236,16 @@ export default function decorate(block) {
       setStatus(statusEl, 'Bearer Token を入力してください。', 'error');
       return;
     }
+    if (!values['asset-url']) {
+      setStatus(statusEl, 'AEM Assets URL を入力してください。', 'error');
+      return;
+    }
 
     submitBtn.disabled = true;
     setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
 
     try {
-      const payload = buildPayload(values, assetUrl);
+      const payload = buildPayload(values);
       const result = await executeWorkflow(values['bearer-token'], payload);
       const jobId = result.jobId || result.id || result.batchId;
 
