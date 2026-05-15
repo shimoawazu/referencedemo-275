@@ -24,17 +24,17 @@ const FIELDS = [
 
 function buildPayload(values) {
   const nodeFor = (id) => FIELDS.find((f) => f.id === id).nodeId;
-  return {
+  const payload = {
     workflowId: WORKFLOW_ID,
     inputs: {
       [IMAGE_NODE_ID]: {
         content: [{ presignedUrl: values['asset-url'], storageType: 'AEM' }],
       },
       [TEMPLATE1_NODE_ID]: {
-        content: [{ presignedUrl: values['template1-url'], storageType: 'AEM' }],
+        template: { presignedUrl: values['template1-url'], storageType: 'AEM' },
       },
       [TEMPLATE2_NODE_ID]: {
-        content: [{ presignedUrl: values['template2-url'], storageType: 'AEM' }],
+        template: { presignedUrl: values['template2-url'], storageType: 'AEM' },
       },
       [nodeFor('prompt-1')]: values['prompt-1'],
       [nodeFor('prompt-2')]: values['prompt-2'],
@@ -44,6 +44,11 @@ function buildPayload(values) {
       [nodeFor('sub-heading-2')]: values['sub-heading-2'],
     },
   };
+  // eslint-disable-next-line no-console
+  console.log('[ad-creation] workflowId:', payload.workflowId);
+  // eslint-disable-next-line no-console
+  console.log('[ad-creation] payload:', JSON.stringify(payload, null, 2));
+  return payload;
 }
 
 async function executeWorkflow(token, payload) {
