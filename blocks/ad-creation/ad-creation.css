@@ -63,56 +63,54 @@
   min-height: 72px;
 }
 
-/* File upload drop zone */
-.ad-creation-dropzone {
-  border: 2px dashed #dadada;
-  border-radius: 8px;
-  padding: 24px 16px;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  background: var(--background-color, #fff);
-  position: relative;
-  min-height: 120px;
+/* Asset picker row */
+.ad-creation-asset-row {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+  gap: 8px;
+  align-items: stretch;
 }
 
-.ad-creation-dropzone:hover,
-.ad-creation-dropzone:focus {
-  border-color: #1473e6;
-  background: #f0f7ff;
-  outline: none;
+.ad-creation-asset-url-input {
+  flex: 1;
 }
 
-.ad-creation-dropzone--drag-over {
-  border-color: #1473e6;
-  background: #e8f4fd;
-}
-
-.ad-creation-dropzone--has-image {
-  border-style: solid;
-  border-color: #147534;
-}
-
-.ad-creation-dropzone-instruction {
-  margin: 0;
+.ad-creation-asset-pick-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: #fff;
+  color: #1473e6;
+  border: 1px solid #1473e6;
+  border-radius: 4px;
   font-size: 0.875rem;
-  color: #767676;
-  pointer-events: none;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
 }
 
+.ad-creation-asset-pick-btn:hover:not(:disabled) {
+  background: #1473e6;
+  color: #fff;
+}
+
+.ad-creation-asset-pick-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Image preview */
 .ad-creation-image-preview {
+  display: block;
+  margin-top: 8px;
   max-width: 100%;
   max-height: 200px;
   border-radius: 4px;
   object-fit: contain;
-  display: block;
+  border: 1px solid #dadada;
+  background: #f5f5f5;
 }
 
+/* Submit button */
 .ad-creation-submit {
   display: inline-block;
   margin-top: 8px;
@@ -183,6 +181,52 @@
   to { transform: rotate(360deg); }
 }
 
+/* Asset Picker overlay / modal */
+.ad-creation-asset-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-creation-asset-dialog {
+  background: #fff;
+  border-radius: 8px;
+  width: min(90vw, 1200px);
+  height: min(85vh, 800px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.ad-creation-asset-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: #505050;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.ad-creation-asset-close:hover {
+  background: #f0f0f0;
+}
+
+.ad-creation-asset-selector-root {
+  flex: 1;
+  overflow: hidden;
+}
+
 /* Output area */
 .ad-creation-output {
   display: flex;
@@ -224,10 +268,13 @@
   color: #0d66d0;
 }
 
-/* Responsive: stack output cards on small screens */
 @media (width <= 600px) {
   .ad-creation-output {
     flex-direction: column;
     align-items: center;
+  }
+
+  .ad-creation-asset-row {
+    flex-direction: column;
   }
 }

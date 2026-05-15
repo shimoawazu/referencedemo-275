@@ -1,14 +1,14 @@
 const WORKFLOW_ID = '4ab22ff7-afee-4b8b-afd4-06f3a7a668b1';
 const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
-const FIREFLY_STORAGE_URL = 'https://firefly-api.adobe.io/v2/storage/image';
-const AEM_HOST = 'https://author-p154442-e1620921.adobeaemcloud.com';
-const AEM_DAM_FOLDER = '/content/dam';
 const API_KEY = 'bulk-automation-web';
-const FIREFLY_API_KEY = 'firefly-recom';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
+const AEM_HOST = 'https://author-p154442-e1620921.adobeaemcloud.com';
+const AEM_REPO_ID = 'author-p154442-e1620921.adobeaemcloud.com';
 const IMAGE_NODE_ID = 'node_1773092259_4401688f';
 const POLL_INTERVAL_MS = 3000;
+
+const ASSET_SELECTOR_SRC = 'https://experience.adobe.com/solutions/CX-Assets-selectors/static-assets/resources/assets-selectors.js';
 
 const TEXT_FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
@@ -20,83 +20,17 @@ const TEXT_FIELDS = [
   { id: 'sub-heading-2', label: 'Sub-Heading Text 2', type: 'text', placeholder: 'サブタイトル 2', nodeId: 'node_1773207613701_hb43tfsgx_19_dmfuef' },
 ];
 
-// --- Upload methods ---
-
-async function uploadToAemDam(token, file) {
-  // Step 1: Initiate Direct Binary Upload
-  const initRes = await fetch(`${AEM_HOST}${AEM_DAM_FOLDER}/.initiateUpload.json`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({ fileName: file.name, fileSize: String(file.size) }),
-  });
-  if (!initRes.ok) throw new Error(`AEM initiate failed ${initRes.status}: ${await initRes.text()}`);
-  const { files, completeURI } = await initRes.json();
-
-  // Step 2: PUT binary to upload URI
-  const putRes = await fetch(files[0].uploadURIs[0], {
-    method: 'PUT',
-    headers: { 'Content-Type': file.type || 'application/octet-stream' },
-    body: file,
-  });
-  if (!putRes.ok) throw new Error(`AEM PUT binary failed ${putRes.status}`);
-
-  // Step 3: Complete upload
-  const completeBody = new URLSearchParams({
-    fileName: file.name,
-    fileSize: String(file.size),
-    mimeType: file.type,
-    uploadToken: files[0].uploadToken,
-  });
-  const completeUrl = completeURI.startsWith('http') ? completeURI : `${AEM_HOST}${completeURI}`;
-  const completeRes = await fetch(completeUrl, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: completeBody,
-  });
-  if (!completeRes.ok) throw new Error(`AEM complete failed ${completeRes.status}: ${await completeRes.text()}`);
-  const completeData = await completeRes.json();
-
-  const assetPath = completeData?.entity?.['jcr:path'] ?? `${AEM_DAM_FOLDER}/${file.name}`;
-  return `${AEM_HOST}${assetPath}`;
-}
-
-async function uploadToFireflyStorage(token, file) {
-  const res = await fetch(FIREFLY_STORAGE_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'x-api-key': FIREFLY_API_KEY,
-      'Content-Type': file.type || 'image/jpeg',
-    },
-    body: file,
-  });
-  if (!res.ok) throw new Error(`Firefly Storage error ${res.status}: ${await res.text()}`);
-  const data = await res.json();
-  const id = data.images?.[0]?.id;
-  if (!id) throw new Error(`images[0].id not found in response: ${JSON.stringify(data)}`);
-  return id;
-}
-
-async function uploadImage(token, file, method) {
-  if (method === 'aem') return uploadToAemDam(token, file);
-  return uploadToFireflyStorage(token, file);
-}
-
 // --- Payload ---
 
-function buildPayload(values, imagePresignedUrl) {
+function buildPayload(values, assetUrl) {
   const nodeFor = (id) => TEXT_FIELDS.find((f) => f.id === id).nodeId;
   return {
     workflowId: WORKFLOW_ID,
     inputs: {
       // template nodes excluded until their presignedUrls are available
-      [IMAGE_NODE_ID]: { presignedUrl: imagePresignedUrl, storageType: 'firefly' },
+      [IMAGE_NODE_ID]: {
+        content: [{ presignedUrl: assetUrl, storageType: 'AEM' }],
+      },
       [nodeFor('prompt-1')]: values['prompt-1'],
       [nodeFor('prompt-2')]: values['prompt-2'],
       [nodeFor('heading-1')]: values['heading-1'],
@@ -139,113 +73,131 @@ async function pollStatus(token, jobId) {
   return res.json();
 }
 
-// --- UI helpers ---
+// --- Asset Picker ---
 
-function readFileAsDataURL(file) {
+function loadAssetSelectorScript() {
+  if (window.PureJSSelectors) return Promise.resolve();
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => resolve(e.target.result);
-    reader.onerror = () => reject(new Error('ファイルの読み込みに失敗しました'));
-    reader.readAsDataURL(file);
+    const script = document.createElement('script');
+    script.src = ASSET_SELECTOR_SRC;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('Asset Selector スクリプトの読み込みに失敗しました'));
+    document.head.append(script);
   });
 }
 
-function createUploadMethodField() {
+function openAssetPicker(token, onSelect) {
+  const overlay = document.createElement('div');
+  overlay.className = 'ad-creation-asset-overlay';
+
+  const dialog = document.createElement('div');
+  dialog.className = 'ad-creation-asset-dialog';
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
+  dialog.setAttribute('aria-label', 'AEM Assets 選択');
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'ad-creation-asset-close';
+  closeBtn.textContent = '✕';
+  closeBtn.setAttribute('aria-label', '閉じる');
+
+  const selectorRoot = document.createElement('div');
+  selectorRoot.className = 'ad-creation-asset-selector-root';
+
+  const close = () => overlay.remove();
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function onEsc(e) {
+    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onEsc); }
+  });
+
+  dialog.append(closeBtn, selectorRoot);
+  overlay.append(dialog);
+  document.body.append(overlay);
+
+  window.PureJSSelectors.renderAssetSelector(selectorRoot, {
+    imsOrg: IMS_ORG_ID,
+    repositoryId: AEM_REPO_ID,
+    imsToken: token,
+    env: 'prod',
+    handleSelection: (assets) => {
+      const asset = assets?.[0];
+      if (!asset) return;
+      const repoPath = asset['repo:path'] || asset.path || '';
+      const url = repoPath ? `${AEM_HOST}${repoPath}` : (asset.id || asset.url || '');
+      onSelect(url, asset);
+      close();
+    },
+    onClose: close,
+  });
+}
+
+function createAssetPickerField() {
   const wrapper = document.createElement('div');
   wrapper.className = 'ad-creation-field';
 
   const label = document.createElement('label');
-  label.htmlFor = 'upload-method';
-  label.textContent = '画像アップロード方法';
+  label.htmlFor = 'asset-url';
+  label.textContent = 'Input画像（AEM Assets）';
 
-  const select = document.createElement('select');
-  select.id = 'upload-method';
-  select.name = 'upload-method';
-  [
-    { value: 'firefly', text: 'Firefly Storage' },
-    { value: 'aem', text: 'AEM Assets DAM' },
-  ].forEach(({ value, text }) => {
-    const opt = document.createElement('option');
-    opt.value = value;
-    opt.textContent = text;
-    select.append(opt);
-  });
+  const row = document.createElement('div');
+  row.className = 'ad-creation-asset-row';
 
-  wrapper.append(label, select);
-  return wrapper;
-}
+  const urlInput = document.createElement('input');
+  urlInput.type = 'url';
+  urlInput.id = 'asset-url';
+  urlInput.name = 'asset-url';
+  urlInput.placeholder = `${AEM_HOST}/content/dam/...`;
+  urlInput.className = 'ad-creation-asset-url-input';
 
-function createFileUploadField() {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'ad-creation-field';
-
-  const label = document.createElement('label');
-  label.textContent = 'Input画像';
-
-  const dropZone = document.createElement('div');
-  dropZone.className = 'ad-creation-dropzone';
-  dropZone.setAttribute('role', 'button');
-  dropZone.setAttribute('tabindex', '0');
-  dropZone.setAttribute('aria-label', '画像をドロップまたはクリックして選択');
-
-  const instruction = document.createElement('p');
-  instruction.className = 'ad-creation-dropzone-instruction';
-  instruction.textContent = 'ここに画像をドロップ、またはクリックして選択';
-
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/*';
-  fileInput.style.display = 'none';
-  fileInput.id = 'image-file-input';
+  const pickBtn = document.createElement('button');
+  pickBtn.type = 'button';
+  pickBtn.textContent = 'アセットを選択';
+  pickBtn.className = 'ad-creation-asset-pick-btn';
 
   const preview = document.createElement('img');
   preview.className = 'ad-creation-image-preview';
   preview.hidden = true;
   preview.alt = 'プレビュー';
 
-  dropZone.append(instruction, preview, fileInput);
-  wrapper.append(label, dropZone);
+  urlInput.addEventListener('input', () => {
+    const val = urlInput.value.trim();
+    if (val) { preview.src = val; preview.hidden = false; }
+    else preview.hidden = true;
+  });
 
-  let storedFile = null;
+  pickBtn.addEventListener('click', async () => {
+    const tokenEl = document.querySelector('#bearer-token');
+    const token = tokenEl?.value?.trim();
+    if (!token) { alert('先に Bearer Token を入力してください。'); return; }
 
-  const handleFile = async (file) => {
-    if (!file || !file.type.startsWith('image/')) return;
+    pickBtn.disabled = true;
+    pickBtn.textContent = '読み込み中...';
     try {
-      const dataUrl = await readFileAsDataURL(file);
-      storedFile = file;
-      preview.src = dataUrl;
-      preview.hidden = false;
-      instruction.textContent = file.name;
-      dropZone.classList.add('ad-creation-dropzone--has-image');
-    } catch {
-      instruction.textContent = 'ファイルの読み込みに失敗しました';
+      await loadAssetSelectorScript();
+      openAssetPicker(token, (url, asset) => {
+        urlInput.value = url;
+        urlInput.dispatchEvent(new Event('input'));
+        if (asset?.['repo:name'] || asset?.name) {
+          urlInput.title = asset['repo:name'] || asset.name;
+        }
+      });
+    } catch (err) {
+      alert(`Asset Picker エラー: ${err.message}`);
+    } finally {
+      pickBtn.disabled = false;
+      pickBtn.textContent = 'アセットを選択';
     }
-  };
-
-  dropZone.addEventListener('click', () => fileInput.click());
-  dropZone.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') fileInput.click();
-  });
-  fileInput.addEventListener('change', () => {
-    if (fileInput.files[0]) handleFile(fileInput.files[0]);
-  });
-  dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.classList.add('ad-creation-dropzone--drag-over');
-  });
-  dropZone.addEventListener('dragleave', () => {
-    dropZone.classList.remove('ad-creation-dropzone--drag-over');
-  });
-  dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('ad-creation-dropzone--drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
   });
 
-  wrapper.getImageFile = () => storedFile;
+  row.append(urlInput, pickBtn);
+  wrapper.append(label, row, preview);
+
+  wrapper.getAssetUrl = () => urlInput.value.trim();
   return wrapper;
 }
+
+// --- Form fields ---
 
 function createFormField(field) {
   const wrapper = document.createElement('div');
@@ -276,6 +228,8 @@ function createFormField(field) {
   wrapper.append(label, input);
   return wrapper;
 }
+
+// --- Status / output ---
 
 function setStatus(statusEl, message, type = 'info') {
   statusEl.textContent = message;
@@ -335,7 +289,6 @@ async function startPolling(token, jobId, statusEl, outputEl, submitBtn) {
       submitBtn.disabled = false;
       return;
     }
-
     try {
       const data = await pollStatus(token, jobId);
       const status = (data.status || data.state || '').toLowerCase();
@@ -374,9 +327,8 @@ export default function decorate(block) {
   legend.textContent = 'Ad Creation — Firefly Workflow';
   fieldset.append(legend);
 
-  const uploadMethodField = createUploadMethodField();
-  const imageUploadField = createFileUploadField();
-  fieldset.append(uploadMethodField, imageUploadField);
+  const assetPickerField = createAssetPickerField();
+  fieldset.append(assetPickerField);
 
   TEXT_FIELDS.forEach((field) => fieldset.append(createFormField(field)));
 
@@ -400,9 +352,9 @@ export default function decorate(block) {
     e.preventDefault();
     outputEl.innerHTML = '';
 
-    const imageFile = imageUploadField.getImageFile();
-    if (!imageFile) {
-      setStatus(statusEl, '画像をアップロードしてください。', 'error');
+    const assetUrl = assetPickerField.getAssetUrl();
+    if (!assetUrl) {
+      setStatus(statusEl, 'AEM Assets から画像を選択してください。', 'error');
       return;
     }
 
@@ -417,17 +369,11 @@ export default function decorate(block) {
       return;
     }
 
-    const uploadMethod = form.querySelector('#upload-method')?.value || 'aem';
-    const methodLabel = uploadMethod === 'aem' ? 'AEM Assets' : 'Firefly Storage';
-
     submitBtn.disabled = true;
+    setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
 
     try {
-      setStatus(statusEl, `画像を ${methodLabel} にアップロード中...`, 'pending');
-      const presignedUrl = await uploadImage(values['bearer-token'], imageFile, uploadMethod);
-
-      setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
-      const payload = buildPayload(values, presignedUrl);
+      const payload = buildPayload(values, assetUrl);
       const result = await executeWorkflow(values['bearer-token'], payload);
       const jobId = result.jobId || result.id || result.batchId;
 
