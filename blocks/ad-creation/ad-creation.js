@@ -1,13 +1,15 @@
-const WORKFLOW_ID = '0e4d5280-a18b-4c65-bfe4-6db607765503';
+const WORKFLOW_ID = '42f8ea5b-21ae-44f1-b7a9-f9ba5d516d43';
 const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
 const API_KEY = 'bulk-automation-web';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
 const IMS_USER_ID = 'C0F657EB5489DE240A4C98A5@adobe.com';
-const IMAGE_NODE_ID = 'node_1773092259_4401688f';
-const TEMPLATE1_NODE_ID = 'node-1773470661819-ta5z8k4kl';
-const TEMPLATE2_NODE_ID = 'node-1773470732553-pxcrvw7f4';
 const POLL_INTERVAL_MS = 3000;
+
+// Fixed connections copied from Workflow Builder payload
+const CONNECTIONS = [
+  { connectionId: 'xy-edge__node_1773092259_4401688f_outputs-node_1773092259_d8b8daa5_input-images' },
+];
 
 const FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
@@ -23,25 +25,82 @@ const FIELDS = [
 ];
 
 function buildPayload(values) {
-  const nodeFor = (id) => FIELDS.find((f) => f.id === id).nodeId;
   const payload = {
     workflowId: WORKFLOW_ID,
-    inputs: {
-      [IMAGE_NODE_ID]: {
-        content: [{ presignedUrl: values['asset-url'], storageType: 'AEM' }],
+    actions: [
+      {
+        actionId: 'node_1773092259_4401688f',
+        actionType: 'input-images',
+        name: 'Input Images',
+        images: [{ presignedUrl: values['asset-url'], storageType: 'AEM' }],
       },
-      [TEMPLATE1_NODE_ID]: {
+      { actionId: 'node_1773092259_d8b8daa5', actionType: 'remove-background', name: 'Remove Background' },
+      {
+        actionId: 'node_1773092259_5cb8c7d8',
+        actionType: 'input-text',
+        name: 'Input Text',
+        parameters: { text: values['prompt-1'] },
+      },
+      { actionId: 'node_1773092259_b389e634', actionType: 'apply-edits', name: 'Apply Edits' },
+      { actionId: 'node_1773092259_7ad98bc5', actionType: 'preview-images', name: 'preview-images' },
+      {
+        actionId: 'node-1773092472186-j1e8zgjog',
+        actionType: 'input-text',
+        name: 'Input Text',
+        parameters: { text: values['prompt-2'] },
+      },
+      {
+        actionId: 'node_1773092491358_7di1in5h1_9_k2gyjz',
+        actionType: 'input-text',
+        name: 'Input text',
+        parameters: { text: values['heading-1'] },
+      },
+      { actionId: 'node_1773092293_6xhiceq7_10_ryzolk', actionType: 'preview-images', name: 'preview-images' },
+      { actionId: 'node_1773092721585_3xdjsktbj2_11_lugyig', actionType: 'crop', name: 'Crop Image' },
+      {
+        actionId: 'node_1773092731405_0yy3d3iyl_12_7tz1yz',
+        actionType: 'input-text',
+        name: 'Input text',
+        parameters: { text: values['sub-heading-1'] },
+      },
+      { actionId: 'node_1773092804901_gdiz8f6eb_15_q82prg', actionType: 'apply-edits', name: 'Apply Edits' },
+      { actionId: 'node_1773092883378_vgxanpe1l_16_qabxlu', actionType: 'preview-images', name: 'preview-images' },
+      { actionId: 'node_1773095380471_3md5k3sji_17_5bvvzs', actionType: 'preview-images', name: 'preview-images' },
+      { actionId: 'node-1773096710497-fe9mlcafp', actionType: 'gen-object-composite' },
+      { actionId: 'node-1773096749614-ogoqdrnpl', actionType: 'gen-object-composite' },
+      { actionId: 'node-1773206538730-vcjv8azvt', actionType: 'crop', name: 'Crop Image' },
+      {
+        actionId: 'node_1773207589592_a1g95pe6x_18_nq3u4k',
+        actionType: 'input-text',
+        name: 'Input Text',
+        parameters: { text: values['heading-2'] },
+      },
+      {
+        actionId: 'node_1773207613701_hb43tfsgx_19_dmfuef',
+        actionType: 'input-text',
+        name: 'Input Text',
+        parameters: { text: values['sub-heading-2'] },
+      },
+      {
+        actionId: 'node-1773470661819-ta5z8k4kl',
+        actionType: 'merge-data',
+        name: 'Merge InDesign data',
         template: { presignedUrl: values['template1-url'], storageType: 'AEM' },
       },
-      [TEMPLATE2_NODE_ID]: {
+      {
+        actionId: 'node-1773470732553-pxcrvw7f4',
+        actionType: 'merge-data',
+        name: 'Merge InDesign data',
         template: { presignedUrl: values['template2-url'], storageType: 'AEM' },
       },
-      [nodeFor('prompt-1')]: values['prompt-1'],
-      [nodeFor('prompt-2')]: values['prompt-2'],
-      [nodeFor('heading-1')]: values['heading-1'],
-      [nodeFor('sub-heading-1')]: values['sub-heading-1'],
-      [nodeFor('heading-2')]: values['heading-2'],
-      [nodeFor('sub-heading-2')]: values['sub-heading-2'],
+    ],
+    connections: CONNECTIONS,
+    debug: false,
+    extract_images: true,
+    metadata: {
+      workflowId: WORKFLOW_ID,
+      name: 'Ad Creation May 15',
+      version: '2.0.0',
     },
   };
   // eslint-disable-next-line no-console
