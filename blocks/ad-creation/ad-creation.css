@@ -181,6 +181,17 @@
   color: #0d66d0;
 }
 
+.ad-creation-result-link {
+  width: 100%;
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+}
+
+.ad-creation-result-link a {
+  color: #1473e6;
+  text-decoration: underline;
+}
+
 @media (width <= 600px) {
   .ad-creation-output {
     flex-direction: column;

@@ -139,17 +139,9 @@ async function executeWorkflow(token, payload) {
     throw new Error(`API error ${res.status}: ${bodyText}`);
   }
 
-  // 202 Accepted: 非同期処理開始 — ボディが空の場合はヘッダーからIDを取得
+  // 202 Accepted: 非同期処理開始 — ヘッダーからIDを取得
   if (res.status === 202 || bodyText.trim() === '') {
-    const locationHeader = res.headers.get('Location') || res.headers.get('location') || '';
-    const batchIdHeader = res.headers.get('X-Batch-Id') || res.headers.get('x-batch-id') || '';
-    // Location: /batch/status/{id} または /batch/{id} の形式を想定
-    const locationId = locationHeader.split('/').filter(Boolean).pop();
-    const jobId = batchIdHeader || locationId || null;
-    const statusUrl = locationHeader
-      ? (locationHeader.startsWith('http') ? locationHeader : `https://run-workflow.adobe.io${locationHeader}`)
-      : null;
-    return { jobId, statusUrl, _raw: { status: res.status, headers: headersObj } };
+    return { _raw: { status: res.status, headers: headersObj } };
   }
 
   // 200 OK またはボディありの場合はJSONをパース
@@ -222,8 +214,22 @@ function setStatus(statusEl, message, type = 'info') {
   statusEl.hidden = !message;
 }
 
-function renderOutputImages(outputEl, outputs) {
+function renderOutputImages(outputEl, outputs, resultUrl) {
   outputEl.innerHTML = '';
+
+  // resultUrl へのリンクを表示
+  if (resultUrl) {
+    const resultLink = document.createElement('p');
+    resultLink.className = 'ad-creation-result-link';
+    const anchor = document.createElement('a');
+    anchor.href = resultUrl;
+    anchor.target = '_blank';
+    anchor.rel = 'noopener noreferrer';
+    anchor.textContent = '結果を確認する（プレビューURL）';
+    resultLink.append(anchor);
+    outputEl.append(resultLink);
+  }
+
   const sizes = [
     { key: 'image_300x600', label: '300 × 600', w: 300, h: 600 },
     { key: 'image_1080x1080', label: '1080 × 1080', w: 1080, h: 1080 },
@@ -263,7 +269,7 @@ function renderOutputImages(outputEl, outputs) {
   }
 }
 
-async function startPolling(token, jobId, statusUrl, statusEl, outputEl, submitBtn) {
+async function startPolling(token, jobId, statusUrl, resultUrl, statusEl, outputEl, submitBtn) {
   let attempts = 0;
   const maxAttempts = 60;
 
@@ -276,11 +282,13 @@ async function startPolling(token, jobId, statusUrl, statusEl, outputEl, submitB
     }
     try {
       const data = await pollStatus(token, statusUrl);
+      // eslint-disable-next-line no-console
+      console.log('[ad-creation] poll response:', data);
       const status = (data.status || data.state || '').toLowerCase();
 
       if (status === 'completed' || status === 'succeeded' || status === 'success') {
         setStatus(statusEl, '完了しました！', 'success');
-        renderOutputImages(outputEl, data.outputs || data);
+        renderOutputImages(outputEl, data.outputs || data, resultUrl);
         submitBtn.disabled = false;
       } else if (status === 'failed' || status === 'error') {
         setStatus(statusEl, `エラー: ${data.error || data.message || '不明なエラー'}`, 'error');
@@ -374,24 +382,29 @@ export default function decorate(block) {
       // eslint-disable-next-line no-console
       console.log('[ad-creation] parsed result:', result);
 
-      const jobId = result.jobId || result.id || result.batchId;
+      const jobId = result._raw?.headers?.['x-session-id']
+        || result._raw?.headers?.['x-batch-id']
+        || result.jobId
+        || result.id
+        || result.batchId;
+
       if (!jobId) {
         setStatus(statusEl, `バッチIDが取得できませんでした。レスポンス: ${JSON.stringify(result)}`, 'error');
         submitBtn.disabled = false;
         return;
       }
 
-      // statusUrlの優先順位: result内のhref → 202ヘッダーから取得済みURL → 構築
-      const statusUrl = result.status?.href
-        || result._links?.status?.href
-        || result.links?.status
-        || result.statusUrl
-        || `${STATUS_URL}/${jobId}`;
+      const statusUrl = `https://run-workflow.adobe.io/batches/${jobId}`;
+      const resultUrl = `https://run-workflow.adobe.io/batches/${jobId}?format=preview`;
       // eslint-disable-next-line no-console
-      console.log('[ad-creation] jobId:', jobId, '/ statusUrl:', statusUrl);
+      console.log('[ad-creation] jobId:', jobId);
+      // eslint-disable-next-line no-console
+      console.log('[ad-creation] statusUrl:', statusUrl);
+      // eslint-disable-next-line no-console
+      console.log('[ad-creation] resultUrl:', resultUrl);
 
       setStatus(statusEl, `ジョブ開始: ${jobId} — ステータスを確認中...`, 'pending');
-      startPolling(values['bearer-token'], jobId, statusUrl, statusEl, outputEl, submitBtn);
+      startPolling(values['bearer-token'], jobId, statusUrl, resultUrl, statusEl, outputEl, submitBtn);
     } catch (err) {
       setStatus(statusEl, `エラー: ${err.message}`, 'error');
       submitBtn.disabled = false;
