@@ -1,4 +1,4 @@
-const WORKFLOW_ID = '42f8ea5b-21ae-44f1-b7a9-f9ba5d516d43';
+const WORKFLOW_ID = '341d116f-4c45-4585-b635-8c0c938c63be';
 const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
 const API_KEY = 'bulk-automation-web';
@@ -14,8 +14,6 @@ const CONNECTIONS = [
 const FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
   { id: 'asset-url', label: 'Input画像（AEM Assets URL）', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: true },
-  { id: 'template1-url', label: 'InDesignテンプレート1 URL (300x600)', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: false },
-  { id: 'template2-url', label: 'InDesignテンプレート2 URL (1080x1080)', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: false },
   { id: 'prompt-1', label: 'Prompt 1', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node_1773092259_5cb8c7d8' },
   { id: 'prompt-2', label: 'Prompt 2', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node-1773092472186-j1e8zgjog' },
   { id: 'heading-1', label: 'Heading Text 1', type: 'text', placeholder: 'メインタイトル', nodeId: 'node_1773092491358_7di1in5h1_9_k2gyjz' },
@@ -81,25 +79,15 @@ function buildPayload(values) {
         name: 'Input Text',
         parameters: { text: values['sub-heading-2'] },
       },
-      {
-        actionId: 'node-1773470661819-ta5z8k4kl',
-        actionType: 'merge-data',
-        name: 'Merge InDesign data',
-        template: { presignedUrl: values['template1-url'], storageType: 'AEM' },
-      },
-      {
-        actionId: 'node-1773470732553-pxcrvw7f4',
-        actionType: 'merge-data',
-        name: 'Merge InDesign data',
-        template: { presignedUrl: values['template2-url'], storageType: 'AEM' },
-      },
+      { actionId: 'node-1773470661819-ta5z8k4kl', actionType: 'merge-data', name: 'Merge InDesign data' },
+      { actionId: 'node-1773470732553-pxcrvw7f4', actionType: 'merge-data', name: 'Merge InDesign data' },
     ],
     connections: CONNECTIONS,
     debug: false,
     extract_images: true,
     metadata: {
       workflowId: WORKFLOW_ID,
-      name: 'Ad Creation May 15',
+      name: 'Ad Creation May 16',
       version: '2.0.0',
     },
   };
@@ -364,15 +352,6 @@ export default function decorate(block) {
       setStatus(statusEl, 'AEM Assets URL を入力してください。', 'error');
       return;
     }
-    if (!values['template1-url']) {
-      setStatus(statusEl, 'InDesignテンプレート1 URL を入力してください。', 'error');
-      return;
-    }
-    if (!values['template2-url']) {
-      setStatus(statusEl, 'InDesignテンプレート2 URL を入力してください。', 'error');
-      return;
-    }
-
     submitBtn.disabled = true;
     setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
 
