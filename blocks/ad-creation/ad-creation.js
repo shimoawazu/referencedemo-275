@@ -147,7 +147,7 @@ async function executeWorkflow(token, payload) {
   // 200 OK またはボディありの場合はJSONをパース
   try {
     return JSON.parse(bodyText);
-  } catch {
+  } catch (e) {
     throw new Error(`JSONパースエラー: ${bodyText}`);
   }
 }
@@ -382,8 +382,9 @@ export default function decorate(block) {
       // eslint-disable-next-line no-console
       console.log('[ad-creation] parsed result:', result);
 
-      const jobId = result._raw?.headers?.['x-session-id']
-        || result._raw?.headers?.['x-batch-id']
+      const rawHeaders = (result._raw && result._raw.headers) ? result._raw.headers : {};
+      const jobId = rawHeaders['x-session-id']
+        || rawHeaders['x-batch-id']
         || result.jobId
         || result.id
         || result.batchId;
