@@ -129,8 +129,8 @@ async function executeWorkflow(token, payload) {
   return res.json();
 }
 
-async function pollStatus(token, jobId) {
-  const res = await fetch(`${STATUS_URL}/${jobId}`, {
+async function pollStatus(token, statusUrl) {
+  const res = await fetch(statusUrl, {
     headers: {
       Authorization: `Bearer ${token}`,
       'x-api-key': API_KEY,
@@ -232,7 +232,7 @@ function renderOutputImages(outputEl, outputs) {
   }
 }
 
-async function startPolling(token, jobId, statusEl, outputEl, submitBtn) {
+async function startPolling(token, jobId, statusUrl, statusEl, outputEl, submitBtn) {
   let attempts = 0;
   const maxAttempts = 60;
 
@@ -244,7 +244,7 @@ async function startPolling(token, jobId, statusEl, outputEl, submitBtn) {
       return;
     }
     try {
-      const data = await pollStatus(token, jobId);
+      const data = await pollStatus(token, statusUrl);
       const status = (data.status || data.state || '').toLowerCase();
 
       if (status === 'completed' || status === 'succeeded' || status === 'success') {
@@ -259,8 +259,18 @@ async function startPolling(token, jobId, statusEl, outputEl, submitBtn) {
         setTimeout(poll, POLL_INTERVAL_MS);
       }
     } catch (err) {
-      setStatus(statusEl, `ポーリングエラー: ${err.message}`, 'error');
-      submitBtn.disabled = false;
+      // TypeError: Failed to fetch はCORSまたはネットワークエラー
+      if (err instanceof TypeError) {
+        setStatus(
+          statusEl,
+          `処理中です。数分後に結果を確認してください。バッチID: ${jobId}`,
+          'pending',
+        );
+        submitBtn.disabled = false;
+      } else {
+        setStatus(statusEl, `ポーリングエラー: ${err.message}`, 'error');
+        submitBtn.disabled = false;
+      }
     }
   };
 
@@ -330,16 +340,26 @@ export default function decorate(block) {
     try {
       const payload = buildPayload(values);
       const result = await executeWorkflow(values['bearer-token'], payload);
-      const jobId = result.jobId || result.id || result.batchId;
+      // eslint-disable-next-line no-console
+      console.log('[ad-creation] execute response:', JSON.stringify(result, null, 2));
 
+      const jobId = result.jobId || result.id || result.batchId;
       if (!jobId) {
         setStatus(statusEl, `予期しないレスポンス: ${JSON.stringify(result)}`, 'error');
         submitBtn.disabled = false;
         return;
       }
 
+      // レスポンスにstatusのhrefがあればそれを使用、なければ構築
+      const statusUrl = result.status?.href
+        || result._links?.status?.href
+        || result.links?.status
+        || `${STATUS_URL}/${jobId}`;
+      // eslint-disable-next-line no-console
+      console.log('[ad-creation] jobId:', jobId, '/ statusUrl:', statusUrl);
+
       setStatus(statusEl, `ジョブ開始: ${jobId} — ステータスを確認中...`, 'pending');
-      startPolling(values['bearer-token'], jobId, statusEl, outputEl, submitBtn);
+      startPolling(values['bearer-token'], jobId, statusUrl, statusEl, outputEl, submitBtn);
     } catch (err) {
       setStatus(statusEl, `エラー: ${err.message}`, 'error');
       submitBtn.disabled = false;
