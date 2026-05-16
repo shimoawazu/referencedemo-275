@@ -6,9 +6,26 @@ const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
 const IMS_USER_ID = 'C0F657EB5489DE240A4C98A5@adobe.com';
 const POLL_INTERVAL_MS = 3000;
 
-// Fixed connections copied from Workflow Builder payload
 const CONNECTIONS = [
-  { connectionId: 'xy-edge__node_1773092259_4401688f_outputs-node_1773092259_d8b8daa5_input-images' },
+  { connectionId: 'xy-edge__node_1773092259_4401688f_outputs-node_1773092259_d8b8daa5_input-images', connectionSource: 'node_1773092259_4401688f', connectionTarget: 'node_1773092259_d8b8daa5', sourcePort: 'outputs', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node_1773092804901_gqlz8f6sb_15_q82prgoutputs-node_1773095380471_3md5k3sji_17_5bvvzsinput-images', connectionSource: 'node_1773092804901_gqlz8f6sb_15_q82prg', connectionTarget: 'node_1773095380471_3md5k3sji_17_5bvvzs', sourcePort: 'outputs', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node_1773092259_b389e634outputs-node_1773092542293_z6xhiceq7_10_ryzolkinput-images', connectionSource: 'node_1773092259_b389e634', connectionTarget: 'node_1773092542293_z6xhiceq7_10_ryzolk', sourcePort: 'outputs', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node_1773092259_5cb8c7d8outputs-node-1773096710497-fe9mlcafpprompt', connectionSource: 'node_1773092259_5cb8c7d8', connectionTarget: 'node-1773096710497-fe9mlcafp', sourcePort: 'outputs', targetPort: 'prompt' },
+  { connectionId: 'xy-edge__node_1773092731405_0yy3d3iyl_12_7tz1yzoutputs-node-1773096749614-ogoqdrnplprompt', connectionSource: 'node_1773092731405_0yy3d3iyl_12_7tz1yz', connectionTarget: 'node-1773096749614-ogoqdrnpl', sourcePort: 'outputs', targetPort: 'prompt' },
+  { connectionId: 'xy-edge__node_1773092259_d8b8daa5outputs-node-1773096710497-fe9mlcafpinput-images', connectionSource: 'node_1773092259_d8b8daa5', connectionTarget: 'node-1773096710497-fe9mlcafp', sourcePort: 'outputs', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node-1773206538730-vcjv8azwtoutputs-node_1773092259_b389e634input-images', connectionSource: 'node-1773206538730-vcjv8azwt', connectionTarget: 'node_1773092259_b389e634', sourcePort: 'outputs', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node-1773096710497-fe9mlcafpoutputs-node-1773206538730-vcjv8azwtinput-images', connectionSource: 'node-1773096710497-fe9mlcafp', connectionTarget: 'node-1773206538730-vcjv8azwt', sourcePort: 'outputs', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node_1773092259_d8b8daa5outputs-node-1773096749614-ogoqdrnplinput-images', connectionSource: 'node_1773092259_d8b8daa5', connectionTarget: 'node-1773096749614-ogoqdrnpl', sourcePort: 'outputs', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node-1773096749614-ogoqdrnploutputs-node_1773092721585_3xdjskbj2_11_luqyiginput-images', connectionSource: 'node-1773096749614-ogoqdrnpl', connectionTarget: 'node_1773092721585_3xdjskbj2_11_luqyig', sourcePort: 'outputs', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node_1773092721585_3xdjskbj2_11_luqyigoutputs-node_1773092804901_gqlz8f6sb_15_q82prginput-images', connectionSource: 'node_1773092721585_3xdjskbj2_11_luqyig', connectionTarget: 'node_1773092804901_gqlz8f6sb_15_q82prg', sourcePort: 'outputs', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node_1773092259_b389e634outputs-node-1773470661819-ta5z8k4klbackground', connectionSource: 'node_1773092259_b389e634', connectionTarget: 'node-1773470661819-ta5z8k4kl', sourcePort: 'outputs', targetPort: 'background' },
+  { connectionId: 'xy-edge__node-1773092472186-j1e8zgjogoutputs-node-1773470661819-ta5z8k4klsub-heading', connectionSource: 'node-1773092472186-j1e8zgjog', connectionTarget: 'node-1773470661819-ta5z8k4kl', sourcePort: 'outputs', targetPort: 'sub-heading' },
+  { connectionId: 'xy-edge__node_1773092491358_7di1in5h1_9_k2gyjzoutputs-node-1773470661819-ta5z8k4klheading', connectionSource: 'node_1773092491358_7di1in5h1_9_k2gyjz', connectionTarget: 'node-1773470661819-ta5z8k4kl', sourcePort: 'outputs', targetPort: 'heading' },
+  { connectionId: 'xy-edge__node_1773092804901_gqlz8f6sb_15_q82prgoutputs-node-1773470732553-pxcrvw7f4background', connectionSource: 'node_1773092804901_gqlz8f6sb_15_q82prg', connectionTarget: 'node-1773470732553-pxcrvw7f4', sourcePort: 'outputs', targetPort: 'background' },
+  { connectionId: 'xy-edge__node_1773207589592_a1g95pe6x_18_nq3u4koutputs-node-1773470732553-pxcrvw7f4sub-heading', connectionSource: 'node_1773207589592_a1g95pe6x_18_nq3u4k', connectionTarget: 'node-1773470732553-pxcrvw7f4', sourcePort: 'outputs', targetPort: 'sub-heading' },
+  { connectionId: 'xy-edge__node-1773470732553-pxcrvw7f4output-node_1773092883378_vgxanpe1i_16_qabxluinput-images', connectionSource: 'node-1773470732553-pxcrvw7f4', connectionTarget: 'node_1773092883378_vgxanpe1i_16_qabxlu', sourcePort: 'output', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node-1773470661819-ta5z8k4kloutput-node_1773092259_7ad98bc5input-images', connectionSource: 'node-1773470661819-ta5z8k4kl', connectionTarget: 'node_1773092259_7ad98bc5', sourcePort: 'output', targetPort: 'input-images' },
+  { connectionId: 'xy-edge__node_1773207613701_hb43tfsgx_19_dmfuefoutputs-node-1773470732553-pxcrvw7f4heading', connectionSource: 'node_1773207613701_hb43tfsgx_19_dmfuef', connectionTarget: 'node-1773470732553-pxcrvw7f4', sourcePort: 'outputs', targetPort: 'heading' },
 ];
 
 const FIELDS = [
@@ -26,59 +43,24 @@ function buildPayload(values) {
   const payload = {
     workflowId: WORKFLOW_ID,
     actions: [
-      {
-        actionId: 'node_1773092259_4401688f',
-        actionType: 'input-images',
-        name: 'Input Images',
-        images: [{ presignedUrl: values['asset-url'], storageType: 'AEM' }],
-      },
+      { actionId: 'node_1773092259_4401688f', actionType: 'input-images', name: 'Input Images', inputs: { images: [{ url: values['asset-url'], storageType: 'AEM' }] } },
       { actionId: 'node_1773092259_d8b8daa5', actionType: 'remove-background', name: 'Remove Background' },
-      {
-        actionId: 'node_1773092259_5cb8c7d8',
-        actionType: 'input-text',
-        name: 'Input Text',
-        parameters: { text: values['prompt-1'] },
-      },
+      { actionId: 'node_1773092259_5cb8c7d8', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-1'] } },
       { actionId: 'node_1773092259_b389e634', actionType: 'apply-edits', name: 'Apply Edits' },
       { actionId: 'node_1773092259_7ad98bc5', actionType: 'preview-images', name: 'preview-images' },
-      {
-        actionId: 'node-1773092472186-j1e8zgjog',
-        actionType: 'input-text',
-        name: 'Input Text',
-        parameters: { text: values['prompt-2'] },
-      },
-      {
-        actionId: 'node_1773092491358_7di1in5h1_9_k2gyjz',
-        actionType: 'input-text',
-        name: 'Input text',
-        parameters: { text: values['heading-1'] },
-      },
-      { actionId: 'node_1773092293_6xhiceq7_10_ryzolk', actionType: 'preview-images', name: 'preview-images' },
-      { actionId: 'node_1773092721585_3xdjsktbj2_11_lugyig', actionType: 'crop', name: 'Crop Image' },
-      {
-        actionId: 'node_1773092731405_0yy3d3iyl_12_7tz1yz',
-        actionType: 'input-text',
-        name: 'Input text',
-        parameters: { text: values['sub-heading-1'] },
-      },
-      { actionId: 'node_1773092804901_gdiz8f6eb_15_q82prg', actionType: 'apply-edits', name: 'Apply Edits' },
-      { actionId: 'node_1773092883378_vgxanpe1l_16_qabxlu', actionType: 'preview-images', name: 'preview-images' },
+      { actionId: 'node-1773092472186-j1e8zgjog', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-2'] } },
+      { actionId: 'node_1773092491358_7di1in5h1_9_k2gyjz', actionType: 'input-text', name: 'Input text', parameters: { text: values['heading-1'] } },
+      { actionId: 'node_1773092542293_z6xhiceq7_10_ryzolk', actionType: 'preview-images', name: 'preview-images' },
+      { actionId: 'node_1773092721585_3xdjskbj2_11_luqyig', actionType: 'crop', name: 'Crop Image' },
+      { actionId: 'node_1773092731405_0yy3d3iyl_12_7tz1yz', actionType: 'input-text', name: 'Input text', parameters: { text: values['sub-heading-1'] } },
+      { actionId: 'node_1773092804901_gqlz8f6sb_15_q82prg', actionType: 'apply-edits', name: 'Apply Edits' },
+      { actionId: 'node_1773092883378_vgxanpe1i_16_qabxlu', actionType: 'preview-images', name: 'preview-images' },
       { actionId: 'node_1773095380471_3md5k3sji_17_5bvvzs', actionType: 'preview-images', name: 'preview-images' },
       { actionId: 'node-1773096710497-fe9mlcafp', actionType: 'gen-object-composite' },
       { actionId: 'node-1773096749614-ogoqdrnpl', actionType: 'gen-object-composite' },
-      { actionId: 'node-1773206538730-vcjv8azvt', actionType: 'crop', name: 'Crop Image' },
-      {
-        actionId: 'node_1773207589592_a1g95pe6x_18_nq3u4k',
-        actionType: 'input-text',
-        name: 'Input Text',
-        parameters: { text: values['heading-2'] },
-      },
-      {
-        actionId: 'node_1773207613701_hb43tfsgx_19_dmfuef',
-        actionType: 'input-text',
-        name: 'Input Text',
-        parameters: { text: values['sub-heading-2'] },
-      },
+      { actionId: 'node-1773206538730-vcjv8azwt', actionType: 'crop', name: 'Crop Image' },
+      { actionId: 'node_1773207589592_a1g95pe6x_18_nq3u4k', actionType: 'input-text', name: 'Input Text', parameters: { text: values['heading-2'] } },
+      { actionId: 'node_1773207613701_hb43tfsgx_19_dmfuef', actionType: 'input-text', name: 'Input Text', parameters: { text: values['sub-heading-2'] } },
       { actionId: 'node-1773470661819-ta5z8k4kl', actionType: 'merge-data', name: 'Merge InDesign data' },
       { actionId: 'node-1773470732553-pxcrvw7f4', actionType: 'merge-data', name: 'Merge InDesign data' },
     ],
@@ -374,7 +356,9 @@ export default function decorate(block) {
         return;
       }
 
-      const statusUrl = `https://run-workflow.adobe.io/batches/${jobId}`;
+      const statusUrl = (result.links && result.links.status && result.links.status.href)
+        ? result.links.status.href
+        : `https://run-workflow.adobe.io/batches/${jobId}`;
       const resultUrl = `https://run-workflow.adobe.io/batches/${jobId}?format=preview`;
       // eslint-disable-next-line no-console
       console.log('[ad-creation] jobId:', jobId);
