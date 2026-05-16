@@ -1,4 +1,7 @@
 const WORKFLOW_ID = '341d116f-4c45-4585-b635-8c0c938c63be';
+// presigned URLs expire in 4 hours — update when expired
+const TEMPLATE1_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/7ae06770-c32d-4644-bb48-4be6253bba54?response-content-disposition=attachment%3B%20filename%3D%22444ba408c5444ff28058cb0438bf3605.indd%22&response-content-type=application%2Fx-indesign&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=21c1f4508dd461944043aa452c00f1047e9d127fd2488509c431ea86def8add9f9a3&x-resource-length=1163264&x-resource-id=00c28205deda12b05811a6440a68f75376ef0b04d845f411b760bb8bd8acbadff3fa6b58&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEMf%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkYwRAIgTF4KIS42ZmH8DSjda7x%2FfyXClv4UbN5AT%2B3IuW%2BnmEwCIHn8XjFTJaJaBh%2BND0%2BaR5PZqA80SobWqE6O5NH0gsT2KvQBCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAhoMNzY2OTY5ODQ0MDc4Igzo%2F3lHvG7mN6jQnKgqyAG14cHdc0T5M0FZz2Btp6csezmrVLtc4e0DjQrlmv%2BDAd8h22BIrLuzdnAxRGxru%2BaFGXwPj9iZNJN2ofNYAAtYiZ5DuFu8QZa6%2BFQH1VWDLwTfuLTeyAkBR1Ew6bVqyhqMn%2FU51YlPCoWW1LE4xbckGFc%2BnvyRb%2Fxxmz3IfOm8vqz5HxMCJ5DvoquE3upC3Cc7cXysfSzxk%2B8b0QOvmL5LOfKpf1qDuTGSewaD6uIw01YevVdheiO9vfXBKV8J40G5kQeGswAYuTD6nqLQBjqZAaLPSdR5oUTjtht4l%2FIMS%2B96Se3ZHVIR%2FlJ8WO6Tlf%2FHoCuszIXIWfvua6cEzO9ude1RRaUs3vjGtbduhnzdKfcQ26%2FB8NBDBZDTIaTvspTbRmrbg0fccsWhFSnRSbldPNQw37xoExWReA%2F06HtPA3V6l0UWdchrgkLKapqqXATa%2FTMJG98xtlkLjNJB%2FLwZxU185Ym95IJ8tQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260516T160242Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXG6QLO3FT%2F20260516%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=73ab6250998aecf4bd96a349fcd2900c1880d7cd1371e287bc2d794e1aae3cd3';
+const TEMPLATE2_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/e23d7d16-4055-44ea-8c08-f14511976cf0?response-content-disposition=attachment%3B%20filename%3D%221e231f1322af4eaf895deefcfab392ad.indd%22&response-content-type=application%2Fx-indesign&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=5e30ce09a3f257e45ea77ee48cdcd16a41e86d1a5dac071e6c69c516d2ecc6a9c36e&x-resource-length=1146880&x-resource-id=2f32b159a1a0749746a275befcb4d73a489f743b02ac74061d3a934bd2bb8ca8cf33e29b&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEMj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkcwRQIgd0EqIs42dp7Ln1rzXaFHt3yGxQLo6NUxNZWbMmj7ZdwCIQCjQoW3J%2BfS6t1vkJ7oWPQefm4GAG%2BxnP2TUQ0sCrDt7Sr0AQiR%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDc2Njk2OTg0NDA3OCIMWJBXviIr5iKM5KBLKsgBlIgMDbAahT2UROPZ9Z6NVUjAmtCbNFQU2Z7q9bVB8lCLLG2Qa4ecjp%2FBpuYusXqWSDNj7dmcjS1kTzjL1yyEtd6%2Bx128jwNuhU%2BAmMdCHGka%2B7Mi3xaOk5CRm0cJH4IwRjblQBl5AFnswZJ7q%2FjKWz7vtufZRsSLOliFt1uFboowUIPDsrs0ScrV2qwNcMZ3M%2B42Gog10kd8fqlENiu3tlrSVA19yugdmkWp7HfM7GdFYphghEL8EesNUC%2F9q%2FfhUM6%2Bo8ygbGQwh6Si0AY6mAHD%2FSzi1mpSsZbP%2BdcZ5W3c1huI9VPAOWWKq4sKTeqJQZfUHQwLRGaWie5d5aTMUYdNJXHpcewHul1KbxdNHPollEQ8d%2BBundib7yL3k8Hcwj%2BjaiPvJqTWl4W1D8eLmHTfeF4X7U4KxjAZnzfvI5Iq57xgXJW06K06vF2fyICFneislHBHVNMhbtllismaZzpxjf8wRnQwUQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260516T160242Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXCSZPS76J%2F20260516%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=1461c4bcda6958abfa1c6b9bf0e52d3e150dd2438565ba731a50016ad2afd966';
 const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
 const API_KEY = 'bulk-automation-web';
@@ -31,8 +34,6 @@ const CONNECTIONS = [
 const FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
   { id: 'asset-url', label: 'Input画像（AEM Assets URL）', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: true },
-  { id: 'template1-url', label: 'テンプレート1 URL (1080x1080)', type: 'url', placeholder: 'https://...' },
-  { id: 'template2-url', label: 'テンプレート2 URL (300x600)', type: 'url', placeholder: 'https://...' },
   { id: 'prompt-1', label: 'Prompt 1', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node_1773092259_5cb8c7d8' },
   { id: 'prompt-2', label: 'Prompt 2', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node-1773092472186-j1e8zgjog' },
   { id: 'heading-1', label: 'Heading Text 1', type: 'text', placeholder: 'メインタイトル', nodeId: 'node_1773092491358_7di1in5h1_9_k2gyjz' },
@@ -70,7 +71,7 @@ function buildPayload(values) {
         parameters: {
           fileName: '1080x1080_Dunlop.indd',
           title: '1080x1080_Dunlop.indd',
-          templates: [{ name: '1080x1080_Dunlop.indd', mimeType: 'application/x-indesign', storageType: 'external', url: values['template1-url'] }],
+          templates: [{ name: '1080x1080_Dunlop.indd', mimeType: 'application/x-indesign', storageType: 'external', url: TEMPLATE1_URL }],
           output: { storageType: 'Azure', type: 'image/png' },
           outputMediaType: 'image/png',
           outputFileBaseString: '1080x1080_Dunlop',
@@ -91,7 +92,7 @@ function buildPayload(values) {
         parameters: {
           fileName: '300x600_Dunlop.indd',
           title: '300x600_Dunlop.indd',
-          templates: [{ name: '300x600_Dunlop.indd', mimeType: 'application/x-indesign', storageType: 'external', url: values['template2-url'] }],
+          templates: [{ name: '300x600_Dunlop.indd', mimeType: 'application/x-indesign', storageType: 'external', url: TEMPLATE2_URL }],
           output: { storageType: 'Azure', type: 'image/png' },
           outputMediaType: 'image/png',
           outputFileBaseString: '300x600_Dunlop',
@@ -384,14 +385,6 @@ export default function decorate(block) {
     }
     if (!values['asset-url']) {
       setStatus(statusEl, 'AEM Assets URL を入力してください。', 'error');
-      return;
-    }
-    if (!values['template1-url']) {
-      setStatus(statusEl, 'テンプレート1 URL (1080x1080) を入力してください。', 'error');
-      return;
-    }
-    if (!values['template2-url']) {
-      setStatus(statusEl, 'テンプレート2 URL (300x600) を入力してください。', 'error');
       return;
     }
     submitBtn.disabled = true;
