@@ -31,6 +31,8 @@ const CONNECTIONS = [
 const FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
   { id: 'asset-url', label: 'Input画像（AEM Assets URL）', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: true },
+  { id: 'template1-url', label: 'テンプレート1 URL (1080x1080)', type: 'url', placeholder: 'https://...' },
+  { id: 'template2-url', label: 'テンプレート2 URL (300x600)', type: 'url', placeholder: 'https://...' },
   { id: 'prompt-1', label: 'Prompt 1', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node_1773092259_5cb8c7d8' },
   { id: 'prompt-2', label: 'Prompt 2', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node-1773092472186-j1e8zgjog' },
   { id: 'heading-1', label: 'Heading Text 1', type: 'text', placeholder: 'メインタイトル', nodeId: 'node_1773092491358_7di1in5h1_9_k2gyjz' },
@@ -43,7 +45,7 @@ function buildPayload(values) {
   const payload = {
     workflowId: WORKFLOW_ID,
     actions: [
-      { actionId: 'node_1773092259_4401688f', actionType: 'input-images', name: 'Input Images', inputs: { images: [{ url: values['asset-url'], storageType: 'AEM' }] } },
+      { actionId: 'node_1773092259_4401688f', actionType: 'input-images', name: 'Input Images', inputs: { images: [{ source: { url: values['asset-url'], storageType: 'AEM' } }] } },
       { actionId: 'node_1773092259_d8b8daa5', actionType: 'remove-background', name: 'Remove Background' },
       { actionId: 'node_1773092259_5cb8c7d8', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-1'] } },
       { actionId: 'node_1773092259_b389e634', actionType: 'apply-edits', name: 'Apply Edits' },
@@ -61,8 +63,47 @@ function buildPayload(values) {
       { actionId: 'node-1773206538730-vcjv8azwt', actionType: 'crop', name: 'Crop Image' },
       { actionId: 'node_1773207589592_a1g95pe6x_18_nq3u4k', actionType: 'input-text', name: 'Input Text', parameters: { text: values['heading-2'] } },
       { actionId: 'node_1773207613701_hb43tfsgx_19_dmfuef', actionType: 'input-text', name: 'Input Text', parameters: { text: values['sub-heading-2'] } },
-      { actionId: 'node-1773470661819-ta5z8k4kl', actionType: 'merge-data', name: 'Merge InDesign data' },
-      { actionId: 'node-1773470732553-pxcrvw7f4', actionType: 'merge-data', name: 'Merge InDesign data' },
+      {
+        actionId: 'node-1773470661819-ta5z8k4kl',
+        actionType: 'merge-data',
+        name: 'Merge InDesign data',
+        parameters: {
+          fileName: '1080x1080_Dunlop.indd',
+          title: '1080x1080_Dunlop.indd',
+          templates: [{ name: '1080x1080_Dunlop.indd', mimeType: 'application/x-indesign', storageType: 'external', url: values['template1-url'] }],
+          output: { storageType: 'Azure', type: 'image/png' },
+          outputMediaType: 'image/png',
+          outputFileBaseString: '1080x1080_Dunlop',
+          recordRange: 'All',
+          removeBlankLines: false,
+          allowMultipleRecordsPerPage: false,
+          convertUrlToHyperlink: true,
+          imagePlacementOptions: { centerImage: false, fittingOption: 'proportional', linkImages: false },
+          exportSettings: { quality: 'medium' },
+          fontDirectories: [],
+          hyphenationSettings: { zone: 0 },
+        },
+      },
+      {
+        actionId: 'node-1773470732553-pxcrvw7f4',
+        actionType: 'merge-data',
+        name: 'Merge InDesign data',
+        parameters: {
+          fileName: '300x600_Dunlop.indd',
+          title: '300x600_Dunlop.indd',
+          templates: [{ name: '300x600_Dunlop.indd', mimeType: 'application/x-indesign', storageType: 'external', url: values['template2-url'] }],
+          output: { storageType: 'Azure', type: 'image/png' },
+          outputMediaType: 'image/png',
+          outputFileBaseString: '300x600_Dunlop',
+          recordRange: 'All',
+          removeBlankLines: false,
+          allowMultipleRecordsPerPage: false,
+          convertUrlToHyperlink: true,
+          imagePlacementOptions: { centerImage: false, fittingOption: 'proportional', linkImages: false },
+          exportSettings: { quality: 'medium' },
+          fontDirectories: [],
+        },
+      },
     ],
     connections: CONNECTIONS,
     debug: false,
@@ -343,6 +384,14 @@ export default function decorate(block) {
     }
     if (!values['asset-url']) {
       setStatus(statusEl, 'AEM Assets URL を入力してください。', 'error');
+      return;
+    }
+    if (!values['template1-url']) {
+      setStatus(statusEl, 'テンプレート1 URL (1080x1080) を入力してください。', 'error');
+      return;
+    }
+    if (!values['template2-url']) {
+      setStatus(statusEl, 'テンプレート2 URL (300x600) を入力してください。', 'error');
       return;
     }
     submitBtn.disabled = true;
