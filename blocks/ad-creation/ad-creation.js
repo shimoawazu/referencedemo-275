@@ -122,11 +122,42 @@ async function executeWorkflow(token, payload) {
     },
     body: JSON.stringify(payload),
   });
+
+  // レスポンスのデバッグ情報を出力
+  const headersObj = {};
+  res.headers.forEach((v, k) => { headersObj[k] = v; });
+  // eslint-disable-next-line no-console
+  console.log('[ad-creation] execute status:', res.status);
+  // eslint-disable-next-line no-console
+  console.log('[ad-creation] execute headers:', headersObj);
+
+  const bodyText = await res.text();
+  // eslint-disable-next-line no-console
+  console.log('[ad-creation] execute body:', bodyText || '(empty)');
+
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`API error ${res.status}: ${text}`);
+    throw new Error(`API error ${res.status}: ${bodyText}`);
   }
-  return res.json();
+
+  // 202 Accepted: 非同期処理開始 — ボディが空の場合はヘッダーからIDを取得
+  if (res.status === 202 || bodyText.trim() === '') {
+    const locationHeader = res.headers.get('Location') || res.headers.get('location') || '';
+    const batchIdHeader = res.headers.get('X-Batch-Id') || res.headers.get('x-batch-id') || '';
+    // Location: /batch/status/{id} または /batch/{id} の形式を想定
+    const locationId = locationHeader.split('/').filter(Boolean).pop();
+    const jobId = batchIdHeader || locationId || null;
+    const statusUrl = locationHeader
+      ? (locationHeader.startsWith('http') ? locationHeader : `https://run-workflow.adobe.io${locationHeader}`)
+      : null;
+    return { jobId, statusUrl, _raw: { status: res.status, headers: headersObj } };
+  }
+
+  // 200 OK またはボディありの場合はJSONをパース
+  try {
+    return JSON.parse(bodyText);
+  } catch {
+    throw new Error(`JSONパースエラー: ${bodyText}`);
+  }
 }
 
 async function pollStatus(token, statusUrl) {
@@ -341,19 +372,20 @@ export default function decorate(block) {
       const payload = buildPayload(values);
       const result = await executeWorkflow(values['bearer-token'], payload);
       // eslint-disable-next-line no-console
-      console.log('[ad-creation] execute response:', JSON.stringify(result, null, 2));
+      console.log('[ad-creation] parsed result:', result);
 
       const jobId = result.jobId || result.id || result.batchId;
       if (!jobId) {
-        setStatus(statusEl, `予期しないレスポンス: ${JSON.stringify(result)}`, 'error');
+        setStatus(statusEl, `バッチIDが取得できませんでした。レスポンス: ${JSON.stringify(result)}`, 'error');
         submitBtn.disabled = false;
         return;
       }
 
-      // レスポンスにstatusのhrefがあればそれを使用、なければ構築
+      // statusUrlの優先順位: result内のhref → 202ヘッダーから取得済みURL → 構築
       const statusUrl = result.status?.href
         || result._links?.status?.href
         || result.links?.status
+        || result.statusUrl
         || `${STATUS_URL}/${jobId}`;
       // eslint-disable-next-line no-console
       console.log('[ad-creation] jobId:', jobId, '/ statusUrl:', statusUrl);
