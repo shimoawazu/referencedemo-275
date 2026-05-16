@@ -109,12 +109,23 @@ async function executeWorkflow(token, payload) {
     throw new Error(`API error ${res.status}: ${bodyText}`);
   }
 
-  // 202 Accepted: 非同期処理開始 — ヘッダーからIDを取得
-  if (res.status === 202 || bodyText.trim() === '') {
-    return { _raw: { status: res.status, headers: headersObj } };
+  const raw = { _raw: { status: res.status, headers: headersObj } };
+
+  // 202 Accepted: ボディがあればJSONパースしてlinks.status.hrefを取得
+  if (res.status === 202) {
+    if (bodyText.trim()) {
+      try {
+        return { ...JSON.parse(bodyText), ...raw };
+      } catch (e) { /* パース失敗は無視してrawのみ返す */ }
+    }
+    return raw;
   }
 
-  // 200 OK またはボディありの場合はJSONをパース
+  if (!bodyText.trim()) {
+    return raw;
+  }
+
+  // 200 OK: JSONをパース
   try {
     return JSON.parse(bodyText);
   } catch (e) {
@@ -342,6 +353,8 @@ export default function decorate(block) {
       const result = await executeWorkflow(values['bearer-token'], payload);
       // eslint-disable-next-line no-console
       console.log('[ad-creation] parsed result:', result);
+      // eslint-disable-next-line no-console
+      console.log('[ad-creation] result.links:', result.links || '(none)');
 
       const rawHeaders = (result._raw && result._raw.headers) ? result._raw.headers : {};
       const jobId = rawHeaders['x-session-id']
@@ -356,14 +369,13 @@ export default function decorate(block) {
         return;
       }
 
-      const statusUrl = (result.links && result.links.status && result.links.status.href)
-        ? result.links.status.href
-        : `https://run-workflow.adobe.io/batches/${jobId}`;
+      const linksStatusHref = result.links && result.links.status && result.links.status.href;
+      const statusUrl = linksStatusHref || `https://run-workflow.adobe.io/batches/${jobId}`;
       const resultUrl = `https://run-workflow.adobe.io/batches/${jobId}?format=preview`;
       // eslint-disable-next-line no-console
       console.log('[ad-creation] jobId:', jobId);
       // eslint-disable-next-line no-console
-      console.log('[ad-creation] statusUrl:', statusUrl);
+      console.log('[ad-creation] statusUrl:', statusUrl, linksStatusHref ? '(from links.status.href)' : '(fallback from x-session-id)');
       // eslint-disable-next-line no-console
       console.log('[ad-creation] resultUrl:', resultUrl);
 
