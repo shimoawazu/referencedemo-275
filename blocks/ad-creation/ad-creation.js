@@ -11,7 +11,7 @@ const POLL_INTERVAL_MS = 3000;
 // 【デバッグ用 — 問題1の切り分け】空でない場合はフォーム入力より優先される
 // 実際のAEM DAM画像URLを設定して動作確認後 '' に戻す
 // 例: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/referencedemo-275/image.jpg'
-const DEBUG_ASSET_URL = 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/referencedemo-275/dunlop-tire.jpg';
+const DEBUG_ASSET_URL = 'https://publish-p154442-e1620921.adobeaemcloud.com/content/dam/demo/Project%20H/project-h2/AdobeStock_192386403.jpeg';
 
 const CONNECTIONS = [
   { connectionId: 'xy-edge__node_1773092259_4401688f_outputs-node_1773092259_d8b8daa5_input-images', connectionSource: 'node_1773092259_4401688f', connectionTarget: 'node_1773092259_d8b8daa5', sourcePort: 'outputs', targetPort: 'input-images' },
@@ -57,7 +57,7 @@ function buildPayload(values) {
   const payload = {
     workflowId: WORKFLOW_ID,
     actions: [
-      { actionId: 'node_1773092259_4401688f', actionType: 'input-images', name: 'Input Images', inputs: { images: [{ source: { url: assetUrl, storageType: 'AEM' } }] } },
+      { actionId: 'node_1773092259_4401688f', actionType: 'input-images', name: 'Input Images', inputs: { images: [{ source: { url: assetUrl, storageType: 'external' } }] } },
       { actionId: 'node_1773092259_d8b8daa5', actionType: 'remove-background', name: 'Remove Background' },
       { actionId: 'node_1773092259_5cb8c7d8', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-1'] } },
       { actionId: 'node_1773092259_b389e634', actionType: 'apply-edits', name: 'Apply Edits' },
