@@ -8,10 +8,8 @@ const API_KEY = 'bulk-automation-web';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
 const IMS_USER_ID = 'C0F657EB5489DE240A4C98A5@adobe.com';
 const POLL_INTERVAL_MS = 3000;
-// 【デバッグ用 — 問題1の切り分け】空でない場合はフォーム入力より優先される
-// 実際のAEM DAM画像URLを設定して動作確認後 '' に戻す
-// 例: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/referencedemo-275/image.jpg'
-const DEBUG_ASSET_URL = 'https://publish-p154442-e1620921.adobeaemcloud.com/content/dam/demo/Project%20H/project-h2/AdobeStock_192386403.jpeg';
+// 【デバッグ用】presigned URL for input-images — 4時間有効。期限切れ後はfirefly.adobe.comのNetworkタブから再取得
+const DEBUG_IMAGE_PRESIGNED_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/5bc2c87e-2619-4478-bc2d-b0fc8c149c0c?response-content-disposition=attachment%3B%20filename%3D%2255d640e732cb4b7faf53a8ec1a0c1a58.jpeg%22&response-content-type=image%2Fjpeg&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=5fe0d45ad9d8a435cf07f8c887eea921be243fda9ed8bc741656f37c6c5d328df804&x-resource-length=3190622&x-resource-id=2ab6f70f8adc844fd751f093fa86af2deb0326f89684cf6c6202a1273b012fd6af5070a9&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkYwRAIgaHNuOJce6BMyjfn7mYgNxYWAYZIrxbJaRnEtiUsro8ACIGe3m0KqoSZoFSVz5Ws1TjobVXGd5iz8DjhVEuo2qJ8CKvQBCLL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAhoMNzY2OTY5ODQ0MDc4Igwx6iw2D%2Fu%2FKTvTMToqyAESxD5CFTP%2FfVx%2F33oX%2BTyVDJGNxicOWS4SbSwUExOFVIVaPLVkd4syj1w%2F7qoDY88xXlJZHds%2B5NuQm6NStqvT7gEgBCqSyMcVudPbvTkDJO2PKZf4as6GrEqqlSQG2EuqMQn8E3JFmkivHekhjwFK4i1A2fdvARYUHt6TBeZ%2BYrF0JS%2F3ywWDPDhq5%2FQXIM%2Br3d01u3k4YFqrG68o2w%2Fy8BXLyh8ezEbaY3dQoD8uLVrlfI8CyaL3DqSsJEXMEpfvZypA8xDqCDCUzanQBjqZAbBWL0PD5iRxNBEUzQLYFV74ZMPhCqKcj730sgWtUqLeBrLDfkOfiVI7g59330%2BsV1d%2FLBFmR9qmmWJCPpsdF2R4SoKWTrTsPsJFPyMvkKYcz8wUqLm9QXAsrfTjBgZXKsGWb9laoMSx44GVNY7ndh0VdHi%2F9dniX%2B9QmXGCZ7ksoEZR5LwxVfe1FvN%2Btx%2B8%2BIf9J63VXJkAMQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260518T013321Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXF3C3FHN5%2F20260518%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=0709aed5318aaaf2b5f01acbf0bed814cdb2b6dab002b63ad623b35347e97ffa';
 
 const CONNECTIONS = [
   { connectionId: 'xy-edge__node_1773092259_4401688f_outputs-node_1773092259_d8b8daa5_input-images', connectionSource: 'node_1773092259_4401688f', connectionTarget: 'node_1773092259_d8b8daa5', sourcePort: 'outputs', targetPort: 'input-images' },
@@ -47,17 +45,31 @@ const FIELDS = [
 ];
 
 function buildPayload(values) {
-  const assetUrl = DEBUG_ASSET_URL || values['asset-url'];
+  const imagePresignedUrl = DEBUG_IMAGE_PRESIGNED_URL || values['asset-url'];
   // eslint-disable-next-line no-console
   console.log(
-    '[ad-creation] assetUrl used:',
-    assetUrl || '(EMPTY — input-images will be skipped)',
-    DEBUG_ASSET_URL ? '← HARDCODED (DEBUG_ASSET_URL)' : '← from form input',
+    '[ad-creation] imagePresignedUrl used:',
+    imagePresignedUrl || '(EMPTY — input-images will be skipped)',
+    DEBUG_IMAGE_PRESIGNED_URL ? '← HARDCODED (DEBUG_IMAGE_PRESIGNED_URL)' : '← from form input',
   );
   const payload = {
     workflowId: WORKFLOW_ID,
     actions: [
-      { actionId: 'node_1773092259_4401688f', actionType: 'input-images', name: 'Input Images', inputs: { images: [{ source: { url: assetUrl, storageType: 'external' } }] } },
+      {
+        actionId: 'node_1773092259_4401688f',
+        actionType: 'input-images',
+        name: 'Input Images',
+        inputs: [],
+        parameters: {
+          images: [{
+            name: 'AdobeStock_192386403.jpeg',
+            assetId: 'node_1773092259_4401688f-0',
+            mimeType: 'image/jpeg',
+            storageType: 'external',
+            sourceUrl: imagePresignedUrl,
+          }],
+        },
+      },
       { actionId: 'node_1773092259_d8b8daa5', actionType: 'remove-background', name: 'Remove Background' },
       { actionId: 'node_1773092259_5cb8c7d8', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-1'] } },
       { actionId: 'node_1773092259_b389e634', actionType: 'apply-edits', name: 'Apply Edits' },
@@ -408,7 +420,7 @@ export default function decorate(block) {
   // eslint-disable-next-line no-console
   console.log('[ad-creation] asset-url from block:', authoredValues['asset-url'] || '(not found in block)');
   // eslint-disable-next-line no-console
-  console.log('[ad-creation] DEBUG_ASSET_URL:', DEBUG_ASSET_URL ? `ACTIVE → ${DEBUG_ASSET_URL}` : 'inactive (using form input)');
+  console.log('[ad-creation] DEBUG_IMAGE_PRESIGNED_URL:', DEBUG_IMAGE_PRESIGNED_URL ? 'ACTIVE (hardcoded presigned URL)' : 'inactive (using form input)');
 
   block.innerHTML = '';
 
@@ -463,7 +475,7 @@ export default function decorate(block) {
       setStatus(statusEl, 'Bearer Token を入力してください。', 'error');
       return;
     }
-    if (!DEBUG_ASSET_URL && !values['asset-url']) {
+    if (!DEBUG_IMAGE_PRESIGNED_URL && !values['asset-url']) {
       setStatus(statusEl, 'AEM Assets URL を入力してください。', 'error');
       return;
     }
