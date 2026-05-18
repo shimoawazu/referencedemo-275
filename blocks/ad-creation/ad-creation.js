@@ -94,6 +94,8 @@ function buildPayload(values) {
           exportSettings: { quality: 'medium' },
           fontDirectories: [],
           hyphenationSettings: { zone: 0 },
+          // heading port ← heading-1, sub-heading port ← prompt-2 (per WFB connections)
+          records: [{ heading: values['heading-1'] || '', 'sub-heading': values['prompt-2'] || '' }],
         },
       },
       {
@@ -115,6 +117,8 @@ function buildPayload(values) {
           exportSettings: { quality: 'medium' },
           fontDirectories: [],
           hyphenationSettings: { zone: 0 },
+          // heading port ← sub-heading-2, sub-heading port ← heading-2 (per WFB connections)
+          records: [{ heading: values['sub-heading-2'] || '', 'sub-heading': values['heading-2'] || '' }],
         },
       },
     ],
@@ -352,27 +356,59 @@ async function startPolling(token, jobId, statusUrl, resultUrl, statusEl, output
 }
 
 export default function decorate(block) {
-  // Read pre-authored values from Universal Editor content model before clearing
-  // fieldOrder must match component-models.json field order (bearerToken is NOT in the model)
-  // model fields: inputImage, prompt1, prompt2, headingText1, subHeadingText1, headingText2, subHeadingText2
+  // component-models.json field name → form field ID mapping
+  const AUE_PROP_TO_FIELD_ID = {
+    inputImage: 'asset-url',
+    assetUrl: 'asset-url',
+    prompt1: 'prompt-1',
+    prompt2: 'prompt-2',
+    headingText1: 'heading-1',
+    subHeadingText1: 'sub-heading-1',
+    headingText2: 'heading-2',
+    subHeadingText2: 'sub-heading-2',
+  };
+
   const authoredValues = {};
-  const fieldOrder = ['asset-url', 'prompt-1', 'prompt-2', 'heading-1', 'sub-heading-1', 'heading-2', 'sub-heading-2'];
-  [...block.children].forEach((row, i) => {
-    if (i >= fieldOrder.length) return;
-    const cells = [...row.children];
-    const cell = cells[cells.length - 1];
-    if (!cell) return;
-    // Handle <a> (URL fields), <img> (file-upload fields), and plain text
-    const link = cell.querySelector('a');
-    const img = cell.querySelector('img');
+
+  // Primary: data-aue-prop attributes (Universal Editor editor context)
+  block.querySelectorAll('[data-aue-prop]').forEach((el) => {
+    const prop = el.getAttribute('data-aue-prop');
+    const fieldId = AUE_PROP_TO_FIELD_ID[prop];
+    if (!fieldId) return;
+    const link = el.querySelector('a');
+    const img = el.querySelector('img') || (el.tagName === 'IMG' ? el : null);
     let val;
     if (link) val = link.href || link.textContent.trim();
-    else if (img) val = img.src;
-    else val = cell.textContent.trim();
-    if (val) authoredValues[fieldOrder[i]] = val;
+    else if (img) val = img.src.split('?')[0]; // strip EDS image optimization params
+    else val = el.textContent.trim();
+    if (val) authoredValues[fieldId] = val;
   });
+
+  // Fallback: row/cell table structure (published page without UE attributes)
+  // model fields order: inputImage, prompt1, prompt2, headingText1, subHeadingText1, headingText2, subHeadingText2
+  if (Object.keys(authoredValues).length === 0) {
+    const fieldOrder = ['asset-url', 'prompt-1', 'prompt-2', 'heading-1', 'sub-heading-1', 'heading-2', 'sub-heading-2'];
+    [...block.children].forEach((row, i) => {
+      if (i >= fieldOrder.length) return;
+      const cells = [...row.children];
+      const cell = cells[cells.length - 1];
+      if (!cell) return;
+      const link = cell.querySelector('a');
+      const img = cell.querySelector('img') || (cell.tagName === 'IMG' ? cell : null);
+      let val;
+      if (link) val = link.href || link.textContent.trim();
+      else if (img) val = img.src.split('?')[0];
+      else val = cell.textContent.trim();
+      if (val) authoredValues[fieldOrder[i]] = val;
+    });
+  }
+
   // eslint-disable-next-line no-console
-  console.log('[ad-creation] authoredValues from block:', authoredValues);
+  console.log('[ad-creation] authoredValues:', authoredValues);
+  // eslint-disable-next-line no-console
+  console.log('[ad-creation] asset-url from block:', authoredValues['asset-url'] || '(not found in block)');
+  // eslint-disable-next-line no-console
+  console.log('[ad-creation] DEBUG_ASSET_URL:', DEBUG_ASSET_URL ? `ACTIVE → ${DEBUG_ASSET_URL}` : 'inactive (using form input)');
 
   block.innerHTML = '';
 
