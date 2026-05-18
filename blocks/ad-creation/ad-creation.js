@@ -493,7 +493,7 @@ export default function decorate(block) {
 
       const linksStatusHref = result.links && result.links.status && result.links.status.href;
       const statusUrl = linksStatusHref || `https://run-workflow.adobe.io/batches/${jobId}`;
-      const resultUrl = `https://run-workflow.adobe.io/batches/${jobId}?format=preview`;
+      const resultUrl = `${statusUrl.split('?')[0]}?format=preview`;
       // eslint-disable-next-line no-console
       console.log('[ad-creation] jobId:', jobId);
       // eslint-disable-next-line no-console
