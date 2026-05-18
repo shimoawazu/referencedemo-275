@@ -11,7 +11,7 @@ const POLL_INTERVAL_MS = 3000;
 // 【デバッグ用 — 問題1の切り分け】空でない場合はフォーム入力より優先される
 // 実際のAEM DAM画像URLを設定して動作確認後 '' に戻す
 // 例: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/referencedemo-275/image.jpg'
-const DEBUG_ASSET_URL = 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/demo/Project%20H/project-h2/AdobeStock_192386403.jpeg';
+const DEBUG_ASSET_URL = 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/referencedemo-275/dunlop-tire.jpg';
 
 const CONNECTIONS = [
   { connectionId: 'xy-edge__node_1773092259_4401688f_outputs-node_1773092259_d8b8daa5_input-images', connectionSource: 'node_1773092259_4401688f', connectionTarget: 'node_1773092259_d8b8daa5', sourcePort: 'outputs', targetPort: 'input-images' },
@@ -353,15 +353,22 @@ async function startPolling(token, jobId, statusUrl, resultUrl, statusEl, output
 
 export default function decorate(block) {
   // Read pre-authored values from Universal Editor content model before clearing
+  // fieldOrder must match component-models.json field order (bearerToken is NOT in the model)
+  // model fields: inputImage, prompt1, prompt2, headingText1, subHeadingText1, headingText2, subHeadingText2
   const authoredValues = {};
-  const fieldOrder = ['bearer-token', 'asset-url', 'prompt-1', 'prompt-2', 'heading-1', 'sub-heading-1', 'heading-2', 'sub-heading-2'];
+  const fieldOrder = ['asset-url', 'prompt-1', 'prompt-2', 'heading-1', 'sub-heading-1', 'heading-2', 'sub-heading-2'];
   [...block.children].forEach((row, i) => {
     if (i >= fieldOrder.length) return;
     const cells = [...row.children];
     const cell = cells[cells.length - 1];
     if (!cell) return;
+    // Handle <a> (URL fields), <img> (file-upload fields), and plain text
     const link = cell.querySelector('a');
-    const val = link ? (link.href || link.textContent.trim()) : cell.textContent.trim();
+    const img = cell.querySelector('img');
+    let val;
+    if (link) val = link.href || link.textContent.trim();
+    else if (img) val = img.src;
+    else val = cell.textContent.trim();
     if (val) authoredValues[fieldOrder[i]] = val;
   });
   // eslint-disable-next-line no-console
