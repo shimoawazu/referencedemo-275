@@ -1,6 +1,6 @@
 const WORKFLOW_ID = '341d116f-4c45-4585-b635-8c0c938c63be';
 // presigned URLs expire in 4 hours — update when expired
-const TEMPLATE1_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/7ae06770-c32d-4644-bb48-4be6253bba54?response-content-disposition=attachment%3B%20filename%3D%22819575c4ca5c4feebbaf24a09c669c59.indd%22&response-content-type=application%2Fx-indesign&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=21c1f4508dd461944043aa452c00f1047e9d127fd2488509c431ea86def8add9f9a3&x-resource-length=1163264&x-resource-id=5ac4d4548ad440b25815f74a0968f7097ee80b04d213a011b360ef8d8aa8b6d8a6aa6808&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkYwRAIgaHNuOJce6BMyjfn7mYgNxYWAYZIrxbJaRnEtiUsro8ACIGe3m0KqoSZoFSVz5Ws1TjobVXGd5iz8DjhVEuo2qJ8CKvQBCLL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAhoMNzY2OTY5ODQ0MDc4Igwx6iw2D%2Fu%2FKTvTMToqyAESxD5CFTP%2FfVx%2F33oX%2BTyVDJGNxicOWS4SbSwUExOFVIVaPLVkd4syj1w%2F7qoDY88xXlJZHds%2B5NuQm6NStqvT7gEgBCqSyMcVudPbvTkDJO2PKZf4as6GrEqqlSQG2EuqMQn8E3JFmkivHekhjwFK4i1A2fdvARYUHt6TBeZ%2BYrF0JS%2F3ywWDPDhq5%2FQXIM%2Br3d01u3k4YFqrG68o2w%2Fy8BXLyh8ezEbaY3dQoD8uLVrlfI8CyaL3DqSsJEXMEpfvZypA8xDqCDCUzanQBjqZAbBWL0PD5iRxNBEUzQLYFV74ZMPhCqKcj730sgWtUqLeBrLDfkOfiVI7g59330%2BsV1d%2FLBFmR9qmmWJCPpsdF2R4SoKWTrTsPsJFPyMvkKYcz8wUqLm9QXAsrfTjBgZXKsGWb9laoMSx44GVNY7ndh0VdHi%2F9dniX%2B9QmXGCZ7ksoEZR5LwxVfe1FvN%2Btx%2B8%2BIf9J63VXJkAMQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260518T013304Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXF3C3FHN5%2F20260518%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=630d5685d22c275bd617000eefaeb2e1ceb13ba704bb299362ccac39b6dc24f1';
+const TEMPLATE1_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/7ae06770-c32d-4644-bb48-4be6253bba54?response-content-disposition=attachment%3B%20filename%3D%22b2005858a3984517a1132ee3d0ddd3e8.indd%22&response-content-type=application%2Fx-indesign&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=21c1f4508dd461944043aa452c00f1047e9d127fd2488509c431ea86def8add9f9a3&x-resource-length=1163264&x-resource-id=5a93d107db8711b35847a44b0c68f7062ce80b04db47f111b236ed8c88a9b3dff0fb3e5c&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOz%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkcwRQIgTKJkOp3CoMhlst4j2MqqGScmj5xgqMyRMx%2B3Za8p2QUCIQCZ9BELwu8TWQ9J02%2FqCeQOQDqZV5p3vF3CuVIvNf%2BQLCr0AQi1%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDc2Njk2OTg0NDA3OCIMP36Bt21o5DSeIZpOKsgBHaBUTjYAH61qZ9Ss1s4sA3irEhDLow4vhwgVLigr6uyDsJZC1qVlf9%2BALrOF3cf2AcN%2BEYbSOevwJitcwXy10A94nKIyOCQjLr9DnlP8XbgKzQCcIF36yHhp5MH9ex%2F6BeNJEG2EzdJbPY3%2BaHDxXkzDQ8%2Bpos3x8R5EpLmpghgxFQ3946J6nGG9HY9N7VkADtUH0B3NEfQ64lINqNLphjIDOcg30JNGAZc8TsGCZYND057lpVx8JrLL8hw%2FKKIaA%2Bi4RM%2Bw%2BD4w2piq0AY6mAGTFfPC1qpJoHLmwsh%2BLVQz6IHjcPlQdJoQljrPEDQAEBSJUucCin%2FPb4BMVapSrZrlFRwlfK6P3WbFRicJUSQtZiLu4K80QFAVfc74OWxX%2BVukHnZjel9m86qjpi0lXRHbcqFf1lF9Qyo%2FSSik4y%2BbUO8i%2BlSO7leeEl86tvmkmE6hYlkbCjChXDKnEyYOJ%2FcWqwBFhlVn%2FQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260518T041559Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXNJHLYZDC%2F20260518%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=38fa19910c1acca2a6130dfdbaf6072ac747b7a727170d44e44fbe232e0c57e8';
 const TEMPLATE2_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/e23d7d16-4055-44ea-8c08-f14511976cf0?response-content-disposition=attachment%3B%20filename%3D%22c20918f1cb9648d6952493e7120e03ab.indd%22&response-content-type=application%2Fx-indesign&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=5e30ce09a3f257e45ea77ee48cdcd16a41e86d1a5dac071e6c69c516d2ecc6a9c36e&x-resource-length=1146880&x-resource-id=2c66b05df5f12b9246a171b8a9b4d73f489c746100f672061a6dc340d4ba8efb9f3be198&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkcwRQIhAI%2FM%2F2kvmb1jI8oRCPiAMwXFMYrIrBSxtNy7QJEI1gmkAiB7UFHqlkgzeQO8tpVimT3yL8hpx7dthxx6fdzgRXg4Uir0AQiy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDc2Njk2OTg0NDA3OCIMDZvZCcnZEU9NROjtKsgBFHIxxUGYhPnzOhu2JSOYfbTJGlhsLAEcn%2FWUmVrqXe8IhawwSZ8ynr9SIo4RmufGoRysSHgKwKd8ngfqOPysDF5gqPO7QlohMYdxbdON6ZXmDsgtFM9Pq%2Bbn2UQMbWtdc%2B%2B9TU5hlPPORH9jqNmUcIbYvABxJbY3t3a%2BjkdD%2Fr6V74Zj9w2%2FJ3RRAN5KBUCb0x3ZkXYP2XOW1Ge3V084eWWhUdnLONb1S2YOysShU9yjmMQdKWlyI3ue4ZkQK1hB49Zy%2F6BoAxQw8Mqp0AY6mAHo4A9csFpm%2By0vvF1iMKkxfeH%2FmGl9i%2BtCRK%2BAha9uoTx5r%2F8uqPshjBThN0Gejx66QbQpuvXqv6m4rd%2BiW6pNW2L5Mf9R7jQS%2BIWmu8%2FFA7otiD%2F4z63OvdcYcjA6aNHVMU06funexjwEhXaVegKOf4zxvXcET1Y89x9FfIZ7wWxcuvAT8qqbeQ9eQLobEA5WNAiO3J4sGQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260518T013304Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXBS6BNWM5%2F20260518%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=fcb93cb7006d3254e53f7b525924370f5e17c53716f516e6a3269d1265306e62';
 const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
@@ -77,14 +77,14 @@ function buildPayload(values) {
       { actionId: 'node-1773092472186-j1e8zgjog', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-2'] } },
       { actionId: 'node_1773092491358_7di1in5h1_9_k2gyjz', actionType: 'input-text', name: 'Input text', parameters: { text: values['heading-1'] } },
       { actionId: 'node_1773092542293_z6xhiceq7_10_ryzolk', actionType: 'preview-images', name: 'preview-images' },
-      { actionId: 'node_1773092721585_3xdjskbj2_11_luqyig', actionType: 'crop', name: 'Crop Image' },
+      { actionId: 'node_1773092721585_3xdjskbj2_11_luqyig', actionType: 'crop', name: 'Crop Image', parameters: { autocrop: true, targetDimension: { left: 0, top: 0, width: 300, height: 600 } } },
       { actionId: 'node_1773092731405_0yy3d3iyl_12_7tz1yz', actionType: 'input-text', name: 'Input text', parameters: { text: values['sub-heading-1'] } },
       { actionId: 'node_1773092804901_gqlz8f6sb_15_q82prg', actionType: 'apply-edits', name: 'Apply Edits' },
       { actionId: 'node_1773092883378_vgxanpe1i_16_qabxlu', actionType: 'preview-images', name: 'preview-images' },
       { actionId: 'node_1773095380471_3md5k3sji_17_5bvvzs', actionType: 'preview-images', name: 'preview-images' },
       { actionId: 'node-1773096710497-fe9mlcafp', actionType: 'gen-object-composite' },
       { actionId: 'node-1773096749614-ogoqdrnpl', actionType: 'gen-object-composite' },
-      { actionId: 'node-1773206538730-vcjv8azwt', actionType: 'crop', name: 'Crop Image' },
+      { actionId: 'node-1773206538730-vcjv8azwt', actionType: 'crop', name: 'Crop image', parameters: { autocrop: true, targetDimension: { left: 0, top: 0, width: 1080, height: 1080 } } },
       { actionId: 'node_1773207589592_a1g95pe6x_18_nq3u4k', actionType: 'input-text', name: 'Input Text', parameters: { text: values['heading-2'] } },
       { actionId: 'node_1773207613701_hb43tfsgx_19_dmfuef', actionType: 'input-text', name: 'Input Text', parameters: { text: values['sub-heading-2'] } },
       {
@@ -106,8 +106,6 @@ function buildPayload(values) {
           exportSettings: { quality: 'medium' },
           fontDirectories: [],
           hyphenationSettings: { zone: 0 },
-          // heading port ← heading-1, sub-heading port ← prompt-2 (per WFB connections)
-          records: [{ heading: values['heading-1'] || '', 'sub-heading': values['prompt-2'] || '' }],
         },
       },
       {
@@ -129,8 +127,6 @@ function buildPayload(values) {
           exportSettings: { quality: 'medium' },
           fontDirectories: [],
           hyphenationSettings: { zone: 0 },
-          // heading port ← sub-heading-2, sub-heading port ← heading-2 (per WFB connections)
-          records: [{ heading: values['sub-heading-2'] || '', 'sub-heading': values['heading-2'] || '' }],
         },
       },
     ],
