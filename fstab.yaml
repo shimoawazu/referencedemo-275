@@ -1,5 +1,3 @@
 mountpoints:
   /:
     url: "https://author-p154442-e1620921.adobeaemcloud.com/bin/franklin.delivery/shimoawazu/referencedemo-275/main"
-    type: "markup"
-    suffix: ".html"
