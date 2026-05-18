@@ -8,6 +8,10 @@ const API_KEY = 'bulk-automation-web';
 const IMS_ORG_ID = 'EE9332B3547CC74E0A4C98A1@AdobeOrg';
 const IMS_USER_ID = 'C0F657EB5489DE240A4C98A5@adobe.com';
 const POLL_INTERVAL_MS = 3000;
+// 【デバッグ用 — 問題1の切り分け】空でない場合はフォーム入力より優先される
+// 実際のAEM DAM画像URLを設定して動作確認後 '' に戻す
+// 例: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/referencedemo-275/image.jpg'
+const DEBUG_ASSET_URL = '';
 
 const CONNECTIONS = [
   { connectionId: 'xy-edge__node_1773092259_4401688f_outputs-node_1773092259_d8b8daa5_input-images', connectionSource: 'node_1773092259_4401688f', connectionTarget: 'node_1773092259_d8b8daa5', sourcePort: 'outputs', targetPort: 'input-images' },
@@ -43,10 +47,17 @@ const FIELDS = [
 ];
 
 function buildPayload(values) {
+  const assetUrl = DEBUG_ASSET_URL || values['asset-url'];
+  // eslint-disable-next-line no-console
+  console.log(
+    '[ad-creation] assetUrl used:',
+    assetUrl || '(EMPTY — input-images will be skipped)',
+    DEBUG_ASSET_URL ? '← HARDCODED (DEBUG_ASSET_URL)' : '← from form input',
+  );
   const payload = {
     workflowId: WORKFLOW_ID,
     actions: [
-      { actionId: 'node_1773092259_4401688f', actionType: 'input-images', name: 'Input Images', inputs: { images: [{ source: { url: values['asset-url'], storageType: 'AEM' } }] } },
+      { actionId: 'node_1773092259_4401688f', actionType: 'input-images', name: 'Input Images', inputs: { images: [{ source: { url: assetUrl, storageType: 'AEM' } }] } },
       { actionId: 'node_1773092259_d8b8daa5', actionType: 'remove-background', name: 'Remove Background' },
       { actionId: 'node_1773092259_5cb8c7d8', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-1'] } },
       { actionId: 'node_1773092259_b389e634', actionType: 'apply-edits', name: 'Apply Edits' },
@@ -103,6 +114,7 @@ function buildPayload(values) {
           imagePlacementOptions: { centerImage: false, fittingOption: 'proportional', linkImages: false },
           exportSettings: { quality: 'medium' },
           fontDirectories: [],
+          hyphenationSettings: { zone: 0 },
         },
       },
     ],
@@ -408,7 +420,7 @@ export default function decorate(block) {
       setStatus(statusEl, 'Bearer Token を入力してください。', 'error');
       return;
     }
-    if (!values['asset-url']) {
+    if (!DEBUG_ASSET_URL && !values['asset-url']) {
       setStatus(statusEl, 'AEM Assets URL を入力してください。', 'error');
       return;
     }
@@ -416,8 +428,6 @@ export default function decorate(block) {
     setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
 
     try {
-      // eslint-disable-next-line no-console
-      console.log('[ad-creation] assetUrl before execute:', values['asset-url'] || '(EMPTY — will cause skippedActivity)');
       const payload = buildPayload(values);
       const result = await executeWorkflow(values['bearer-token'], payload);
       // eslint-disable-next-line no-console
