@@ -1,7 +1,7 @@
 const WORKFLOW_ID = '341d116f-4c45-4585-b635-8c0c938c63be';
 // presigned URLs expire in 4 hours — update when expired
-const TEMPLATE1_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/7ae06770-c32d-4644-bb48-4be6253bba54?response-content-disposition=attachment%3B%20filename%3D%22444ba408c5444ff28058cb0438bf3605.indd%22&response-content-type=application%2Fx-indesign&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=21c1f4508dd461944043aa452c00f1047e9d127fd2488509c431ea86def8add9f9a3&x-resource-length=1163264&x-resource-id=00c28205deda12b05811a6440a68f75376ef0b04d845f411b760bb8bd8acbadff3fa6b58&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEMf%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkYwRAIgTF4KIS42ZmH8DSjda7x%2FfyXClv4UbN5AT%2B3IuW%2BnmEwCIHn8XjFTJaJaBh%2BND0%2BaR5PZqA80SobWqE6O5NH0gsT2KvQBCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAhoMNzY2OTY5ODQ0MDc4Igzo%2F3lHvG7mN6jQnKgqyAG14cHdc0T5M0FZz2Btp6csezmrVLtc4e0DjQrlmv%2BDAd8h22BIrLuzdnAxRGxru%2BaFGXwPj9iZNJN2ofNYAAtYiZ5DuFu8QZa6%2BFQH1VWDLwTfuLTeyAkBR1Ew6bVqyhqMn%2FU51YlPCoWW1LE4xbckGFc%2BnvyRb%2Fxxmz3IfOm8vqz5HxMCJ5DvoquE3upC3Cc7cXysfSzxk%2B8b0QOvmL5LOfKpf1qDuTGSewaD6uIw01YevVdheiO9vfXBKV8J40G5kQeGswAYuTD6nqLQBjqZAaLPSdR5oUTjtht4l%2FIMS%2B96Se3ZHVIR%2FlJ8WO6Tlf%2FHoCuszIXIWfvua6cEzO9ude1RRaUs3vjGtbduhnzdKfcQ26%2FB8NBDBZDTIaTvspTbRmrbg0fccsWhFSnRSbldPNQw37xoExWReA%2F06HtPA3V6l0UWdchrgkLKapqqXATa%2FTMJG98xtlkLjNJB%2FLwZxU185Ym95IJ8tQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260516T160242Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXG6QLO3FT%2F20260516%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=73ab6250998aecf4bd96a349fcd2900c1880d7cd1371e287bc2d794e1aae3cd3';
-const TEMPLATE2_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/e23d7d16-4055-44ea-8c08-f14511976cf0?response-content-disposition=attachment%3B%20filename%3D%221e231f1322af4eaf895deefcfab392ad.indd%22&response-content-type=application%2Fx-indesign&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=5e30ce09a3f257e45ea77ee48cdcd16a41e86d1a5dac071e6c69c516d2ecc6a9c36e&x-resource-length=1146880&x-resource-id=2f32b159a1a0749746a275befcb4d73a489f743b02ac74061d3a934bd2bb8ca8cf33e29b&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEMj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkcwRQIgd0EqIs42dp7Ln1rzXaFHt3yGxQLo6NUxNZWbMmj7ZdwCIQCjQoW3J%2BfS6t1vkJ7oWPQefm4GAG%2BxnP2TUQ0sCrDt7Sr0AQiR%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDc2Njk2OTg0NDA3OCIMWJBXviIr5iKM5KBLKsgBlIgMDbAahT2UROPZ9Z6NVUjAmtCbNFQU2Z7q9bVB8lCLLG2Qa4ecjp%2FBpuYusXqWSDNj7dmcjS1kTzjL1yyEtd6%2Bx128jwNuhU%2BAmMdCHGka%2B7Mi3xaOk5CRm0cJH4IwRjblQBl5AFnswZJ7q%2FjKWz7vtufZRsSLOliFt1uFboowUIPDsrs0ScrV2qwNcMZ3M%2B42Gog10kd8fqlENiu3tlrSVA19yugdmkWp7HfM7GdFYphghEL8EesNUC%2F9q%2FfhUM6%2Bo8ygbGQwh6Si0AY6mAHD%2FSzi1mpSsZbP%2BdcZ5W3c1huI9VPAOWWKq4sKTeqJQZfUHQwLRGaWie5d5aTMUYdNJXHpcewHul1KbxdNHPollEQ8d%2BBundib7yL3k8Hcwj%2BjaiPvJqTWl4W1D8eLmHTfeF4X7U4KxjAZnzfvI5Iq57xgXJW06K06vF2fyICFneislHBHVNMhbtllismaZzpxjf8wRnQwUQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260516T160242Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXCSZPS76J%2F20260516%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=1461c4bcda6958abfa1c6b9bf0e52d3e150dd2438565ba731a50016ad2afd966';
+const TEMPLATE1_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/7ae06770-c32d-4644-bb48-4be6253bba54?response-content-disposition=attachment%3B%20filename%3D%22819575c4ca5c4feebbaf24a09c669c59.indd%22&response-content-type=application%2Fx-indesign&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=21c1f4508dd461944043aa452c00f1047e9d127fd2488509c431ea86def8add9f9a3&x-resource-length=1163264&x-resource-id=5ac4d4548ad440b25815f74a0968f7097ee80b04d213a011b360ef8d8aa8b6d8a6aa6808&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkYwRAIgaHNuOJce6BMyjfn7mYgNxYWAYZIrxbJaRnEtiUsro8ACIGe3m0KqoSZoFSVz5Ws1TjobVXGd5iz8DjhVEuo2qJ8CKvQBCLL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAhoMNzY2OTY5ODQ0MDc4Igwx6iw2D%2Fu%2FKTvTMToqyAESxD5CFTP%2FfVx%2F33oX%2BTyVDJGNxicOWS4SbSwUExOFVIVaPLVkd4syj1w%2F7qoDY88xXlJZHds%2B5NuQm6NStqvT7gEgBCqSyMcVudPbvTkDJO2PKZf4as6GrEqqlSQG2EuqMQn8E3JFmkivHekhjwFK4i1A2fdvARYUHt6TBeZ%2BYrF0JS%2F3ywWDPDhq5%2FQXIM%2Br3d01u3k4YFqrG68o2w%2Fy8BXLyh8ezEbaY3dQoD8uLVrlfI8CyaL3DqSsJEXMEpfvZypA8xDqCDCUzanQBjqZAbBWL0PD5iRxNBEUzQLYFV74ZMPhCqKcj730sgWtUqLeBrLDfkOfiVI7g59330%2BsV1d%2FLBFmR9qmmWJCPpsdF2R4SoKWTrTsPsJFPyMvkKYcz8wUqLm9QXAsrfTjBgZXKsGWb9laoMSx44GVNY7ndh0VdHi%2F9dniX%2B9QmXGCZ7ksoEZR5LwxVfe1FvN%2Btx%2B8%2BIf9J63VXJkAMQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260518T013304Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXF3C3FHN5%2F20260518%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=630d5685d22c275bd617000eefaeb2e1ceb13ba704bb299362ccac39b6dc24f1';
+const TEMPLATE2_URL = 'https://acp-aep-cs-blobstore-prod-jpn3-data.adobe.io/e23d7d16-4055-44ea-8c08-f14511976cf0?response-content-disposition=attachment%3B%20filename%3D%22c20918f1cb9648d6952493e7120e03ab.indd%22&response-content-type=application%2Fx-indesign&x-user-client-id=clio-playground-web&x-region=jpn3&x-version-id=2&x-partition-prefix=5e30ce09a3f257e45ea77ee48cdcd16a41e86d1a5dac071e6c69c516d2ecc6a9c36e&x-resource-length=1146880&x-resource-id=2c66b05df5f12b9246a171b8a9b4d73f489c746100f672061a6dc340d4ba8efb9f3be198&x-key-id=BN5JZ&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0xIkcwRQIhAI%2FM%2F2kvmb1jI8oRCPiAMwXFMYrIrBSxtNy7QJEI1gmkAiB7UFHqlkgzeQO8tpVimT3yL8hpx7dthxx6fdzgRXg4Uir0AQiy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDc2Njk2OTg0NDA3OCIMDZvZCcnZEU9NROjtKsgBFHIxxUGYhPnzOhu2JSOYfbTJGlhsLAEcn%2FWUmVrqXe8IhawwSZ8ynr9SIo4RmufGoRysSHgKwKd8ngfqOPysDF5gqPO7QlohMYdxbdON6ZXmDsgtFM9Pq%2Bbn2UQMbWtdc%2B%2B9TU5hlPPORH9jqNmUcIbYvABxJbY3t3a%2BjkdD%2Fr6V74Zj9w2%2FJ3RRAN5KBUCb0x3ZkXYP2XOW1Ge3V084eWWhUdnLONb1S2YOysShU9yjmMQdKWlyI3ue4ZkQK1hB49Zy%2F6BoAxQw8Mqp0AY6mAHo4A9csFpm%2By0vvF1iMKkxfeH%2FmGl9i%2BtCRK%2BAha9uoTx5r%2F8uqPshjBThN0Gejx66QbQpuvXqv6m4rd%2BiW6pNW2L5Mf9R7jQS%2BIWmu8%2FFA7otiD%2F4z63OvdcYcjA6aNHVMU06funexjwEhXaVegKOf4zxvXcET1Y89x9FfIZ7wWxcuvAT8qqbeQ9eQLobEA5WNAiO3J4sGQ%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260518T013304Z&X-Amz-SignedHeaders=host&X-Amz-Credential=ASIA3FEXXCFXBS6BNWM5%2F20260518%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Expires=14400&X-Amz-Signature=fcb93cb7006d3254e53f7b525924370f5e17c53716f516e6a3269d1265306e62';
 const EXECUTE_URL = 'https://run-workflow.adobe.io/batch/execute';
 const STATUS_URL = 'https://run-workflow.adobe.io/batch/status';
 const API_KEY = 'bulk-automation-web';
@@ -340,6 +340,21 @@ async function startPolling(token, jobId, statusUrl, resultUrl, statusEl, output
 }
 
 export default function decorate(block) {
+  // Read pre-authored values from Universal Editor content model before clearing
+  const authoredValues = {};
+  const fieldOrder = ['bearer-token', 'asset-url', 'prompt-1', 'prompt-2', 'heading-1', 'sub-heading-1', 'heading-2', 'sub-heading-2'];
+  [...block.children].forEach((row, i) => {
+    if (i >= fieldOrder.length) return;
+    const cells = [...row.children];
+    const cell = cells[cells.length - 1];
+    if (!cell) return;
+    const link = cell.querySelector('a');
+    const val = link ? (link.href || link.textContent.trim()) : cell.textContent.trim();
+    if (val) authoredValues[fieldOrder[i]] = val;
+  });
+  // eslint-disable-next-line no-console
+  console.log('[ad-creation] authoredValues from block:', authoredValues);
+
   block.innerHTML = '';
 
   const form = document.createElement('form');
@@ -369,6 +384,16 @@ export default function decorate(block) {
   form.append(fieldset, statusEl, outputEl);
   block.append(form);
 
+  // Pre-populate form fields with values authored in Universal Editor
+  Object.entries(authoredValues).forEach(([id, val]) => {
+    const el = form.querySelector(`#${id}`);
+    if (el && val) {
+      el.value = val;
+      // Trigger input event for fields with preview (e.g. asset-url)
+      el.dispatchEvent(new Event('input'));
+    }
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     outputEl.innerHTML = '';
@@ -391,6 +416,8 @@ export default function decorate(block) {
     setStatus(statusEl, 'ワークフローを開始しています...', 'pending');
 
     try {
+      // eslint-disable-next-line no-console
+      console.log('[ad-creation] assetUrl before execute:', values['asset-url'] || '(EMPTY — will cause skippedActivity)');
       const payload = buildPayload(values);
       const result = await executeWorkflow(values['bearer-token'], payload);
       // eslint-disable-next-line no-console
