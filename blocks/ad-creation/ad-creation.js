@@ -71,22 +71,22 @@ function buildPayload(values) {
         },
       },
       { actionId: 'node_1773092259_d8b8daa5', actionType: 'remove-background', name: 'Remove Background' },
-      { actionId: 'node_1773092259_5cb8c7d8', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-1'] } },
+      { actionId: 'node_1773092259_5cb8c7d8', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-1'], content: values['prompt-1'] } },
       { actionId: 'node_1773092259_b389e634', actionType: 'apply-edits', name: 'Apply Edits', parameters: { WhiteBalance: 'As Shot', Exposure: 0.3, Contrast: 15, Highlights: -20, Shadows: 30, Whites: 0, Blacks: 0, Clarity: 10, ColorNoiseReduction: 0, Dehaze: 0, NoiseReduction: 0, Saturation: 10, SharpenDetail: 0, SharpenEdgeMasking: 0, SharpenRadius: 1, Sharpness: 0, Texture: 0, Vibrance: 15, VignetteAmount: 0 } },
       { actionId: 'node_1773092259_7ad98bc5', actionType: 'preview-images', name: 'preview-images' },
-      { actionId: 'node-1773092472186-j1e8zgjog', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-2'] } },
-      { actionId: 'node_1773092491358_7di1in5h1_9_k2gyjz', actionType: 'input-text', name: 'Input text', parameters: { text: values['heading-1'] } },
+      { actionId: 'node-1773092472186-j1e8zgjog', actionType: 'input-text', name: 'Input Text', parameters: { text: values['prompt-2'], content: values['prompt-2'] } },
+      { actionId: 'node_1773092491358_7di1in5h1_9_k2gyjz', actionType: 'input-text', name: 'Input text', parameters: { text: values['heading-1'], content: values['heading-1'] } },
       { actionId: 'node_1773092542293_z6xhiceq7_10_ryzolk', actionType: 'preview-images', name: 'preview-images' },
       { actionId: 'node_1773092721585_3xdjskbj2_11_luqyig', actionType: 'crop', name: 'Crop Image', parameters: { autocrop: true, targetDimension: { left: 0, top: 0, width: 300, height: 600 } } },
-      { actionId: 'node_1773092731405_0yy3d3iyl_12_7tz1yz', actionType: 'input-text', name: 'Input text', parameters: { text: values['sub-heading-1'] } },
+      { actionId: 'node_1773092731405_0yy3d3iyl_12_7tz1yz', actionType: 'input-text', name: 'Input text', parameters: { text: values['sub-heading-1'], content: values['sub-heading-1'] } },
       { actionId: 'node_1773092804901_gqlz8f6sb_15_q82prg', actionType: 'apply-edits', name: 'Apply Edits', parameters: { WhiteBalance: 'As Shot', Exposure: -0.05, Contrast: 10, Highlights: -60, Shadows: 30, Whites: -29, Blacks: 0, Clarity: 10, ColorNoiseReduction: 0, Dehaze: 9, NoiseReduction: 0, Saturation: 10, SharpenDetail: 0, SharpenEdgeMasking: 0, SharpenRadius: 1, Sharpness: 0, Texture: 0, Vibrance: 15, VignetteAmount: 0 } },
       { actionId: 'node_1773092883378_vgxanpe1i_16_qabxlu', actionType: 'preview-images', name: 'preview-images' },
       { actionId: 'node_1773095380471_3md5k3sji_17_5bvvzs', actionType: 'preview-images', name: 'preview-images' },
       { actionId: 'node-1773096710497-fe9mlcafp', actionType: 'gen-object-composite' },
       { actionId: 'node-1773096749614-ogoqdrnpl', actionType: 'gen-object-composite' },
       { actionId: 'node-1773206538730-vcjv8azwt', actionType: 'crop', name: 'Crop image', parameters: { autocrop: true, targetDimension: { left: 0, top: 0, width: 1080, height: 1080 } } },
-      { actionId: 'node_1773207589592_a1g95pe6x_18_nq3u4k', actionType: 'input-text', name: 'Input Text', parameters: { text: values['heading-2'] } },
-      { actionId: 'node_1773207613701_hb43tfsgx_19_dmfuef', actionType: 'input-text', name: 'Input Text', parameters: { text: values['sub-heading-2'] } },
+      { actionId: 'node_1773207589592_a1g95pe6x_18_nq3u4k', actionType: 'input-text', name: 'Input Text', parameters: { text: values['heading-2'], content: values['heading-2'] } },
+      { actionId: 'node_1773207613701_hb43tfsgx_19_dmfuef', actionType: 'input-text', name: 'Input Text', parameters: { text: values['sub-heading-2'], content: values['sub-heading-2'] } },
       {
         actionId: 'node-1773470661819-ta5z8k4kl',
         actionType: 'merge-data',
@@ -491,6 +491,14 @@ export default function decorate(block) {
     }
     if (!DEBUG_IMAGE_PRESIGNED_URL && !values['asset-url']) {
       setStatus(statusEl, 'AEM Assets URL を入力してください。', 'error');
+      return;
+    }
+    if (!values['prompt-1']) {
+      setStatus(statusEl, 'Prompt 1 を入力してください。', 'error');
+      return;
+    }
+    if (!values['sub-heading-1']) {
+      setStatus(statusEl, 'Sub-Heading Text 1 を入力してください（gen-object-composite のプロンプトに使用されます）。', 'error');
       return;
     }
     submitBtn.disabled = true;
