@@ -1,3 +1,5 @@
 mountpoints:
   /:
-    url: "https://author-p154442-e1620921.adobeaemcloud.com/content/referencedemo-275/language-masters/en"
+    url: "https://author-p154442-e1620921.adobeaemcloud.com/bin/ued/shimoawazu/referencedemo-275/main"
+    type: "markup"
+    suffix: ".html"
