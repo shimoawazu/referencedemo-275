@@ -261,29 +261,30 @@ function setStatus(statusEl, message, type = 'info') {
   statusEl.hidden = !message;
 }
 
-function renderOutputImages(outputEl, outputs, resultUrl) {
+function extractImageUrls(previewData) {
+  // previewData.outputs[0].outputs[] から node_id で merge-data ノードの presignedUrl を抽出
+  const nodeOutputs = previewData?.outputs?.[0]?.outputs;
+  if (Array.isArray(nodeOutputs)) {
+    const find = (nodeId) => nodeOutputs.find((o) => o.node_id === nodeId)?.content?.presignedUrl;
+    return {
+      url1080: find('node-1773470661819-ta5z8k4kl'),
+      url300: find('node-1773470732553-pxcrvw7f4'),
+    };
+  }
+  return { url1080: null, url300: null };
+}
+
+function renderOutputImages(outputEl, previewData, resultUrl) {
   outputEl.innerHTML = '';
 
-  // resultUrl へのリンクを表示
-  if (resultUrl) {
-    const resultLink = document.createElement('p');
-    resultLink.className = 'ad-creation-result-link';
-    const anchor = document.createElement('a');
-    anchor.href = resultUrl;
-    anchor.target = '_blank';
-    anchor.rel = 'noopener noreferrer';
-    anchor.textContent = '結果を確認する（プレビューURL）';
-    resultLink.append(anchor);
-    outputEl.append(resultLink);
-  }
+  const { url1080, url300 } = extractImageUrls(previewData);
 
-  const sizes = [
-    { key: 'image_300x600', label: '300 × 600', w: 300, h: 600 },
-    { key: 'image_1080x1080', label: '1080 × 1080', w: 1080, h: 1080 },
+  const items = [
+    { url: url1080, label: '1080 × 1080', w: 1080, h: 1080 },
+    { url: url300, label: '300 × 600', w: 300, h: 600 },
   ];
 
-  sizes.forEach(({ key, label, w, h }) => {
-    const url = outputs?.[key] || outputs?.outputs?.[key];
+  items.forEach(({ url, label, w, h }) => {
     if (!url) return;
 
     const card = document.createElement('div');
@@ -296,8 +297,7 @@ function renderOutputImages(outputEl, outputs, resultUrl) {
     const img = document.createElement('img');
     img.src = url;
     img.alt = label;
-    img.width = w;
-    img.height = h;
+    img.style.maxWidth = '100%';
     img.loading = 'lazy';
 
     const link = document.createElement('a');
