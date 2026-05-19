@@ -335,7 +335,25 @@ async function startPolling(token, jobId, statusUrl, resultUrl, statusEl, output
 
       if (status === 'completed' || status === 'succeeded' || status === 'success') {
         setStatus(statusEl, '完了しました！', 'success');
-        renderOutputImages(outputEl, data.outputs || data, resultUrl);
+        let previewData = data.outputs || data;
+        try {
+          const previewRes = await fetch(resultUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'x-api-key': API_KEY,
+              'x-gw-ims-org-id': IMS_ORG_ID,
+            },
+          });
+          if (previewRes.ok) {
+            previewData = await previewRes.json();
+            // eslint-disable-next-line no-console
+            console.log('[ad-creation] preview response:', previewData);
+          }
+        } catch (previewErr) {
+          // eslint-disable-next-line no-console
+          console.warn('[ad-creation] preview fetch failed, using poll data:', previewErr);
+        }
+        renderOutputImages(outputEl, previewData, resultUrl);
         submitBtn.disabled = false;
       } else if (status === 'failed' || status === 'error') {
         setStatus(statusEl, `エラー: ${data.error || data.message || '不明なエラー'}`, 'error');
