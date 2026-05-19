@@ -36,12 +36,12 @@ const CONNECTIONS = [
 const FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
   { id: 'asset-url', label: 'Input画像（AEM Assets URL）', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: true },
-  { id: 'prompt-1', label: 'Prompt 1', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node_1773092259_5cb8c7d8' },
-  { id: 'prompt-2', label: 'Sub-Heading for 1080×1080', type: 'text', placeholder: 'Sub-heading text for 1080×1080 ad', nodeId: 'node-1773092472186-j1e8zgjog' },
-  { id: 'heading-1', label: 'Heading Text 1', type: 'text', placeholder: 'メインタイトル', nodeId: 'node_1773092491358_7di1in5h1_9_k2gyjz' },
+  { id: 'prompt-1', label: 'Background Prompt for 1080×1080', type: 'textarea', placeholder: 'AI generation prompt for 1080×1080 background image', nodeId: 'node_1773092259_5cb8c7d8' },
+  { id: 'heading-1', label: 'Heading Text for 1080×1080', type: 'text', placeholder: 'Heading text', nodeId: 'node_1773092491358_7di1in5h1_9_k2gyjz' },
+  { id: 'prompt-2', label: 'Sub-heading Text for 1080×1080', type: 'text', placeholder: 'Sub-heading text for 1080×1080 ad', nodeId: 'node-1773092472186-j1e8zgjog' },
   { id: 'sub-heading-1', label: 'Background Prompt for 300×600', type: 'textarea', placeholder: 'AI generation prompt for 300×600 background image', nodeId: 'node_1773092731405_0yy3d3iyl_12_7tz1yz' },
-  { id: 'heading-2', label: 'Heading Text 2', type: 'text', placeholder: 'メインタイトル 2', nodeId: 'node_1773207589592_a1g95pe6x_18_nq3u4k' },
-  { id: 'sub-heading-2', label: 'Sub-Heading Text 2', type: 'text', placeholder: 'サブタイトル 2', nodeId: 'node_1773207613701_hb43tfsgx_19_dmfuef' },
+  { id: 'heading-2', label: 'Heading Text for 300×600', type: 'text', placeholder: 'Heading text', nodeId: 'node_1773207589592_a1g95pe6x_18_nq3u4k' },
+  { id: 'sub-heading-2', label: 'Sub-heading Text for 300×600', type: 'text', placeholder: 'Sub-heading text for 300×600 ad', nodeId: 'node_1773207613701_hb43tfsgx_19_dmfuef' },
 ];
 
 function buildPayload(values) {
@@ -529,11 +529,11 @@ export default function decorate(block) {
       return;
     }
     if (!values['prompt-1']) {
-      setStatus(statusEl, 'Prompt 1 を入力してください。', 'error');
+      setStatus(statusEl, 'Background Prompt for 1080×1080 を入力してください。', 'error');
       return;
     }
     if (!values['sub-heading-1']) {
-      setStatus(statusEl, 'Background Prompt for 300×600 を入力してください（300×600 背景画像の AI 生成プロンプトです）。', 'error');
+      setStatus(statusEl, 'Background Prompt for 300×600 を入力してください。', 'error');
       return;
     }
     submitBtn.disabled = true;
