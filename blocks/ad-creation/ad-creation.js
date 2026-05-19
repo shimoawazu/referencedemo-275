@@ -274,31 +274,58 @@ function extractImageUrls(previewData) {
   return { url1080: null, url300: null };
 }
 
-function renderOutputImages(outputEl, previewData, resultUrl) {
+async function fetchAndDisplayImage(imageUrl, token, containerEl) {
+  try {
+    const res = await fetch(imageUrl);
+    if (res.ok) {
+      const blob = await res.blob();
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(blob);
+      img.style.maxWidth = '100%';
+      containerEl.append(img);
+      return;
+    }
+  } catch { /* fall through to auth attempt */ }
+
+  try {
+    const resAuth = await fetch(imageUrl, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (resAuth.ok) {
+      const blob = await resAuth.blob();
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(blob);
+      img.style.maxWidth = '100%';
+      containerEl.append(img);
+      return;
+    }
+  } catch { /* fall through to link fallback */ }
+
+  const a = document.createElement('a');
+  a.href = imageUrl;
+  a.textContent = imageUrl.split('/').pop().split('?')[0];
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  containerEl.append(a);
+}
+
+async function renderOutputImages(outputEl, previewData, token, resultUrl) {
   outputEl.innerHTML = '';
 
   const { url1080, url300 } = extractImageUrls(previewData);
 
   const items = [
-    { url: url1080, label: '1080 × 1080', w: 1080, h: 1080 },
-    { url: url300, label: '300 × 600', w: 300, h: 600 },
+    { url: url1080, label: '1080 × 1080' },
+    { url: url300, label: '300 × 600' },
   ];
 
-  items.forEach(({ url, label, w, h }) => {
-    if (!url) return;
-
+  const cards = items.filter(({ url }) => url).map(({ url, label }) => {
     const card = document.createElement('div');
     card.className = 'ad-creation-output-card';
 
     const title = document.createElement('p');
     title.className = 'ad-creation-output-label';
     title.textContent = label;
-
-    const img = document.createElement('img');
-    img.src = url;
-    img.alt = label;
-    img.style.maxWidth = '100%';
-    img.loading = 'lazy';
 
     const link = document.createElement('a');
     link.href = url;
@@ -307,11 +334,14 @@ function renderOutputImages(outputEl, previewData, resultUrl) {
     link.textContent = 'ダウンロード';
     link.className = 'ad-creation-download';
 
-    card.append(title, img, link);
+    card.append(title);
+    fetchAndDisplayImage(url, token, card);
+    card.append(link);
     outputEl.append(card);
+    return card;
   });
 
-  if (!outputEl.children.length) {
+  if (!cards.length) {
     outputEl.textContent = '出力画像が見つかりませんでした。';
   }
 }
@@ -353,7 +383,7 @@ async function startPolling(token, jobId, statusUrl, resultUrl, statusEl, output
           // eslint-disable-next-line no-console
           console.warn('[ad-creation] preview fetch failed, using poll data:', previewErr);
         }
-        renderOutputImages(outputEl, previewData, resultUrl);
+        renderOutputImages(outputEl, previewData, token, resultUrl);
         submitBtn.disabled = false;
       } else if (status === 'failed' || status === 'error') {
         setStatus(statusEl, `エラー: ${data.error || data.message || '不明なエラー'}`, 'error');
