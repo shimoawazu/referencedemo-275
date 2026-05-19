@@ -27,10 +27,10 @@ const CONNECTIONS = [
   { connectionId: 'xy-edge__node-1773092472186-j1e8zgjogoutputs-node-1773470661819-ta5z8k4klsub-heading', connectionSource: 'node-1773092472186-j1e8zgjog', connectionTarget: 'node-1773470661819-ta5z8k4kl', sourcePort: 'outputs', targetPort: 'sub-heading' },
   { connectionId: 'xy-edge__node_1773092491358_7di1in5h1_9_k2gyjzoutputs-node-1773470661819-ta5z8k4klheading', connectionSource: 'node_1773092491358_7di1in5h1_9_k2gyjz', connectionTarget: 'node-1773470661819-ta5z8k4kl', sourcePort: 'outputs', targetPort: 'heading' },
   { connectionId: 'xy-edge__node_1773092804901_gqlz8f6sb_15_q82prgoutputs-node-1773470732553-pxcrvw7f4background', connectionSource: 'node_1773092804901_gqlz8f6sb_15_q82prg', connectionTarget: 'node-1773470732553-pxcrvw7f4', sourcePort: 'outputs', targetPort: 'background' },
-  { connectionId: 'xy-edge__node_1773207589592_a1g95pe6x_18_nq3u4koutputs-node-1773470732553-pxcrvw7f4sub-heading', connectionSource: 'node_1773207589592_a1g95pe6x_18_nq3u4k', connectionTarget: 'node-1773470732553-pxcrvw7f4', sourcePort: 'outputs', targetPort: 'sub-heading' },
+  { connectionId: 'xy-edge__node_1773207589592_a1g95pe6x_18_nq3u4koutputs-node-1773470732553-pxcrvw7f4heading', connectionSource: 'node_1773207589592_a1g95pe6x_18_nq3u4k', connectionTarget: 'node-1773470732553-pxcrvw7f4', sourcePort: 'outputs', targetPort: 'heading' },
   { connectionId: 'xy-edge__node-1773470732553-pxcrvw7f4output-node_1773092883378_vgxanpe1i_16_qabxluinput-images', connectionSource: 'node-1773470732553-pxcrvw7f4', connectionTarget: 'node_1773092883378_vgxanpe1i_16_qabxlu', sourcePort: 'output', targetPort: 'input-images' },
   { connectionId: 'xy-edge__node-1773470661819-ta5z8k4kloutput-node_1773092259_7ad98bc5input-images', connectionSource: 'node-1773470661819-ta5z8k4kl', connectionTarget: 'node_1773092259_7ad98bc5', sourcePort: 'output', targetPort: 'input-images' },
-  { connectionId: 'xy-edge__node_1773207613701_hb43tfsgx_19_dmfuefoutputs-node-1773470732553-pxcrvw7f4heading', connectionSource: 'node_1773207613701_hb43tfsgx_19_dmfuef', connectionTarget: 'node-1773470732553-pxcrvw7f4', sourcePort: 'outputs', targetPort: 'heading' },
+  { connectionId: 'xy-edge__node_1773207613701_hb43tfsgx_19_dmfuefoutputs-node-1773470732553-pxcrvw7f4sub-heading', connectionSource: 'node_1773207613701_hb43tfsgx_19_dmfuef', connectionTarget: 'node-1773470732553-pxcrvw7f4', sourcePort: 'outputs', targetPort: 'sub-heading' },
 ];
 
 const FIELDS = [
