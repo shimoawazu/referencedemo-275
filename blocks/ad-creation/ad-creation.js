@@ -37,9 +37,9 @@ const FIELDS = [
   { id: 'bearer-token', label: 'Bearer Token', type: 'password', placeholder: 'eyJhbGci...' },
   { id: 'asset-url', label: 'Input画像（AEM Assets URL）', type: 'url', placeholder: 'https://author-p154442-e1620921.adobeaemcloud.com/content/dam/...', preview: true },
   { id: 'prompt-1', label: 'Prompt 1', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node_1773092259_5cb8c7d8' },
-  { id: 'prompt-2', label: 'Prompt 2', type: 'textarea', placeholder: 'テキストを入力...', nodeId: 'node-1773092472186-j1e8zgjog' },
+  { id: 'prompt-2', label: 'Sub-Heading for 1080×1080', type: 'text', placeholder: 'Sub-heading text for 1080×1080 ad', nodeId: 'node-1773092472186-j1e8zgjog' },
   { id: 'heading-1', label: 'Heading Text 1', type: 'text', placeholder: 'メインタイトル', nodeId: 'node_1773092491358_7di1in5h1_9_k2gyjz' },
-  { id: 'sub-heading-1', label: 'Sub-Heading Text 1', type: 'text', placeholder: 'サブタイトル', nodeId: 'node_1773092731405_0yy3d3iyl_12_7tz1yz' },
+  { id: 'sub-heading-1', label: 'Background Prompt for 300×600', type: 'textarea', placeholder: 'AI generation prompt for 300×600 background image', nodeId: 'node_1773092731405_0yy3d3iyl_12_7tz1yz' },
   { id: 'heading-2', label: 'Heading Text 2', type: 'text', placeholder: 'メインタイトル 2', nodeId: 'node_1773207589592_a1g95pe6x_18_nq3u4k' },
   { id: 'sub-heading-2', label: 'Sub-Heading Text 2', type: 'text', placeholder: 'サブタイトル 2', nodeId: 'node_1773207613701_hb43tfsgx_19_dmfuef' },
 ];
@@ -264,12 +264,17 @@ function setStatus(statusEl, message, type = 'info') {
 function extractImageUrls(previewData) {
   // previewData.outputs[0].outputs[] から node_id で merge-data ノードの presignedUrl を抽出
   const nodeOutputs = previewData?.outputs?.[0]?.outputs;
+  // eslint-disable-next-line no-console
+  console.log('[ad-creation] nodeOutputs:', JSON.stringify(nodeOutputs?.map((o) => ({ node_id: o.node_id, status: o.status, hasUrl: !!o.content?.presignedUrl })), null, 2));
   if (Array.isArray(nodeOutputs)) {
     const find = (nodeId) => nodeOutputs.find((o) => o.node_id === nodeId)?.content?.presignedUrl;
-    return {
-      url1080: find('node-1773470661819-ta5z8k4kl'),
-      url300: find('node-1773470732553-pxcrvw7f4'),
-    };
+    const url1080 = find('node-1773470661819-ta5z8k4kl');
+    const url300 = find('node-1773470732553-pxcrvw7f4');
+    // eslint-disable-next-line no-console
+    console.log('[ad-creation] url1080:', url1080 ? url1080.slice(0, 80) : null);
+    // eslint-disable-next-line no-console
+    console.log('[ad-creation] url300:', url300 ? url300.slice(0, 80) : null);
+    return { url1080, url300 };
   }
   return { url1080: null, url300: null };
 }
@@ -528,7 +533,7 @@ export default function decorate(block) {
       return;
     }
     if (!values['sub-heading-1']) {
-      setStatus(statusEl, 'Sub-Heading Text 1 を入力してください（gen-object-composite のプロンプトに使用されます）。', 'error');
+      setStatus(statusEl, 'Background Prompt for 300×600 を入力してください（300×600 背景画像の AI 生成プロンプトです）。', 'error');
       return;
     }
     submitBtn.disabled = true;
