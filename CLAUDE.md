@@ -345,3 +345,34 @@ GET https://run-workflow.adobe.io/batches/{batchId}/executions
 
 3. テスト環境
    → aem.live でのページ公開フロー確立が必要
+
+   CLAUDE.md に以下のセクションを追加してください：
+
+## エラー分析ルール
+
+生成ボタンを押してfailedになった場合、以下を自動実行してください：
+
+1. pollレスポンスのbatchIdを取得
+2. 以下のコマンドでexecutions詳細を確認：
+
+node -e "
+const TOKEN = process.env.FIREFLY_TOKEN || '';
+const BATCH_ID = process.argv[1];
+fetch(\`https://run-workflow.adobe.io/batches/\${BATCH_ID}/executions\`, {
+  headers: {
+    'Authorization': \`Bearer \${TOKEN}\`,
+    'x-api-key': 'bulk-automation-web',
+    'x-gw-ims-org-id': 'EE9332B3547CC74E0A4C98A1@AdobeOrg',
+    'x-gw-ims-user-id': 'C0F657EB5489DE240A4C98A5@adobe.com'
+  }
+}).then(r=>r.json()).then(data=>{
+  const ex = data.executions?.[0];
+  ex?.outputs?.forEach((a,i)=>{
+    const mark = a.status==='failed' ? '❌' : '✅';
+    console.log(\`[\${i+1}] \${mark} [\${a.actionType}] \${a.error||''}\`);
+  });
+})
+" BATCH_ID_HERE
+
+3. failedノードのエラーを分析して修正案を提示
+4. 修正後は自動でgit add, commit, push
