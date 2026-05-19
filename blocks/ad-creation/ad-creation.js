@@ -517,4 +517,3 @@ export default function decorate(block) {
     }
   });
 }
-4. 修正後は自動でgit add, commit, push
