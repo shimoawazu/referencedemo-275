@@ -125,6 +125,32 @@ export default function decorate(block) {
   inner.appendChild(panel);
   block.appendChild(inner);
 
+  // ========== プレビューモードでのリンク動作 ==========
+  const isEditor = document.querySelector('html').classList.contains('adobe-ue-edit')
+    || window.location.href.includes('universal-editor');
+  if (!isEditor) {
+    rows.slice(0, 5).forEach((row) => {
+      const linkEl = row.querySelector('.smtc-hero-slide-link a');
+      if (linkEl) {
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', (e) => {
+          if (!e.target.closest('button')) {
+            window.location.href = linkEl.href;
+          }
+        });
+      }
+    });
+    rows.slice(5).forEach((row) => {
+      const linkEl = row.querySelector('.smtc-hero-btn-link a');
+      if (linkEl) {
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', () => {
+          window.location.href = linkEl.href;
+        });
+      }
+    });
+  }
+
   // ========== カルーセル動作 ==========
   let current = 0;
   const slideEls = [...slidesWrap.querySelectorAll('.smtc-hero-slide')];
