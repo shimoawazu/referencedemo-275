@@ -11,12 +11,24 @@ export default function decorate(block) {
     const cell2 = cells[2]?.firstElementChild;
 
     const img = cell0?.querySelector('picture, img') || null;
-    const textEl = cell1 || null;
-    const linkHref = cell2?.querySelector('a')?.href || '#';
 
     let type = 'slide';
-    if (index >= 5 && index <= 8) type = 'button';
-    if (index === 9) type = 'button-wide';
+    let textEl = null;
+    let linkHref = '#';
+
+    if (index >= 5 && index <= 8) {
+      type = 'button';
+      textEl = cell1 || null;
+      linkHref = cell2?.querySelector('a')?.href || cell2?.textContent?.trim() || '#';
+    } else if (index === 9) {
+      type = 'button-wide';
+      textEl = cell1 || null;
+      linkHref = cell2?.querySelector('a')?.href || cell2?.textContent?.trim() || '#';
+    } else {
+      // スライド: テキストなし、リンクのみ
+      linkHref = cell1?.querySelector('a')?.href || cell1?.textContent?.trim() || '#';
+      textEl = null;
+    }
 
     return { type, img, textEl, linkHref };
   });
@@ -33,8 +45,9 @@ export default function decorate(block) {
   slidesWrapper.className = 'smtc-hero-slides';
 
   slides.forEach((data, i) => {
-    const slide = document.createElement('div');
+    const slide = document.createElement('a');
     slide.className = 'smtc-hero-slide' + (i === 0 ? ' active' : '');
+    slide.href = data.linkHref;
 
     if (data.img) {
       const imgWrap = document.createElement('div');
@@ -42,11 +55,6 @@ export default function decorate(block) {
       imgWrap.appendChild(data.img.cloneNode(true));
       slide.appendChild(imgWrap);
     }
-
-    const overlay = document.createElement('div');
-    overlay.className = 'smtc-hero-slide-overlay';
-    if (data.textEl) overlay.innerHTML = data.textEl.innerHTML;
-    slide.appendChild(overlay);
 
     slidesWrapper.appendChild(slide);
   });
