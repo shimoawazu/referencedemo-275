@@ -36,12 +36,9 @@ export default function decorate(block) {
   const buttons  = items.filter(it => it.type === 'button');
   const wideItem = items.find(it  => it.type === 'button-wide');
 
-  // ========== 元の行をUE編集用に変換（削除しない・非表示にしない） ==========
-  // 元の行のスタイルをリセットして、UEが正しく認識できるようにする
-  // ただし視覚的には隠す（height:0, overflow:hidden, position:absolute）
+  // ========== 元の行を完全に削除（UEツリーに表示させない） ==========
   rows.forEach(row => {
-    row.setAttribute('aria-hidden', 'true');
-    row.style.cssText = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;';
+    row.remove();
   });
 
   // ========== Carousel ==========
