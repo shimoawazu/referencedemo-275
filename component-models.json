@@ -277,7 +277,8 @@
         "component": "reference",
         "name": "image",
         "label": "背景画像",
-        "valueType": "string"
+        "valueType": "string",
+        "metaData": { "typefilter": "image" }
       },
       {
         "component": "richtext",
@@ -300,7 +301,8 @@
         "component": "reference",
         "name": "image",
         "label": "アイコン画像",
-        "valueType": "string"
+        "valueType": "string",
+        "metaData": { "typefilter": "image" }
       },
       {
         "component": "richtext",
