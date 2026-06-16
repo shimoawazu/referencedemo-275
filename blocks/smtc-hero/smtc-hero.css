@@ -1,27 +1,17 @@
-/* EDS デフォルトコンテナ制限を解除 */
-.section:has(.smtc-hero) > div {
-  max-width: unset !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.smtc-hero {
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.block.smtc-hero { display: block; width: 100%; }
-
+/* smtc-hero セクションのコンテナ制限のみ解除 */
 .smtc-hero-wrapper {
-  display: grid !important;
-  grid-template-columns: 55% 45% !important;
-  width: 100% !important;
-  max-width: 100% !important;
+  display: grid;
+  grid-template-columns: 55% 45%;
+  width: 100%;
   min-height: 560px;
   overflow: hidden;
+}
+
+/* ブロック自体はコンテナ幅いっぱいに */
+.smtc-hero {
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 /* ===== Carousel ===== */
@@ -43,10 +33,15 @@
 
 .smtc-hero-slide.active { display: block; }
 
-.smtc-hero-slide-img { width: 100%; height: 100%; }
+.smtc-hero-slide-img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
 
-.smtc-hero-slide-img img,
-.smtc-hero-slide-img picture {
+.smtc-hero-slide-img picture { display: block; width: 100%; height: 100%; }
+
+.smtc-hero-slide-img img {
   width: 100%;
   height: 560px;
   object-fit: cover;
@@ -59,6 +54,7 @@
   left: 28px;
   right: 28px;
   color: #fff;
+  z-index: 2;
 }
 
 .smtc-hero-slide-overlay h2,
@@ -128,12 +124,14 @@
   display: flex;
   flex-direction: column;
   height: 560px;
+  overflow: hidden;
 }
 
 .smtc-hero-grid4 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   flex: 1;
+  overflow: hidden;
 }
 
 .smtc-hero-grid1 {
@@ -141,7 +139,6 @@
   flex-shrink: 0;
 }
 
-/* ボタン共通 */
 .smtc-hero-btn {
   display: flex;
   flex-direction: column;
@@ -153,14 +150,14 @@
   transition: opacity 0.2s;
   cursor: pointer;
   overflow: hidden;
+  min-height: 0;
 }
 
 .smtc-hero-btn:hover { opacity: 0.88; }
 
-/* アイコン */
 .smtc-hero-btn-icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   margin-bottom: 10px;
   flex-shrink: 0;
 }
@@ -171,24 +168,20 @@
   object-fit: contain;
 }
 
-/* テキスト */
-.smtc-hero-btn-text h1,
-.smtc-hero-btn-text h2,
 .smtc-hero-btn-text h3 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: bold;
   margin: 0 0 6px;
   line-height: 1.3;
 }
 
 .smtc-hero-btn-text p {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   line-height: 1.5;
   margin: 0;
   opacity: 0.88;
 }
 
-/* 矢印 */
 .smtc-hero-btn-arrow {
   position: absolute;
   bottom: 12px;
@@ -196,16 +189,14 @@
   font-size: 1rem;
 }
 
-/* ===== 白ボタン（横幅） ===== */
 .smtc-hero-btn-wide {
-  flex-direction: row;
+  flex-direction: row !important;
   align-items: center;
   background: #fff !important;
   color: #1a2d5a !important;
   border-color: #dde3ec !important;
   padding: 18px 24px;
   min-height: 90px;
-  gap: 0;
 }
 
 .smtc-hero-btn-wide-left {
@@ -217,16 +208,11 @@
   border-right: 1px solid #dde3ec;
   padding-right: 20px;
   gap: 6px;
+  flex-shrink: 0;
 }
 
-.smtc-hero-btn-wide-left .smtc-hero-btn-icon {
-  margin-bottom: 4px;
-}
-
-.smtc-hero-btn-wide-title h1,
-.smtc-hero-btn-wide-title h2,
 .smtc-hero-btn-wide-title h3 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: bold;
   margin: 0;
   color: #1a2d5a;
@@ -234,18 +220,17 @@
 }
 
 .smtc-hero-btn-wide-right {
-  width: 50%;
+  flex: 1;
   padding-left: 20px;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   line-height: 1.6;
   color: #333;
 }
 
 .smtc-hero-btn-wide .smtc-hero-btn-arrow {
   position: static;
-  margin-left: auto;
+  margin-left: 12px;
   flex-shrink: 0;
-  padding-left: 12px;
 }
 
 /* ===== レスポンシブ ===== */
@@ -254,13 +239,9 @@
   .smtc-hero-panel { height: auto; }
   .smtc-hero-slide,
   .smtc-hero-carousel { min-height: 320px; height: 320px; }
-  .smtc-hero-slide-img img,
-  .smtc-hero-slide-img picture { height: 320px; }
+  .smtc-hero-slide-img img { height: 320px; }
 }
 
 @media (max-width: 480px) {
   .smtc-hero-grid4 { grid-template-columns: 1fr; }
-  .smtc-hero-btn-wide { flex-direction: column; }
-  .smtc-hero-btn-wide-left { width: 100%; border-right: none; border-bottom: 1px solid #dde3ec; padding: 0 0 12px 0; }
-  .smtc-hero-btn-wide-right { width: 100%; padding: 12px 0 0 0; }
 }

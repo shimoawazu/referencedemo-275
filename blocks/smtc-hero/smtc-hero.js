@@ -1,15 +1,18 @@
 export default function decorate(block) {
   const rows = [...block.children];
 
-  // 各行: cells[0]=image, cells[1]=text, cells[2]=link
-  // アイテムの種別はインデックスで判定
-  // 0-4: slide, 5-8: button, 9: button-wide
-
   const items = rows.map((row, index) => {
     const cells = [...row.children];
-    const img = cells[0]?.querySelector('picture, img') || null;
-    const textEl = cells[1] || null;
-    const linkHref = cells[2]?.textContent?.trim() || cells[0]?.querySelector('a')?.href || '#';
+
+    // 各セルは <div><div>コンテンツ</div></div> の構造
+    // → cells[0].firstElementChild が実際のコンテンツ
+    const cell0 = cells[0]?.firstElementChild;
+    const cell1 = cells[1]?.firstElementChild;
+    const cell2 = cells[2]?.firstElementChild;
+
+    const img = cell0?.querySelector('picture, img') || null;
+    const textEl = cell1 || null;
+    const linkHref = cell2?.querySelector('a')?.href || '#';
 
     let type = 'slide';
     if (index >= 5 && index <= 8) type = 'button';
@@ -121,14 +124,12 @@ export default function decorate(block) {
 
     const leftWrap = document.createElement('div');
     leftWrap.className = 'smtc-hero-btn-wide-left';
-
     if (wideItem.img) {
       const iconWrap = document.createElement('div');
       iconWrap.className = 'smtc-hero-btn-icon';
       iconWrap.appendChild(wideItem.img.cloneNode(true));
       leftWrap.appendChild(iconWrap);
     }
-
     if (wideItem.textEl) {
       const titleEl = wideItem.textEl.querySelector('h1,h2,h3,h4,h5,h6');
       if (titleEl) {
