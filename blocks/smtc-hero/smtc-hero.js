@@ -5,17 +5,14 @@ export default function decorate(block) {
   const buttons = [];
   let wideButton = null;
 
-  rows.forEach((row) => {
+  rows.forEach((row, index) => {
     const cells = [...row.children];
-    const rowtype = cells[0]?.textContent?.trim();
-
-    if (rowtype === 'button-wide') {
-      wideButton = { img: cells[1], text: cells[2], link: row.querySelector('a') };
-    } else if (rowtype === 'button') {
-      buttons.push({ img: cells[1], text: cells[2], link: row.querySelector('a') });
-    } else {
-      // slide: cells[1]=画像, cells[2]=オーバーレイテキスト
+    if (index < 5) {
       slides.push({ img: cells[1], text: cells[2], link: row.querySelector('a') });
+    } else if (index === 9) {
+      wideButton = { img: cells[1], text: cells[2], link: row.querySelector('a') };
+    } else {
+      buttons.push({ img: cells[1], text: cells[2], link: row.querySelector('a') });
     }
   });
 
