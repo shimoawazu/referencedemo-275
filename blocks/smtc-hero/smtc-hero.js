@@ -1,20 +1,27 @@
 export default function decorate(block) {
-  const rows = [...block.children];
+  // 全行を取得
+  const allRows = [...block.children];
 
-  const slides = [];
-  const buttons = [];
-  let wideButton = null;
+  // 4行ずつグループ化して1アイテムとして処理
+  const items = [];
+  for (let i = 0; i < allRows.length; i += 4) {
+    const rowtypeRow = allRows[i];
+    const imageRow = allRows[i + 1];
+    const textRow = allRows[i + 2];
+    const linkRow = allRows[i + 3];
 
-  rows.forEach((row, index) => {
-    const cells = [...row.children];
-    if (index < 5) {
-      slides.push({ img: cells[1], text: cells[2], link: row.querySelector('a') });
-    } else if (index === 9) {
-      wideButton = { img: cells[1], text: cells[2], link: row.querySelector('a') };
-    } else {
-      buttons.push({ img: cells[1], text: cells[2], link: row.querySelector('a') });
-    }
-  });
+    const rowtype = rowtypeRow?.querySelector('div')?.textContent?.trim() || 'slide';
+    const img = imageRow?.querySelector('picture, img') || null;
+    const textEl = textRow?.querySelector('div') || null;
+    const linkEl = linkRow?.querySelector('a') || null;
+    const linkHref = linkEl ? linkEl.href : (linkRow?.querySelector('div')?.textContent?.trim() || '#');
+
+    items.push({ rowtype, img, textEl, linkHref });
+  }
+
+  const slides = items.filter(it => it.rowtype === 'slide');
+  const buttons = items.filter(it => it.rowtype === 'button');
+  const wideItem = items.find(it => it.rowtype === 'button-wide');
 
   // ========== Carousel ==========
   const carousel = document.createElement('div');
@@ -30,13 +37,13 @@ export default function decorate(block) {
     if (data.img) {
       const imgWrap = document.createElement('div');
       imgWrap.className = 'smtc-hero-slide-img';
-      imgWrap.innerHTML = data.img.innerHTML;
+      imgWrap.appendChild(data.img.cloneNode(true));
       slide.appendChild(imgWrap);
     }
 
     const overlay = document.createElement('div');
     overlay.className = 'smtc-hero-slide-overlay';
-    if (data.text) overlay.innerHTML = data.text.innerHTML;
+    if (data.textEl) overlay.innerHTML = data.textEl.innerHTML;
     slide.appendChild(overlay);
 
     slidesWrapper.appendChild(slide);
@@ -71,7 +78,6 @@ export default function decorate(block) {
   const panel = document.createElement('div');
   panel.className = 'smtc-hero-panel';
 
-  // 4つの色付きボタン
   const grid4 = document.createElement('div');
   grid4.className = 'smtc-hero-grid4';
 
@@ -80,28 +86,25 @@ export default function decorate(block) {
 
   buttons.forEach((data, i) => {
     const btn = document.createElement('a');
-    btn.className = `smtc-hero-btn smtc-hero-btn-color`;
-    btn.href = data.link ? data.link.href : '#';
+    btn.className = 'smtc-hero-btn';
+    btn.href = data.linkHref;
     btn.style.backgroundColor = btnColors[i] || '#1a3a8f';
     btn.style.color = btnTextColors[i] || '#fff';
 
-    // アイコン画像
     if (data.img) {
       const iconWrap = document.createElement('div');
       iconWrap.className = 'smtc-hero-btn-icon';
-      iconWrap.innerHTML = data.img.innerHTML;
+      iconWrap.appendChild(data.img.cloneNode(true));
       btn.appendChild(iconWrap);
     }
 
-    // テキスト（タイトル＋説明）
-    if (data.text) {
+    if (data.textEl) {
       const textWrap = document.createElement('div');
       textWrap.className = 'smtc-hero-btn-text';
-      textWrap.innerHTML = data.text.innerHTML;
+      textWrap.innerHTML = data.textEl.innerHTML;
       btn.appendChild(textWrap);
     }
 
-    // 矢印
     const arrow = document.createElement('span');
     arrow.className = 'smtc-hero-btn-arrow';
     arrow.textContent = '→';
@@ -110,46 +113,41 @@ export default function decorate(block) {
     grid4.appendChild(btn);
   });
 
-  // 1つの白ボタン（横幅）
   const grid1 = document.createElement('div');
   grid1.className = 'smtc-hero-grid1';
 
-  if (wideButton) {
+  if (wideItem) {
     const btn = document.createElement('a');
     btn.className = 'smtc-hero-btn smtc-hero-btn-wide';
-    btn.href = wideButton.link ? wideButton.link.href : '#';
+    btn.href = wideItem.linkHref;
 
-    // 左半分：アイコン＋タイトル
     const leftWrap = document.createElement('div');
     leftWrap.className = 'smtc-hero-btn-wide-left';
-    if (wideButton.img) {
+
+    if (wideItem.img) {
       const iconWrap = document.createElement('div');
       iconWrap.className = 'smtc-hero-btn-icon';
-      iconWrap.innerHTML = wideButton.img.innerHTML;
+      iconWrap.appendChild(wideItem.img.cloneNode(true));
       leftWrap.appendChild(iconWrap);
     }
-    if (wideButton.text) {
-      // 最初のh要素をタイトルとして左側に
-      const titleEl = wideButton.text.querySelector('h1,h2,h3,h4,h5,h6');
+
+    if (wideItem.textEl) {
+      const titleEl = wideItem.textEl.querySelector('h1,h2,h3,h4,h5,h6');
       if (titleEl) {
-        const titleWrap = document.createElement('div');
-        titleWrap.className = 'smtc-hero-btn-wide-title';
-        titleWrap.innerHTML = titleEl.outerHTML;
-        leftWrap.appendChild(titleWrap);
+        const t = document.createElement('div');
+        t.className = 'smtc-hero-btn-wide-title';
+        t.innerHTML = titleEl.outerHTML;
+        leftWrap.appendChild(t);
       }
     }
 
-    // 右半分：説明テキスト
     const rightWrap = document.createElement('div');
     rightWrap.className = 'smtc-hero-btn-wide-right';
-    if (wideButton.text) {
-      const descEl = wideButton.text.querySelector('p');
-      if (descEl) {
-        rightWrap.innerHTML = descEl.outerHTML;
-      }
+    if (wideItem.textEl) {
+      const descEl = wideItem.textEl.querySelector('p');
+      if (descEl) rightWrap.innerHTML = descEl.outerHTML;
     }
 
-    // 矢印
     const arrow = document.createElement('span');
     arrow.className = 'smtc-hero-btn-arrow';
     arrow.textContent = '→';
