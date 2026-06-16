@@ -1,4 +1,18 @@
 export default function decorate(block) {
+  // data-aue-* 属性を再帰的に除去（UEツリーに重複表示させない）
+  function stripAueAttrs(el) {
+    if (el.nodeType !== 1) return;
+    [...el.attributes].forEach(attr => {
+      if (attr.name.startsWith('data-aue-')) el.removeAttribute(attr.name);
+    });
+    el.querySelectorAll('[data-aue-prop],[data-aue-type],[data-aue-label],[data-aue-resource]').forEach(child => {
+      [...child.attributes].forEach(attr => {
+        if (attr.name.startsWith('data-aue-')) child.removeAttribute(attr.name);
+      });
+    });
+    return el;
+  }
+
   const rows = [...block.children];
 
   // ========== データ取得 ==========
@@ -56,7 +70,7 @@ export default function decorate(block) {
     if (data.img) {
       const imgWrap = document.createElement('div');
       imgWrap.className = 'smtc-hero-slide-img';
-      imgWrap.appendChild(data.img.cloneNode(true));
+      imgWrap.appendChild(stripAueAttrs(data.img.cloneNode(true)));
       slide.appendChild(imgWrap);
     }
     slidesWrapper.appendChild(slide);
@@ -106,13 +120,14 @@ export default function decorate(block) {
     if (data.img) {
       const iconWrap = document.createElement('div');
       iconWrap.className = 'smtc-hero-btn-icon';
-      iconWrap.appendChild(data.img.cloneNode(true));
+      iconWrap.appendChild(stripAueAttrs(data.img.cloneNode(true)));
       btn.appendChild(iconWrap);
     }
     if (data.textEl) {
       const textWrap = document.createElement('div');
       textWrap.className = 'smtc-hero-btn-text';
       textWrap.innerHTML = data.textEl.innerHTML;
+      stripAueAttrs(textWrap);
       btn.appendChild(textWrap);
     }
     const arrow = document.createElement('span');
@@ -135,7 +150,7 @@ export default function decorate(block) {
     if (wideItem.img) {
       const iconWrap = document.createElement('div');
       iconWrap.className = 'smtc-hero-btn-icon';
-      iconWrap.appendChild(wideItem.img.cloneNode(true));
+      iconWrap.appendChild(stripAueAttrs(wideItem.img.cloneNode(true)));
       leftWrap.appendChild(iconWrap);
     }
     if (wideItem.textEl) {
@@ -144,6 +159,7 @@ export default function decorate(block) {
         const t = document.createElement('div');
         t.className = 'smtc-hero-btn-wide-title';
         t.innerHTML = titleEl.outerHTML;
+        stripAueAttrs(t);
         leftWrap.appendChild(t);
       }
     }
@@ -151,7 +167,7 @@ export default function decorate(block) {
     rightWrap.className = 'smtc-hero-btn-wide-right';
     if (wideItem.textEl) {
       const descEl = wideItem.textEl.querySelector('p');
-      if (descEl) rightWrap.innerHTML = descEl.outerHTML;
+      if (descEl) { rightWrap.innerHTML = descEl.outerHTML; stripAueAttrs(rightWrap); }
     }
     const arrow = document.createElement('span');
     arrow.className = 'smtc-hero-btn-arrow';
