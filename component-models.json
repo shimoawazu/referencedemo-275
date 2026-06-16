@@ -269,5 +269,22 @@
         "value": ""
       }
     ]
+  },
+  {
+    "id": "smtc-hero",
+    "fields": [
+      {
+        "component": "reference",
+        "name": "image",
+        "label": "画像",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "label": "テキスト",
+        "valueType": "string"
+      }
+    ]
   }
 ]
