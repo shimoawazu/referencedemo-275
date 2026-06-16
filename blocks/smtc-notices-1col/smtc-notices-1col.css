@@ -1,0 +1,93 @@
+/* ============================================================
+   smtc-notices-1col block — 重要なお知らせ専用
+   フル幅・薄灰背景・黒文字・黒線
+   ============================================================ */
+
+.smtc-notices-1col-container .smtc-notices-1col-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.smtc-notices-1col-wrapper .smtc-notices-1col {
+  background: #f2f2f2;
+}
+
+/* 非表示ストア (UE用) */
+.smtc-notices-1col .smtc-notices-1col-store {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* 内側レイアウト */
+.smtc-notices-1col-wrapper .smtc-notices-1col {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 32px 20px;
+  position: relative;
+}
+
+/* 見出し */
+.smtc-notices-1col .smtc-notices-1col-heading {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #1a1a1a;
+  letter-spacing: 0.05em;
+}
+
+/* リスト */
+.smtc-notices-1col .smtc-notices-1col-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.smtc-notices-1col .smtc-notices-1col-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 7px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.smtc-notices-1col .smtc-notices-1col-list li:last-child {
+  border-bottom: none;
+}
+
+.smtc-notices-1col .smtc-notices-1col-list li::before {
+  content: "・";
+  color: #1a1a1a;
+  flex-shrink: 0;
+}
+
+/* リンク */
+.smtc-notices-1col .smtc-notices-1col-list a {
+  color: #1a1a1a;
+  text-decoration: none;
+}
+
+.smtc-notices-1col .smtc-notices-1col-list a:hover {
+  text-decoration: underline;
+  color: #003087;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .smtc-notices-1col-wrapper .smtc-notices-1col {
+    padding: 14px 16px 16px;
+  }
+
+  .smtc-notices-1col .smtc-notices-1col-list li {
+    font-size: 14px;
+  }
+}

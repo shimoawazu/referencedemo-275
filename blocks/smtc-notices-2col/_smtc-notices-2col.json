@@ -1,30 +1,30 @@
 {
   "definitions": [
     {
-      "title": "SMTC Notices",
-      "id": "smtc-notices",
+      "title": "SMTC Notices 2col",
+      "id": "smtc-notices-2col",
       "plugins": {
         "xwalk": {
           "page": {
             "resourceType": "core/franklin/components/block/v1/block",
             "template": {
-              "name": "SMTC Notices",
-              "model": "smtc-notices"
+              "name": "SMTC Notices 2col",
+              "model": "smtc-notices-2col"
             }
           }
         }
       }
     },
     {
-      "title": "SMTC Notices Item",
-      "id": "smtc-notices-item",
+      "title": "SMTC Notices 2col Item",
+      "id": "smtc-notices-2col-item",
       "plugins": {
         "xwalk": {
           "page": {
             "resourceType": "core/franklin/components/block/v1/block/item",
             "template": {
               "name": "Notice Item",
-              "model": "smtc-notices-item"
+              "model": "smtc-notices-2col-item"
             }
           }
         }
@@ -33,11 +33,11 @@
   ],
   "models": [
     {
-      "id": "smtc-notices",
+      "id": "smtc-notices-2col",
       "fields": []
     },
     {
-      "id": "smtc-notices-item",
+      "id": "smtc-notices-2col-item",
       "fields": [
         {
           "component": "select",
@@ -45,7 +45,6 @@
           "label": "カテゴリ",
           "valueType": "string",
           "options": [
-            { "name": "重要なお知らせ", "value": "important" },
             { "name": "お知らせ",       "value": "news" },
             { "name": "ご確認ください", "value": "check" }
           ]
@@ -53,12 +52,12 @@
         {
           "component": "text",
           "name": "date",
-          "label": "日付",
+          "label": "日付（お知らせのみ）",
           "valueType": "string",
-          "description": "例: 2026年6月1日 (お知らせのみ)"
+          "description": "例: 2026年6月1日"
         },
         {
-          "component": "richtext",
+          "component": "text",
           "name": "text",
           "label": "タイトル／リンクテキスト",
           "valueType": "string"
@@ -74,8 +73,8 @@
   ],
   "filters": [
     {
-      "id": "smtc-notices",
-      "components": ["smtc-notices-item"]
+      "id": "smtc-notices-2col",
+      "components": ["smtc-notices-2col-item"]
     }
   ]
 }
