@@ -25,7 +25,6 @@ export default function decorate(block) {
       linkHref = cell2?.querySelector('a')?.href
         || cell2?.textContent?.trim() || '#';
     } else {
-      // スライド: cell1 = link のみ
       linkHref = cell1?.querySelector('a')?.href
         || cell1?.textContent?.trim() || '#';
     }
@@ -33,12 +32,17 @@ export default function decorate(block) {
     return { type, img, textEl, linkHref, row };
   });
 
-  // ========== 元の行を非表示（UE編集のために保持） ==========
-  rows.forEach(row => { row.style.display = 'none'; });
-
   const slides   = items.filter(it => it.type === 'slide');
   const buttons  = items.filter(it => it.type === 'button');
   const wideItem = items.find(it  => it.type === 'button-wide');
+
+  // ========== 元の行をUE編集用に変換（削除しない・非表示にしない） ==========
+  // 元の行のスタイルをリセットして、UEが正しく認識できるようにする
+  // ただし視覚的には隠す（height:0, overflow:hidden, position:absolute）
+  rows.forEach(row => {
+    row.setAttribute('aria-hidden', 'true');
+    row.style.cssText = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;';
+  });
 
   // ========== Carousel ==========
   const carousel = document.createElement('div');
@@ -146,18 +150,15 @@ export default function decorate(block) {
         leftWrap.appendChild(t);
       }
     }
-
     const rightWrap = document.createElement('div');
     rightWrap.className = 'smtc-hero-btn-wide-right';
     if (wideItem.textEl) {
       const descEl = wideItem.textEl.querySelector('p');
       if (descEl) rightWrap.innerHTML = descEl.outerHTML;
     }
-
     const arrow = document.createElement('span');
     arrow.className = 'smtc-hero-btn-arrow';
     arrow.textContent = '→';
-
     btn.appendChild(leftWrap);
     btn.appendChild(rightWrap);
     btn.appendChild(arrow);
@@ -167,7 +168,7 @@ export default function decorate(block) {
   panel.appendChild(grid4);
   panel.appendChild(grid1);
 
-  // ========== 組み立て（元の行の後ろに追加） ==========
+  // ========== 組み立て ==========
   const inner = document.createElement('div');
   inner.className = 'smtc-hero-inner';
   inner.appendChild(carousel);
