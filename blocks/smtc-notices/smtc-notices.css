@@ -1,0 +1,234 @@
+/* ============================================================
+   smtc-notices block
+   参照: https://www.diners.co.jp/ja/index.html
+   レイアウト:
+     上段: 重要なお知らせ (フル幅 1列)
+     下段: お知らせ (左) | ご確認ください (右) の 2列
+   ============================================================ */
+
+/* --- コンテナ幅解除 (smtc-hero と同様) --- */
+.smtc-notices-container .smtc-notices-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+/* --- ブロック全体 --- */
+.smtc-notices-wrapper .smtc-notices {
+  position: relative;
+  background: #fff;
+}
+
+/* --- 非表示ストア (UE 用 item 退避領域) --- */
+.smtc-notices .smtc-notices-store {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ============================================================
+   グリッドレイアウト: 2列ベース
+   ============================================================ */
+.smtc-notices .smtc-notices-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 32px;
+}
+
+/* --- 重要なお知らせ: 上段フル幅 --- */
+.smtc-notices .smtc-notices-important {
+  grid-column: 1 / -1;           /* 全列をまたぐ */
+  padding: 0 0 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: none;
+}
+
+/* --- お知らせ: 下段左列 --- */
+.smtc-notices .smtc-notices-news {
+  padding: 0 24px 0 0;
+  border-right: 1px solid #e5e7eb;
+}
+
+/* --- ご確認ください: 下段右列 --- */
+.smtc-notices .smtc-notices-check {
+  padding: 0 0 0 24px;
+  border-right: none;
+}
+
+/* ============================================================
+   重要なお知らせ: 横並びリスト
+   ============================================================ */
+.smtc-notices .smtc-notices-important .smtc-notices-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.smtc-notices .smtc-notices-important .smtc-notices-list li {
+  display: flex;
+  align-items: baseline;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 4px 20px 4px 0;
+  border-bottom: none;
+  white-space: normal;
+}
+
+/* 「・」区切り */
+.smtc-notices .smtc-notices-important .smtc-notices-list li::before {
+  content: "・";
+  color: #c00;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   見出し (共通)
+   ============================================================ */
+.smtc-notices .smtc-notices-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #1a1a1a;
+  letter-spacing: 0.05em;
+}
+
+/* 重要なお知らせ: 赤 */
+.smtc-notices .smtc-notices-important .smtc-notices-heading {
+  border-bottom-color: #c00;
+  color: #c00;
+}
+
+/* ============================================================
+   お知らせ / ご確認ください: 縦リスト
+   ============================================================ */
+.smtc-notices .smtc-notices-news .smtc-notices-list,
+.smtc-notices .smtc-notices-check .smtc-notices-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.smtc-notices .smtc-notices-news .smtc-notices-list li,
+.smtc-notices .smtc-notices-check .smtc-notices-list li {
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.smtc-notices .smtc-notices-news .smtc-notices-list li:last-child,
+.smtc-notices .smtc-notices-check .smtc-notices-list li:last-child {
+  border-bottom: none;
+}
+
+/* ▶ 矢印アイコン */
+.smtc-notices .smtc-notices-news .smtc-notices-list li::before,
+.smtc-notices .smtc-notices-check .smtc-notices-list li::before {
+  content: "▶";
+  font-size: 9px;
+  color: #003087;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* ============================================================
+   リンク
+   ============================================================ */
+.smtc-notices .smtc-notices-list a {
+  color: #1a1a1a;
+  text-decoration: none;
+}
+
+.smtc-notices .smtc-notices-list a:hover {
+  text-decoration: underline;
+  color: #003087;
+}
+
+/* 重要なお知らせのリンク */
+.smtc-notices .smtc-notices-important .smtc-notices-list a {
+  color: #c00;
+}
+
+.smtc-notices .smtc-notices-important .smtc-notices-list a:hover {
+  color: #900;
+}
+
+/* ============================================================
+   日付バッジ (お知らせ)
+   ============================================================ */
+.smtc-notices .smtc-notices-date {
+  display: inline-block;
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   もっと見るリンク
+   ============================================================ */
+.smtc-notices .smtc-notices-more {
+  margin: 12px 0 0;
+  text-align: right;
+}
+
+.smtc-notices .smtc-notices-more a {
+  font-size: 12px;
+  color: #003087;
+  text-decoration: none;
+  border: 1px solid #003087;
+  padding: 3px 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.smtc-notices .smtc-notices-more a:hover {
+  background: #003087;
+  color: #fff;
+}
+
+/* ============================================================
+   レスポンシブ (768px 以下)
+   ============================================================ */
+@media (max-width: 768px) {
+  .smtc-notices .smtc-notices-inner {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  /* 重要なお知らせ: 縦積み */
+  .smtc-notices .smtc-notices-important .smtc-notices-list {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .smtc-notices .smtc-notices-important .smtc-notices-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: normal;
+  }
+
+  .smtc-notices .smtc-notices-news {
+    padding: 0;
+    border-right: none;
+    margin-bottom: 20px;
+  }
+
+  .smtc-notices .smtc-notices-check {
+    padding: 0;
+  }
+}
