@@ -274,15 +274,32 @@
     "id": "smtc-hero",
     "fields": [
       {
+        "component": "select",
+        "name": "rowtype",
+        "label": "行の種別",
+        "valueType": "string",
+        "options": [
+          { "name": "スライド", "value": "slide" },
+          { "name": "ボタン（色付き）", "value": "button" },
+          { "name": "ボタン（白・横幅）", "value": "button-wide" }
+        ]
+      },
+      {
         "component": "reference",
         "name": "image",
-        "label": "画像",
+        "label": "画像（スライド背景 / ボタンアイコン）",
         "valueType": "string"
       },
       {
         "component": "richtext",
         "name": "text",
-        "label": "テキスト",
+        "label": "テキスト（タイトル・説明・ボタンラベル）",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "link",
+        "label": "リンクURL",
         "valueType": "string"
       }
     ]
