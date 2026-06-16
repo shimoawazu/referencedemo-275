@@ -1,17 +1,9 @@
-/* ===== EDS コンテナからはみ出してフル幅を実現 ===== */
+/* ===== SMTC Hero Block ===== */
 .smtc-hero {
-  width: calc(100% + 48px);
-  margin-left: -24px;
-  margin-right: -24px;
+  width: 100%;
   padding: 0;
-}
-
-@media (width >= 900px) {
-  .smtc-hero {
-    width: calc(100% + 64px);
-    margin-left: -32px;
-    margin-right: -32px;
-  }
+  margin: 0;
+  overflow: hidden;
 }
 
 .smtc-hero-wrapper {
@@ -242,7 +234,11 @@
 }
 
 /* ===== レスポンシブ ===== */
-@media (max-width: 900px) {
+@media (width >= 900px) {
+  .smtc-hero-wrapper { grid-template-columns: 55% 45%; }
+}
+
+@media (width < 900px) {
   .smtc-hero-wrapper { grid-template-columns: 1fr; }
   .smtc-hero-panel { height: auto; }
   .smtc-hero-slide,
@@ -250,6 +246,6 @@
   .smtc-hero-slide-img img { height: 320px; }
 }
 
-@media (max-width: 480px) {
+@media (width < 480px) {
   .smtc-hero-grid4 { grid-template-columns: 1fr; }
 }
