@@ -41,5 +41,9 @@
       "button",
       "title"
     ]
+  },
+  {
+    "id": "smtc-hero",
+    "components": ["smtc-hero-slide", "smtc-hero-button"]
   }
 ]

@@ -1,27 +1,26 @@
 export default function decorate(block) {
-  // 全行を取得
-  const allRows = [...block.children];
+  const rows = [...block.children];
 
-  // 4行ずつグループ化して1アイテムとして処理
-  const items = [];
-  for (let i = 0; i < allRows.length; i += 4) {
-    const rowtypeRow = allRows[i];
-    const imageRow = allRows[i + 1];
-    const textRow = allRows[i + 2];
-    const linkRow = allRows[i + 3];
+  // 各行: cells[0]=image, cells[1]=text, cells[2]=link
+  // アイテムの種別はインデックスで判定
+  // 0-4: slide, 5-8: button, 9: button-wide
 
-    const rowtype = rowtypeRow?.querySelector('div')?.textContent?.trim() || 'slide';
-    const img = imageRow?.querySelector('picture, img') || null;
-    const textEl = textRow?.querySelector('div') || null;
-    const linkEl = linkRow?.querySelector('a') || null;
-    const linkHref = linkEl ? linkEl.href : (linkRow?.querySelector('div')?.textContent?.trim() || '#');
+  const items = rows.map((row, index) => {
+    const cells = [...row.children];
+    const img = cells[0]?.querySelector('picture, img') || null;
+    const textEl = cells[1] || null;
+    const linkHref = cells[2]?.textContent?.trim() || cells[0]?.querySelector('a')?.href || '#';
 
-    items.push({ rowtype, img, textEl, linkHref });
-  }
+    let type = 'slide';
+    if (index >= 5 && index <= 8) type = 'button';
+    if (index === 9) type = 'button-wide';
 
-  const slides = items.filter(it => it.rowtype === 'slide');
-  const buttons = items.filter(it => it.rowtype === 'button');
-  const wideItem = items.find(it => it.rowtype === 'button-wide');
+    return { type, img, textEl, linkHref };
+  });
+
+  const slides = items.filter(it => it.type === 'slide');
+  const buttons = items.filter(it => it.type === 'button');
+  const wideItem = items.find(it => it.type === 'button-wide');
 
   // ========== Carousel ==========
   const carousel = document.createElement('div');
@@ -64,7 +63,6 @@ export default function decorate(block) {
   slides.forEach((_, i) => {
     const dot = document.createElement('button');
     dot.className = 'smtc-hero-dot' + (i === 0 ? ' active' : '');
-    dot.setAttribute('aria-label', `スライド ${i + 1}`);
     dot.dataset.index = i;
     dotsEl.appendChild(dot);
   });

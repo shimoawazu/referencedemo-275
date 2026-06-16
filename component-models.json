@@ -271,29 +271,18 @@
     ]
   },
   {
-    "id": "smtc-hero",
+    "id": "smtc-hero-slide",
     "fields": [
-      {
-        "component": "select",
-        "name": "rowtype",
-        "label": "行の種別",
-        "valueType": "string",
-        "options": [
-          { "name": "スライド", "value": "slide" },
-          { "name": "ボタン（色付き）", "value": "button" },
-          { "name": "ボタン（白・横幅）", "value": "button-wide" }
-        ]
-      },
       {
         "component": "reference",
         "name": "image",
-        "label": "画像（スライド背景 / ボタンアイコン）",
+        "label": "背景画像",
         "valueType": "string"
       },
       {
         "component": "richtext",
         "name": "text",
-        "label": "テキスト（タイトル・説明・ボタンラベル）",
+        "label": "テキスト",
         "valueType": "string"
       },
       {
@@ -303,5 +292,32 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "smtc-hero-button",
+    "fields": [
+      {
+        "component": "reference",
+        "name": "image",
+        "label": "アイコン画像",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "label": "タイトル・説明",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "link",
+        "label": "リンクURL",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "smtc-hero",
+    "fields": []
   }
 ]
