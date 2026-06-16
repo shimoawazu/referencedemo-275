@@ -53,6 +53,15 @@
 /* スライドのリンクセル（非表示だがDOM保持） */
 .smtc-hero-slide-link { display: none !important; }
 
+/* 画像セル以外を全て隠す（セル数に関係なく対応） */
+.smtc-hero-slide > div:not(.smtc-hero-slide-img) {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+
 /* ナビゲーション */
 .smtc-hero-prev,
 .smtc-hero-next {
