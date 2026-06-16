@@ -13,21 +13,13 @@
   margin: 0 !important;
 }
 
+.block.smtc-hero { display: block; width: 100%; }
+
 .smtc-hero-wrapper {
   display: grid !important;
   grid-template-columns: 55% 45% !important;
   width: 100% !important;
   max-width: 100% !important;
-  min-height: 560px;
-  overflow: hidden;
-}
-
-.block.smtc-hero { display: block; width: 100%; }
-
-.smtc-hero-wrapper {
-  display: grid;
-  grid-template-columns: 55% 45%;
-  width: 100%;
   min-height: 560px;
   overflow: hidden;
 }
