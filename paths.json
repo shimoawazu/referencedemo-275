@@ -1,5 +1,7 @@
 {
   "mappings": [
+    "/content/referencedemo-275/language-masters/en/nav:/nav",
+    "/content/referencedemo-275/language-masters/en/footer:/footer",
     "/content/referencedemo-275/:/"
   ],
   "includes": [
