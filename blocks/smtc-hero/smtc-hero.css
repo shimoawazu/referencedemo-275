@@ -1,12 +1,11 @@
-/* ===== SMTC Hero Block ===== */
-.smtc-hero {
-  width: 100%;
+/* EDS 自動生成コンテナのmax-widthを解除してフル幅化 */
+.smtc-hero-container .smtc-hero-wrapper {
+  max-width: unset;
   padding: 0;
-  margin: 0;
-  overflow: hidden;
 }
 
-.smtc-hero-wrapper {
+/* JS が生成する内部グリッド */
+.smtc-hero-inner {
   display: grid;
   grid-template-columns: 55% 45%;
   width: 100%;
@@ -234,12 +233,8 @@
 }
 
 /* ===== レスポンシブ ===== */
-@media (width >= 900px) {
-  .smtc-hero-wrapper { grid-template-columns: 55% 45%; }
-}
-
 @media (width < 900px) {
-  .smtc-hero-wrapper { grid-template-columns: 1fr; }
+  .smtc-hero-inner { grid-template-columns: 1fr; }
   .smtc-hero-panel { height: auto; }
   .smtc-hero-slide,
   .smtc-hero-carousel { min-height: 320px; height: 320px; }

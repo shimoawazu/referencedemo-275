@@ -163,7 +163,7 @@ export default function decorate(block) {
   // ========== 組み立て ==========
   block.textContent = '';
   const wrapper = document.createElement('div');
-  wrapper.className = 'smtc-hero-wrapper';
+  wrapper.className = 'smtc-hero-inner';
   wrapper.appendChild(carousel);
   wrapper.appendChild(panel);
   block.appendChild(wrapper);
