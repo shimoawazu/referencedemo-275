@@ -1,11 +1,9 @@
 export default function decorate(block) {
   const rows = [...block.children];
 
+  // ========== データ取得 ==========
   const items = rows.map((row, index) => {
     const cells = [...row.children];
-
-    // 各セルは <div><div>コンテンツ</div></div> の構造
-    // → cells[0].firstElementChild が実際のコンテンツ
     const cell0 = cells[0]?.firstElementChild;
     const cell1 = cells[1]?.firstElementChild;
     const cell2 = cells[2]?.firstElementChild;
@@ -19,23 +17,28 @@ export default function decorate(block) {
     if (index >= 5 && index <= 8) {
       type = 'button';
       textEl = cell1 || null;
-      linkHref = cell2?.querySelector('a')?.href || cell2?.textContent?.trim() || '#';
+      linkHref = cell2?.querySelector('a')?.href
+        || cell2?.textContent?.trim() || '#';
     } else if (index === 9) {
       type = 'button-wide';
       textEl = cell1 || null;
-      linkHref = cell2?.querySelector('a')?.href || cell2?.textContent?.trim() || '#';
+      linkHref = cell2?.querySelector('a')?.href
+        || cell2?.textContent?.trim() || '#';
     } else {
-      // スライド: テキストなし、リンクのみ
-      linkHref = cell1?.querySelector('a')?.href || cell1?.textContent?.trim() || '#';
-      textEl = null;
+      // スライド: cell1 = link のみ
+      linkHref = cell1?.querySelector('a')?.href
+        || cell1?.textContent?.trim() || '#';
     }
 
-    return { type, img, textEl, linkHref };
+    return { type, img, textEl, linkHref, row };
   });
 
-  const slides = items.filter(it => it.type === 'slide');
-  const buttons = items.filter(it => it.type === 'button');
-  const wideItem = items.find(it => it.type === 'button-wide');
+  // ========== 元の行を非表示（UE編集のために保持） ==========
+  rows.forEach(row => { row.style.display = 'none'; });
+
+  const slides   = items.filter(it => it.type === 'slide');
+  const buttons  = items.filter(it => it.type === 'button');
+  const wideItem = items.find(it  => it.type === 'button-wide');
 
   // ========== Carousel ==========
   const carousel = document.createElement('div');
@@ -55,7 +58,6 @@ export default function decorate(block) {
       imgWrap.appendChild(data.img.cloneNode(true));
       slide.appendChild(imgWrap);
     }
-
     slidesWrapper.appendChild(slide);
   });
 
@@ -90,7 +92,7 @@ export default function decorate(block) {
   const grid4 = document.createElement('div');
   grid4.className = 'smtc-hero-grid4';
 
-  const btnColors = ['#e8eef7', '#1a3a8f', '#1e6aad', '#2a8fc8'];
+  const btnColors     = ['#e8eef7', '#1a3a8f', '#1e6aad', '#2a8fc8'];
   const btnTextColors = ['#1a2d5a', '#ffffff', '#ffffff', '#ffffff'];
 
   buttons.forEach((data, i) => {
@@ -106,19 +108,16 @@ export default function decorate(block) {
       iconWrap.appendChild(data.img.cloneNode(true));
       btn.appendChild(iconWrap);
     }
-
     if (data.textEl) {
       const textWrap = document.createElement('div');
       textWrap.className = 'smtc-hero-btn-text';
       textWrap.innerHTML = data.textEl.innerHTML;
       btn.appendChild(textWrap);
     }
-
     const arrow = document.createElement('span');
     arrow.className = 'smtc-hero-btn-arrow';
     arrow.textContent = '→';
     btn.appendChild(arrow);
-
     grid4.appendChild(btn);
   });
 
@@ -168,18 +167,17 @@ export default function decorate(block) {
   panel.appendChild(grid4);
   panel.appendChild(grid1);
 
-  // ========== 組み立て ==========
-  block.textContent = '';
-  const wrapper = document.createElement('div');
-  wrapper.className = 'smtc-hero-inner';
-  wrapper.appendChild(carousel);
-  wrapper.appendChild(panel);
-  block.appendChild(wrapper);
+  // ========== 組み立て（元の行の後ろに追加） ==========
+  const inner = document.createElement('div');
+  inner.className = 'smtc-hero-inner';
+  inner.appendChild(carousel);
+  inner.appendChild(panel);
+  block.appendChild(inner);
 
   // ========== カルーセル動作 ==========
   let current = 0;
   const slideEls = [...slidesWrapper.querySelectorAll('.smtc-hero-slide')];
-  const dotEls = [...dotsEl.querySelectorAll('.smtc-hero-dot')];
+  const dotEls   = [...dotsEl.querySelectorAll('.smtc-hero-dot')];
 
   function goTo(n) {
     if (!slideEls.length) return;
@@ -192,7 +190,9 @@ export default function decorate(block) {
 
   prevBtn.addEventListener('click', () => goTo(current - 1));
   nextBtn.addEventListener('click', () => goTo(current + 1));
-  dotEls.forEach((dot) => dot.addEventListener('click', () => goTo(+dot.dataset.index)));
+  dotEls.forEach(dot =>
+    dot.addEventListener('click', () => goTo(+dot.dataset.index))
+  );
 
   let timer = setInterval(() => goTo(current + 1), 5000);
   carousel.addEventListener('mouseenter', () => clearInterval(timer));
