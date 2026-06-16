@@ -277,7 +277,10 @@
         "component": "aem-content",
         "name": "image",
         "label": "背景画像",
-        "valueType": "string"
+        "valueType": "string",
+        "metaData": {
+          "typeFilter": "image"
+        }
       },
       {
         "component": "richtext",
@@ -289,7 +292,10 @@
         "component": "text",
         "name": "link",
         "label": "リンクURL",
-        "valueType": "string"
+        "valueType": "string",
+        "metaData": {
+          "type": "url"
+        }
       }
     ]
   },
@@ -312,7 +318,10 @@
         "component": "text",
         "name": "link",
         "label": "リンクURL",
-        "valueType": "string"
+        "valueType": "string",
+        "metaData": {
+          "type": "url"
+        }
       }
     ]
   },
