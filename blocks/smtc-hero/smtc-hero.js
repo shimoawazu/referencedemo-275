@@ -1,102 +1,54 @@
 export default function decorate(block) {
-  // data-aue-* 属性を再帰的に除去（UEツリーに重複表示させない）
-  function stripAueAttrs(el) {
-    if (el.nodeType !== 1) return;
-    [...el.attributes].forEach(attr => {
-      if (attr.name.startsWith('data-aue-')) el.removeAttribute(attr.name);
-    });
-    el.querySelectorAll('[data-aue-prop],[data-aue-type],[data-aue-label],[data-aue-resource]').forEach(child => {
-      [...child.attributes].forEach(attr => {
-        if (attr.name.startsWith('data-aue-')) child.removeAttribute(attr.name);
-      });
-    });
-    return el;
-  }
-
   const rows = [...block.children];
 
-  // ========== データ取得 ==========
-  const items = rows.map((row, index) => {
-    const cells = [...row.children];
-    const cell0 = cells[0]?.firstElementChild;
-    const cell1 = cells[1]?.firstElementChild;
-    const cell2 = cells[2]?.firstElementChild;
-
-    const img = cell0?.querySelector('picture, img') || null;
-
-    let type = 'slide';
-    let textEl = null;
-    let linkHref = '#';
-
-    if (index >= 5 && index <= 8) {
-      type = 'button';
-      textEl = cell1 || null;
-      linkHref = cell2?.querySelector('a')?.href
-        || cell2?.textContent?.trim() || '#';
-    } else if (index === 9) {
-      type = 'button-wide';
-      textEl = cell1 || null;
-      linkHref = cell2?.querySelector('a')?.href
-        || cell2?.textContent?.trim() || '#';
-    } else {
-      linkHref = cell1?.querySelector('a')?.href
-        || cell1?.textContent?.trim() || '#';
-    }
-
-    return { type, img, textEl, linkHref, row };
-  });
-
-  const slides   = items.filter(it => it.type === 'slide');
-  const buttons  = items.filter(it => it.type === 'button');
-  const wideItem = items.find(it  => it.type === 'button-wide');
-
-  // ========== 元の行を完全に削除（UEツリーに表示させない） ==========
-  rows.forEach(row => {
-    row.remove();
-  });
-
-  // ========== Carousel ==========
+  // ========== Carousel ラッパー ==========
   const carousel = document.createElement('div');
   carousel.className = 'smtc-hero-carousel';
 
-  const slidesWrapper = document.createElement('div');
-  slidesWrapper.className = 'smtc-hero-slides';
+  const slidesWrap = document.createElement('div');
+  slidesWrap.className = 'smtc-hero-slides';
 
-  slides.forEach((data, i) => {
-    const slide = document.createElement('a');
-    slide.className = 'smtc-hero-slide' + (i === 0 ? ' active' : '');
-    slide.href = data.linkHref;
+  // スライド行を「移動」（削除ではない）して変換
+  rows.slice(0, 5).forEach((row, i) => {
+    row.classList.add('smtc-hero-slide');
+    if (i === 0) row.classList.add('active');
 
-    if (data.img) {
-      const imgWrap = document.createElement('div');
-      imgWrap.className = 'smtc-hero-slide-img';
-      imgWrap.appendChild(stripAueAttrs(data.img.cloneNode(true)));
-      slide.appendChild(imgWrap);
+    const cells = [...row.children];
+    // cells[0] = 画像セル → スライド画像として表示
+    if (cells[0]) cells[0].classList.add('smtc-hero-slide-img');
+    // cells[1] = リンクセル → 非表示だがDOMは保持
+    if (cells[1]) cells[1].classList.add('smtc-hero-slide-link');
+
+    // リンクをスライド全体に適用
+    const linkEl = cells[1]?.querySelector('a');
+    if (linkEl) {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', () => { window.location.href = linkEl.href; });
     }
-    slidesWrapper.appendChild(slide);
+
+    slidesWrap.appendChild(row); // 移動（data-aue-* 保持）
   });
 
+  // ナビゲーション
   const prevBtn = document.createElement('button');
   prevBtn.className = 'smtc-hero-prev';
-  prevBtn.setAttribute('aria-label', '前へ');
   prevBtn.innerHTML = '&#10094;';
 
   const nextBtn = document.createElement('button');
   nextBtn.className = 'smtc-hero-next';
-  nextBtn.setAttribute('aria-label', '次へ');
   nextBtn.innerHTML = '&#10095;';
 
   const dotsEl = document.createElement('div');
   dotsEl.className = 'smtc-hero-dots';
-  slides.forEach((_, i) => {
+  for (let i = 0; i < 5; i++) {
     const dot = document.createElement('button');
     dot.className = 'smtc-hero-dot' + (i === 0 ? ' active' : '');
     dot.dataset.index = i;
     dotsEl.appendChild(dot);
-  });
+  }
 
   carousel.appendChild(prevBtn);
-  carousel.appendChild(slidesWrapper);
+  carousel.appendChild(slidesWrap);
   carousel.appendChild(nextBtn);
   carousel.appendChild(dotsEl);
 
@@ -107,75 +59,60 @@ export default function decorate(block) {
   const grid4 = document.createElement('div');
   grid4.className = 'smtc-hero-grid4';
 
-  const btnColors     = ['#e8eef7', '#1a3a8f', '#1e6aad', '#2a8fc8'];
-  const btnTextColors = ['#1a2d5a', '#ffffff', '#ffffff', '#ffffff'];
+  const btnColors = ['#e8eef7', '#1a3a8f', '#1e6aad', '#2a8fc8'];
+  const btnTextColors = ['#1a2d5a', '#fff', '#fff', '#fff'];
 
-  buttons.forEach((data, i) => {
-    const btn = document.createElement('a');
-    btn.className = 'smtc-hero-btn';
-    btn.href = data.linkHref;
-    btn.style.backgroundColor = btnColors[i] || '#1a3a8f';
-    btn.style.color = btnTextColors[i] || '#fff';
+  // ボタン行を「移動」して変換
+  rows.slice(5, 9).forEach((row, i) => {
+    row.classList.add('smtc-hero-btn');
+    row.style.backgroundColor = btnColors[i];
+    row.style.color = btnTextColors[i];
 
-    if (data.img) {
-      const iconWrap = document.createElement('div');
-      iconWrap.className = 'smtc-hero-btn-icon';
-      iconWrap.appendChild(stripAueAttrs(data.img.cloneNode(true)));
-      btn.appendChild(iconWrap);
-    }
-    if (data.textEl) {
-      const textWrap = document.createElement('div');
-      textWrap.className = 'smtc-hero-btn-text';
-      textWrap.innerHTML = data.textEl.innerHTML;
-      stripAueAttrs(textWrap);
-      btn.appendChild(textWrap);
-    }
+    const cells = [...row.children];
+    if (cells[0]) cells[0].classList.add('smtc-hero-btn-icon');
+    if (cells[1]) cells[1].classList.add('smtc-hero-btn-text');
+    if (cells[2]) cells[2].classList.add('smtc-hero-btn-link');
+
     const arrow = document.createElement('span');
     arrow.className = 'smtc-hero-btn-arrow';
     arrow.textContent = '→';
-    btn.appendChild(arrow);
-    grid4.appendChild(btn);
+    row.appendChild(arrow);
+
+    // リンクをボタン全体に適用
+    const linkEl = cells[2]?.querySelector('a');
+    if (linkEl) {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', () => { window.location.href = linkEl.href; });
+    }
+
+    grid4.appendChild(row); // 移動
   });
 
+  // 横幅ボタン
   const grid1 = document.createElement('div');
   grid1.className = 'smtc-hero-grid1';
 
-  if (wideItem) {
-    const btn = document.createElement('a');
-    btn.className = 'smtc-hero-btn smtc-hero-btn-wide';
-    btn.href = wideItem.linkHref;
+  const wideRow = rows[9];
+  if (wideRow) {
+    wideRow.classList.add('smtc-hero-btn', 'smtc-hero-btn-wide');
 
-    const leftWrap = document.createElement('div');
-    leftWrap.className = 'smtc-hero-btn-wide-left';
-    if (wideItem.img) {
-      const iconWrap = document.createElement('div');
-      iconWrap.className = 'smtc-hero-btn-icon';
-      iconWrap.appendChild(stripAueAttrs(wideItem.img.cloneNode(true)));
-      leftWrap.appendChild(iconWrap);
-    }
-    if (wideItem.textEl) {
-      const titleEl = wideItem.textEl.querySelector('h1,h2,h3,h4,h5,h6');
-      if (titleEl) {
-        const t = document.createElement('div');
-        t.className = 'smtc-hero-btn-wide-title';
-        t.innerHTML = titleEl.outerHTML;
-        stripAueAttrs(t);
-        leftWrap.appendChild(t);
-      }
-    }
-    const rightWrap = document.createElement('div');
-    rightWrap.className = 'smtc-hero-btn-wide-right';
-    if (wideItem.textEl) {
-      const descEl = wideItem.textEl.querySelector('p');
-      if (descEl) { rightWrap.innerHTML = descEl.outerHTML; stripAueAttrs(rightWrap); }
-    }
+    const cells = [...wideRow.children];
+    if (cells[0]) cells[0].classList.add('smtc-hero-btn-wide-left');
+    if (cells[1]) cells[1].classList.add('smtc-hero-btn-wide-right');
+    if (cells[2]) cells[2].classList.add('smtc-hero-btn-link');
+
     const arrow = document.createElement('span');
     arrow.className = 'smtc-hero-btn-arrow';
     arrow.textContent = '→';
-    btn.appendChild(leftWrap);
-    btn.appendChild(rightWrap);
-    btn.appendChild(arrow);
-    grid1.appendChild(btn);
+    wideRow.appendChild(arrow);
+
+    const linkEl = cells[2]?.querySelector('a');
+    if (linkEl) {
+      wideRow.style.cursor = 'pointer';
+      wideRow.addEventListener('click', () => { window.location.href = linkEl.href; });
+    }
+
+    grid1.appendChild(wideRow); // 移動
   }
 
   panel.appendChild(grid4);
@@ -190,8 +127,8 @@ export default function decorate(block) {
 
   // ========== カルーセル動作 ==========
   let current = 0;
-  const slideEls = [...slidesWrapper.querySelectorAll('.smtc-hero-slide')];
-  const dotEls   = [...dotsEl.querySelectorAll('.smtc-hero-dot')];
+  const slideEls = [...slidesWrap.querySelectorAll('.smtc-hero-slide')];
+  const dotEls = [...dotsEl.querySelectorAll('.smtc-hero-dot')];
 
   function goTo(n) {
     if (!slideEls.length) return;
@@ -202,10 +139,10 @@ export default function decorate(block) {
     dotEls[current].classList.add('active');
   }
 
-  prevBtn.addEventListener('click', () => goTo(current - 1));
-  nextBtn.addEventListener('click', () => goTo(current + 1));
+  prevBtn.addEventListener('click', (e) => { e.stopPropagation(); goTo(current - 1); });
+  nextBtn.addEventListener('click', (e) => { e.stopPropagation(); goTo(current + 1); });
   dotEls.forEach(dot =>
-    dot.addEventListener('click', () => goTo(+dot.dataset.index))
+    dot.addEventListener('click', (e) => { e.stopPropagation(); goTo(+dot.dataset.index); })
   );
 
   let timer = setInterval(() => goTo(current + 1), 5000);
