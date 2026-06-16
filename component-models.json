@@ -274,11 +274,10 @@
     "id": "smtc-hero-slide",
     "fields": [
       {
-        "component": "reference",
+        "component": "aem-content",
         "name": "image",
         "label": "背景画像",
-        "valueType": "string",
-        "metaData": { "typefilter": "image" }
+        "valueType": "string"
       },
       {
         "component": "richtext",
@@ -298,11 +297,10 @@
     "id": "smtc-hero-button",
     "fields": [
       {
-        "component": "reference",
+        "component": "aem-content",
         "name": "image",
         "label": "アイコン画像",
-        "valueType": "string",
-        "metaData": { "typefilter": "image" }
+        "valueType": "string"
       },
       {
         "component": "richtext",

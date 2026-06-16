@@ -1,3 +1,27 @@
+/* EDS デフォルトコンテナ制限を解除 */
+.section:has(.smtc-hero) > div {
+  max-width: unset !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.smtc-hero {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.smtc-hero-wrapper {
+  display: grid !important;
+  grid-template-columns: 55% 45% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 560px;
+  overflow: hidden;
+}
+
 .block.smtc-hero { display: block; width: 100%; }
 
 .smtc-hero-wrapper {
