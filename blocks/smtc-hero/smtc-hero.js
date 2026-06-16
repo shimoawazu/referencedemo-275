@@ -20,10 +20,10 @@ export default function decorate(block) {
     if (cells[1]) cells[1].classList.add('smtc-hero-slide-link');
 
     // リンクをスライド全体に適用
-    const linkEl = cells[1]?.querySelector('a');
-    if (linkEl) {
+    const slideLink = row.querySelector('a');
+    if (slideLink) {
       row.style.cursor = 'pointer';
-      row.addEventListener('click', () => { window.location.href = linkEl.href; });
+      row.addEventListener('click', () => { window.location.href = slideLink.href; });
     }
 
     slidesWrap.appendChild(row); // 移動（data-aue-* 保持）
@@ -129,23 +129,12 @@ export default function decorate(block) {
   const isEditor = document.querySelector('html').classList.contains('adobe-ue-edit')
     || window.location.href.includes('universal-editor');
   if (!isEditor) {
-    rows.slice(0, 5).forEach((row) => {
-      const linkEl = row.querySelector('.smtc-hero-slide-link a');
+    rows.forEach((row) => {
+      const linkEl = row.querySelector('a');
       if (linkEl) {
         row.style.cursor = 'pointer';
         row.addEventListener('click', (e) => {
-          if (!e.target.closest('button')) {
-            window.location.href = linkEl.href;
-          }
-        });
-      }
-    });
-    rows.slice(5).forEach((row) => {
-      const linkEl = row.querySelector('.smtc-hero-btn-link a');
-      if (linkEl) {
-        row.style.cursor = 'pointer';
-        row.addEventListener('click', () => {
-          window.location.href = linkEl.href;
+          if (!e.target.closest('button')) window.location.href = linkEl.href;
         });
       }
     });
