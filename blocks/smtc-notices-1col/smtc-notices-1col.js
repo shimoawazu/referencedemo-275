@@ -74,13 +74,11 @@ function render(block, heading, items) {
 export default async function decorate(block) {
   const rawItems = [...block.querySelectorAll(':scope > div')];
 
-  // --- CF モード判定 ---
-  // ブロックの最初のセルに CF パス or reference が入っている場合
-  const firstCell = rawItems[0]?.querySelector(':scope > div');
-  const referenceText = firstCell ? firstCell.textContent.trim() : '';
-  const isCfReference =
-    referenceText.startsWith('/content/dam/') &&
-    !referenceText.includes('\n');
+  // EDS は reference を <a href="/content/dam/..."> で出力する
+  const firstDiv = rawItems[0]?.querySelector(':scope > div');
+  const refLink = firstDiv?.querySelector('a');
+  const refText = refLink ? new URL(refLink.href).pathname : (firstDiv?.textContent.trim() || '');
+  const isCfReference = refText.startsWith('/content/dam/');
 
   if (isCfReference) {
     // UE 用に元 DOM を非表示ストアへ退避
@@ -91,7 +89,7 @@ export default async function decorate(block) {
     block.appendChild(store);
 
     // CF データを取得
-    const cfData = await fetchCfData(referenceText);
+    const cfData = await fetchCfData(refText);
     if (cfData) {
       const heading  = getCfFieldValue(cfData, 'sectionTitle') || '重要なお知らせ';
       const items = [1, 2, 3].map((n) => ({

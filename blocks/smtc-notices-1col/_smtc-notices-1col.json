@@ -10,7 +10,8 @@
             "template": {
               "name": "SMTC Notices 1col",
               "model": "smtc-notices-1col",
-              "filter": "smtc-notices-1col"
+              "filter": "smtc-notices-1col",
+              "modelFields": ["reference"]
             }
           }
         }
@@ -41,7 +42,7 @@
           "name": "reference",
           "label": "コンテンツフラグメント参照",
           "valueType": "string",
-          "description": "SMTC Notices 1col Model の CF パスを指定（例: /content/dam/referencedemo-275/ja/notices/smtc-notices-1col-june2026）"
+          "description": "SMTC Notices 1col Model の CF パス"
         }
       ]
     },
