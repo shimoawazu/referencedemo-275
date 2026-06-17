@@ -22,7 +22,9 @@ function getAemHost() {
 /** CF JSON を取得してパース */
 async function fetchCfData(reference) {
   const aemHost = getAemHost();
-  const assetPath = reference.replace('/content/dam/', '/');
+  // EDS が自動付与する .html を除去
+  const cleanRef = reference.replace(/\.html$/, '');
+  const assetPath = cleanRef.replace('/content/dam/', '/');
 
   try {
     const url = aemHost + '/api/assets' + assetPath + '.infinity.json';
