@@ -212,7 +212,8 @@
                 "template": {
                   "name": "SMTC Notices 1col",
                   "model": "smtc-notices-1col",
-                  "filter": "smtc-notices-1col"
+                  "filter": "smtc-notices-1col",
+                  "modelFields": ["reference"]
                 }
               }
             }
