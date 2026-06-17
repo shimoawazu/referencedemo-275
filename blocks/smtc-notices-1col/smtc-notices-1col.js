@@ -9,54 +9,23 @@
  *   sectionTitle, item1Text, item1Url, item2Text, item2Url, item3Text, item3Url
  */
 
-/** AEM Author ホストを meta タグから取得 */
-function getAemHost() {
-  const meta = document.querySelector('meta[name="urn:adobe:aem:editor:aemconnection"]');
-  if (meta) {
-    // 値は "aem:https://author-pXXXX-eYYYY.adobeaemcloud.com" 形式
-    return meta.content.replace(/^aem:/, '').replace(/\/$/, '');
-  }
-  return window.location.origin;
-}
-
 /** CF JSON を取得してパース */
 async function fetchCfData(reference) {
-  const aemHost = getAemHost();
-  // EDS が自動付与する .html を除去
   const cleanRef = reference.replace(/\.html$/, '');
-  const assetPath = cleanRef.replace('/content/dam/', '/');
-
+  const url = cleanRef + '/jcr:content/data/master.json';
   try {
-    const url = aemHost + '/api/assets' + assetPath + '.infinity.json';
-    const res = await fetch(url, { credentials: 'include' });
+    const res = await fetch(url);
     if (res.ok) return res.json();
   } catch (e) {
     // fallthrough
   }
-
-  try {
-    const url2 = aemHost + '/api/assets' + assetPath + '.json';
-    const res2 = await fetch(url2, { credentials: 'include' });
-    if (res2.ok) return res2.json();
-  } catch (e) {
-    // fallthrough
-  }
-
   return null;
 }
 
 /** CF JSON からフィールド値を取得 */
 function getCfFieldValue(cfData, fieldName) {
-  // Assets HTTP API: properties.elements.fieldName.value
-  const elements = cfData?.properties?.elements;
-  if (elements && elements[fieldName]) {
-    return elements[fieldName].value || '';
-  }
-  // CF delivery API: fields[].name / values[]
-  const fields = cfData?.fields;
-  if (Array.isArray(fields)) {
-    const f = fields.find((x) => x.name === fieldName);
-    return f?.values?.[0] || '';
+  if (cfData && typeof cfData[fieldName] === 'string') {
+    return cfData[fieldName];
   }
   return '';
 }
