@@ -9,24 +9,32 @@
  *   sectionTitle, item1Text, item1Url, item2Text, item2Url, item3Text, item3Url
  */
 
+/** AEM Author ホストを meta タグから取得 */
+function getAemHost() {
+  const meta = document.querySelector('meta[name="urn:adobe:aem:editor:aemconnection"]');
+  if (meta) {
+    // 値は "aem:https://author-pXXXX-eYYYY.adobeaemcloud.com" 形式
+    return meta.content.replace(/^aem:/, '').replace(/\/$/, '');
+  }
+  return window.location.origin;
+}
+
 /** CF JSON を取得してパース */
 async function fetchCfData(reference) {
-  // Assets HTTP API はパスから /content/dam/ を除去する必要がある
+  const aemHost = getAemHost();
   const assetPath = reference.replace('/content/dam/', '/');
 
-  // 方法1: Assets HTTP API
   try {
-    const assetUrl = window.location.origin + '/api/assets' + assetPath + '.infinity.json';
-    const res = await fetch(assetUrl, { credentials: 'same-origin' });
+    const url = aemHost + '/api/assets' + assetPath + '.infinity.json';
+    const res = await fetch(url, { credentials: 'include' });
     if (res.ok) return res.json();
   } catch (e) {
     // fallthrough
   }
 
-  // 方法2: CF Delivery API (UUID)
   try {
-    const searchUrl = window.location.origin + '/api/assets' + assetPath + '.json';
-    const res2 = await fetch(searchUrl, { credentials: 'same-origin' });
+    const url2 = aemHost + '/api/assets' + assetPath + '.json';
+    const res2 = await fetch(url2, { credentials: 'include' });
     if (res2.ok) return res2.json();
   } catch (e) {
     // fallthrough
