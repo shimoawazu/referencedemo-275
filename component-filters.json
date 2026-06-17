@@ -18,7 +18,9 @@
       "fragment",
       "sensor",
       "ad-creation",
-      "smtc-hero"
+      "smtc-hero",
+      "smtc-notices-1col",
+      "smtc-notices-2col"
     ]
   },
   {
@@ -45,5 +47,13 @@
   {
     "id": "smtc-hero",
     "components": ["smtc-hero-slide", "smtc-hero-button"]
+  },
+  {
+    "id": "smtc-notices-1col",
+    "components": ["smtc-notices-1col-item"]
+  },
+  {
+    "id": "smtc-notices-2col",
+    "components": ["smtc-notices-2col-item"]
   }
 ]
