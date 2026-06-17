@@ -11,37 +11,44 @@
 
 /** CF JSON を取得してパース */
 async function fetchCfData(reference) {
+  // Assets HTTP API はパスから /content/dam/ を除去する必要がある
+  const assetPath = reference.replace('/content/dam/', '/');
+
+  // 方法1: Assets HTTP API
   try {
-    const cfApiUrl = `${window.location.origin}/adobe/sites/cf/fragments/${encodeURIComponent(reference)}`;
-    const res = await fetch(`${cfApiUrl}?variation=master`, {
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) throw new Error(`CF fetch failed: ${res.status}`);
-    const json = await res.json();
-    return json;
-  } catch {
-    // CF API 失敗時は assets API にフォールバック
-    try {
-      const assetUrl = `${window.location.origin}/api/assets${reference}.infinity.json`;
-      const res2 = await fetch(assetUrl);
-      if (!res2.ok) return null;
-      return res2.json();
-    } catch {
-      return null;
-    }
+    const assetUrl = window.location.origin + '/api/assets' + assetPath + '.infinity.json';
+    const res = await fetch(assetUrl, { credentials: 'same-origin' });
+    if (res.ok) return res.json();
+  } catch (e) {
+    // fallthrough
   }
+
+  // 方法2: CF Delivery API (UUID)
+  try {
+    const searchUrl = window.location.origin + '/api/assets' + assetPath + '.json';
+    const res2 = await fetch(searchUrl, { credentials: 'same-origin' });
+    if (res2.ok) return res2.json();
+  } catch (e) {
+    // fallthrough
+  }
+
+  return null;
 }
 
 /** CF JSON からフィールド値を取得 */
 function getCfFieldValue(cfData, fieldName) {
-  // CF delivery API レスポンス形式: fields[name].values[0]
+  // Assets HTTP API: properties.elements.fieldName.value
+  const elements = cfData?.properties?.elements;
+  if (elements && elements[fieldName]) {
+    return elements[fieldName].value || '';
+  }
+  // CF delivery API: fields[].name / values[]
   const fields = cfData?.fields;
   if (Array.isArray(fields)) {
     const f = fields.find((x) => x.name === fieldName);
-    return f?.values?.[0] ?? '';
+    return f?.values?.[0] || '';
   }
-  // 旧形式: properties.elements[fieldName].value
-  return cfData?.properties?.elements?.[fieldName]?.value ?? '';
+  return '';
 }
 
 /** ブロックを描画 */
