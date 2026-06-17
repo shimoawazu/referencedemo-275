@@ -201,6 +201,68 @@
               }
             }
           }
+        },
+        {
+          "title": "SMTC Notices 1col",
+          "id": "smtc-notices-1col",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "SMTC Notices 1col",
+                  "model": "smtc-notices-1col",
+                  "filter": "smtc-notices-1col"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "SMTC Notices 1col Item",
+          "id": "smtc-notices-1col-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "重要なお知らせ",
+                  "model": "smtc-notices-1col-item"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "SMTC Notices 2col",
+          "id": "smtc-notices-2col",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "SMTC Notices 2col",
+                  "model": "smtc-notices-2col",
+                  "filter": "smtc-notices-2col"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "SMTC Notices 2col Item",
+          "id": "smtc-notices-2col-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Notice Item",
+                  "model": "smtc-notices-2col-item"
+                }
+              }
+            }
+          }
         }
       ]
     }
