@@ -328,5 +328,16 @@
   {
     "id": "smtc-hero",
     "fields": []
+  },
+  {
+    "id": "smtc-notices-1col",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "reference",
+        "label": "コンテンツフラグメント参照",
+        "valueType": "string"
+      }
+    ]
   }
 ]
