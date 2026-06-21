@@ -1,0 +1,45 @@
+.list-1col {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.list-1col-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list-1col-items li {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0.8rem 0;
+}
+
+.list-1col-items li:first-child {
+  border-top: 1px solid #e0e0e0;
+}
+
+.list-1col-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: #333;
+}
+
+.list-1col-link:hover {
+  color: #003087;
+  text-decoration: underline;
+}
+
+.list-1col-date {
+  font-size: 0.85rem;
+  color: #666;
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+.list-1col-title {
+  font-size: 1rem;
+  line-height: 1.6;
+}

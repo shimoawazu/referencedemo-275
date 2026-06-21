@@ -367,5 +367,33 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "list-1col",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "folderPath",
+        "label": "フォルダーパス",
+        "valueType": "string"
+      },
+      {
+        "component": "number",
+        "name": "maxItems",
+        "label": "表示件数",
+        "valueType": "number",
+        "value": 3
+      },
+      {
+        "component": "select",
+        "name": "sortOrder",
+        "label": "並び順",
+        "valueType": "string",
+        "options": [
+          { "name": "公開日 降順（新しい順）", "value": "desc" },
+          { "name": "公開日 昇順（古い順）", "value": "asc" }
+        ]
+      }
+    ]
   }
 ]
