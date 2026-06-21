@@ -395,5 +395,22 @@
         ]
       }
     ]
+  },
+  {
+    "id": "accordion-item",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "label",
+        "label": "タイトル",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "body",
+        "label": "本文",
+        "valueType": "string"
+      }
+    ]
   }
 ]
