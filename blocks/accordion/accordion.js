@@ -1,8 +1,3 @@
-function hasWrapper(el) {
-  return !!el.firstElementChild
-    && window.getComputedStyle(el.firstElementChild).display === 'block';
-}
-
 export default function decorate(block) {
   [...block.children].forEach((row) => {
     const cols = [...row.children];
@@ -10,25 +5,18 @@ export default function decorate(block) {
     const body = cols[1];
     if (!label) return;
 
-    const summary = document.createElement('summary');
-    summary.className = 'accordion-item-label';
-    summary.append(...label.childNodes);
-    if (!hasWrapper(summary)) {
-      summary.innerHTML = `<p>${summary.innerHTML}</p>`;
-    }
-
     const details = document.createElement('details');
     details.className = 'accordion-item';
 
-    if (body) {
-      body.className = 'accordion-item-body';
-      if (!hasWrapper(body)) {
-        body.innerHTML = `<p>${body.innerHTML}</p>`;
-      }
-      details.append(summary, body);
-    } else {
-      details.append(summary);
-    }
+    const summary = document.createElement('summary');
+    summary.className = 'accordion-item-label';
+    summary.innerHTML = label.innerHTML;
+
+    const div = document.createElement('div');
+    div.className = 'accordion-item-body';
+    if (body) div.innerHTML = body.innerHTML;
+
+    details.append(summary, div);
     row.replaceWith(details);
   });
 

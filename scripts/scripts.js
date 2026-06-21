@@ -58,13 +58,24 @@ async function loadFonts() {
   }
 }
 
+function buildAccordion(main) {
+  main.querySelectorAll('.section.accordion').forEach((section) => {
+    const accordion = document.createElement('div');
+    accordion.className = 'accordion';
+    [...section.children].forEach((child) => {
+      accordion.append(child);
+    });
+    section.append(accordion);
+  });
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
-function buildAutoBlocks() {
+function buildAutoBlocks(main) {
   try {
-    // TODO: add auto block, if needed
+    buildAccordion(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);

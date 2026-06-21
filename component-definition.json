@@ -270,15 +270,11 @@
           "plugins": {
             "xwalk": {
               "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
+                "resourceType": "core/franklin/components/section/v1/section",
                 "template": {
                   "name": "Accordion",
-                  "model": "accordion",
-                  "filter": "accordion",
-                  "item": {
-                    "name": "Item",
-                    "model": "accordion-item"
-                  }
+                  "model": "accordion-item",
+                  "filter": "section"
                 }
               }
             }
