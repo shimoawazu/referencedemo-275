@@ -255,3 +255,11 @@ main .section.highlight {
   margin: 0;
   padding: 40px 0;
 }
+
+.section.point-box {
+  border: 2px solid #003087;
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 1.5rem 0;
+  background-color: #f0f4ff;
+}
