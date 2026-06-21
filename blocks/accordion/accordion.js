@@ -1,33 +1,17 @@
-function hasWrapper(el) {
-  return !!el.firstElementChild
-    && window.getComputedStyle(el.firstElementChild).display === 'block';
-}
+import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   [...block.children].forEach((row) => {
     const label = row.children[0];
-    const body = row.children[1];
-    if (!label) return;
-
     const summary = document.createElement('summary');
     summary.className = 'accordion-item-label';
     summary.append(...label.childNodes);
-    if (!hasWrapper(summary)) {
-      summary.innerHTML = `<p>${summary.innerHTML}</p>`;
-    }
-
+    const body = row.children[1];
+    body.className = 'accordion-item-body';
     const details = document.createElement('details');
+    moveInstrumentation(row, details);
     details.className = 'accordion-item';
-
-    if (body) {
-      body.className = 'accordion-item-body';
-      if (!hasWrapper(body)) {
-        body.innerHTML = `<p>${body.innerHTML}</p>`;
-      }
-      details.append(summary, body);
-    } else {
-      details.append(summary);
-    }
+    details.append(summary, body);
     row.replaceWith(details);
   });
 
