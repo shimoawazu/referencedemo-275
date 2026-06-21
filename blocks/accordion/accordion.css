@@ -55,3 +55,20 @@
   border-top: 1px solid var(--dark-color);
   background-color: var(--background-color);
 }
+
+/* リンクをテキストリンクに戻す */
+.accordion-item-body a {
+  display: inline;
+  background: none;
+  border: none;
+  padding: 0;
+  color: #0057b8;
+  text-decoration: underline;
+  font-size: inherit;
+  border-radius: 0;
+}
+
+.accordion-item-body a:hover {
+  color: #003087;
+  background: none;
+}
