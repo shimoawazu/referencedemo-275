@@ -136,7 +136,8 @@
         "options": [
           { "name": "なし", "value": "" },
           { "name": "Point Box", "value": "point-box" },
-          { "name": "Highlight", "value": "highlight" }
+          { "name": "Highlight", "value": "highlight" },
+          { "name": "Accordion", "value": "accordion" }
         ]
       }
     ]
