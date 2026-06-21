@@ -20,7 +20,8 @@
       "ad-creation",
       "smtc-hero",
       "smtc-notices-1col",
-      "smtc-notices-2col"
+      "smtc-notices-2col",
+      "notice"
     ]
   },
   {
@@ -59,5 +60,9 @@
   {
     "id": "accordion",
     "components": ["accordion"]
+  },
+  {
+    "id": "press-article",
+    "components": ["hero", "notice"]
   }
 ]

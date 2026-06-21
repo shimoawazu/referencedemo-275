@@ -356,5 +356,16 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "notice",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "reference",
+        "label": "コンテンツフラグメント",
+        "valueType": "string"
+      }
+    ]
   }
 ]
