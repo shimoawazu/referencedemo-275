@@ -79,7 +79,7 @@ export default async function decorate(block) {
     <div class="list-2col-left">
       <div class="list-2col-header">
         <span class="list-2col-icon">ⓘ</span>
-        <span class="list-2col-label">重要なお知らせ</span>
+        <span class="list-2col-label">お知らせ</span>
       </div>
       <div class="list-2col-body">
         ${leftItems ? `<ul class="list-2col-items">${leftItems}</ul>` : '<p>記事が見つかりませんでした。</p>'}
@@ -88,7 +88,7 @@ export default async function decorate(block) {
     <div class="list-2col-right">
       <div class="list-2col-header">
         <span class="list-2col-icon">🔒</span>
-        <span class="list-2col-label">安全・安心情報</span>
+        <span class="list-2col-label">ご確認ください</span>
       </div>
       <div class="list-2col-body">
         ${rightItems ? `<ul class="list-2col-items">${rightItems}</ul>` : ''}
