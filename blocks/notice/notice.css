@@ -66,3 +66,40 @@
     width: 35%;
   }
 }
+
+/* テーブルのはみ出し防止 */
+.notice-summary,
+.notice-body {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.notice-summary table,
+.notice-body table {
+  width: 100% !important;
+  max-width: 100% !important;
+  border-collapse: collapse;
+  table-layout: fixed;
+  word-break: break-all;
+}
+
+.notice-summary table th,
+.notice-summary table td,
+.notice-body table th,
+.notice-body table td {
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.notice-summary table th,
+.notice-body table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  width: 30%;
+}
