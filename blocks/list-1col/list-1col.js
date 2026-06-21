@@ -19,7 +19,7 @@ function extractPages(data, basePath, maxItems, sortOrder) {
       pages.push({
         title: content['jcr:title'] || key,
         path: `${basePath}/${key}`,
-        publishDate: content['cq:lastPublished'] || content['jcr:created'] || '',
+        publishDate: content['publishDate'] || content['date'] || '',
       });
     }
   });

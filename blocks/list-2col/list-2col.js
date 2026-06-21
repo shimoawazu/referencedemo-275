@@ -16,10 +16,13 @@ function extractPages(data, basePath, maxItems, sortOrder) {
   Object.entries(data).forEach(([key, value]) => {
     if (value && typeof value === 'object' && value['jcr:primaryType'] === 'cq:Page') {
       const content = value['jcr:content'] || {};
+      // CF内で設定された公開日を優先して取得
+      const cfDate = content['publishDate'] || content['date'] || '';
       pages.push({
         title: content['jcr:title'] || key,
         path: `${basePath}/${key}`,
-        publishDate: content['cq:lastPublished'] || content['jcr:created'] || '',
+        publishDate: cfDate,
+        hasCfDate: !!cfDate,
       });
     }
   });
