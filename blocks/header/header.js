@@ -15,12 +15,18 @@ export default async function decorate(block) {
   const navBrand = nav.children[0];
   if (navBrand) {
     navBrand.classList.add('nav-brand');
-    // ボタンスタイルを除去してシンプルなリンクに
-    navBrand.querySelectorAll('.button').forEach((btn) => btn.classList.remove('button'));
-    navBrand.querySelectorAll('.button-container').forEach((c) => c.classList.remove('button-container'));
+    // nav.html にある既存リンクを取得（なければ / にフォールバック）
+    const existingLink = navBrand.querySelector('a');
+    const href = existingLink?.getAttribute('href') || '/';
+    // DAM から直接ロゴ画像を表示
+    navBrand.innerHTML = `
+      <a href="${href}" class="nav-brand-link">
+        <img src="/content/dam/referencedemo-275/en/images/logo_2410.png"
+             alt="ロゴ" loading="eager" class="nav-brand-logo">
+      </a>`;
   }
 
-  // Section 1以降（ナビリンク等）を非表示
+  // Section 1以降（ナビリンク等）を除去
   [...nav.children].forEach((child, i) => {
     if (i > 0) child.remove();
   });
