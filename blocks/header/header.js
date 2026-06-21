@@ -16,11 +16,8 @@ export default async function decorate(block) {
   if (navBrand) {
     navBrand.classList.add('nav-brand');
     // nav.html にある既存リンクを取得（なければ / にフォールバック）
-    const existingLink = navBrand.querySelector('a');
-    const href = existingLink?.getAttribute('href') || '/';
-    // DAM から直接ロゴ画像を表示
     navBrand.innerHTML = `
-      <a href="${href}" class="nav-brand-link">
+      <a href="https://author-p154442-e1620921.adobeaemcloud.com/content/referencedemo-275/language-masters/ja.html" class="nav-brand-link">
         <img src="/content/dam/referencedemo-275/en/images/logo_2410.png"
              alt="ロゴ" loading="eager" class="nav-brand-logo">
       </a>`;
