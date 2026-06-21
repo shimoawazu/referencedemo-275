@@ -42,17 +42,15 @@ export default function decorate(block) {
   };
 
   block.querySelectorAll('details').forEach((detail) => {
-    const summary = detail.querySelector('summary');
-    if (!summary) return;
-    const text = summary.textContent.trim();
+    const s = detail.querySelector('summary');
+    if (!s) return;
+    const text = s.textContent.trim();
     Object.entries(anchorMap).forEach(([keyword, id]) => {
-      if (text.includes(keyword)) {
-        detail.setAttribute('id', id);
-      }
+      if (text.includes(keyword)) detail.setAttribute('id', id);
     });
   });
 
-  // アンカーリンクで該当セクションを自動展開
+  // アンカーリンクで自動展開
   const hash = window.location.hash.slice(1);
   if (hash) {
     const target = block.querySelector(`#${hash}`);
