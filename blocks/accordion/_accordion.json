@@ -12,7 +12,7 @@
               "model": "accordion",
               "filter": "accordion",
               "accordion-item": {
-                "name": "Item",
+                "name": "Accordion Item",
                 "model": "accordion-item"
               }
             }
@@ -44,8 +44,8 @@
       "id": "accordion-item",
       "fields": [
         {
-          "component": "text",
-          "name": "title",
+          "component": "richtext",
+          "name": "label",
           "label": "タイトル",
           "valueType": "string"
         },
