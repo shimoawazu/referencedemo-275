@@ -1,7 +1,46 @@
 .list-1col {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1.2rem 1.5rem;
+  margin: 1rem auto;
+  max-width: 900px;
+  background-color: #fff;
+  gap: 2rem;
+}
+
+.list-1col > div {
+  display: contents;
+}
+
+.list-1col-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 140px;
+  white-space: nowrap;
+  padding-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.list-1col-icon {
+  font-size: 1.2rem;
+  color: #003087;
+}
+
+.list-1col-label {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.list-1col-body {
+  flex: 1;
+  border-left: 1px solid #e0e0e0;
+  padding-left: 2rem;
 }
 
 .list-1col-items {
@@ -11,35 +50,47 @@
 }
 
 .list-1col-items li {
-  border-bottom: 1px solid #e0e0e0;
-  padding: 0.8rem 0;
-}
-
-.list-1col-items li:first-child {
-  border-top: 1px solid #e0e0e0;
+  padding: 0.3rem 0;
 }
 
 .list-1col-link {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  text-decoration: none;
-  color: #333;
+  gap: 0.4rem;
+  text-decoration: underline;
+  color: #0057b8;
+  font-size: 0.95rem;
 }
 
 .list-1col-link:hover {
   color: #003087;
-  text-decoration: underline;
 }
 
-.list-1col-date {
-  font-size: 0.85rem;
-  color: #666;
-  white-space: nowrap;
-  min-width: 80px;
-}
-
-.list-1col-title {
+.list-1col-arrow {
   font-size: 1rem;
-  line-height: 1.6;
+  color: #0057b8;
+}
+
+/* タブレット以下でも横並びを維持 */
+@media (max-width: 768px) {
+  .list-1col {
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .list-1col-header {
+    min-width: 80px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .list-1col-body {
+    padding-left: 1rem;
+  }
+
+  .list-1col-link {
+    font-size: 0.85rem;
+  }
 }
