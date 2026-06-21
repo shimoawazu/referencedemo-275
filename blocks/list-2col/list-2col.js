@@ -1,49 +1,78 @@
+// CF参照パスを再帰的に検索
+function findCfReference(obj) {
+  if (!obj || typeof obj !== 'object') return '';
+  if (typeof obj.reference === 'string' && obj.reference.startsWith('/content/dam/')) {
+    return obj.reference;
+  }
+  for (const key of Object.keys(obj)) {
+    if (key === 'jcr:primaryType' || key === 'jcr:uuid' || key === 'jcr:created') continue;
+    const found = findCfReference(obj[key]);
+    if (found) return found;
+  }
+  return '';
+}
+
+// CF の publishDate を取得
+async function fetchCfDate(cfRef) {
+  if (!cfRef) return '';
+  try {
+    const cleanRef = cfRef.replace(/\.html$/, '');
+    const res = await fetch(`${cleanRef}/jcr:content/data/master.json`);
+    if (!res.ok) return '';
+    const data = await res.json();
+    return data['publishDate'] || data['date'] || '';
+  } catch (e) {
+    return '';
+  }
+}
+
 async function fetchPages(folderPath, maxItems, sortOrder) {
   const cleanPath = folderPath.replace(/\.html$/, '');
   try {
     const res = await fetch(`${cleanPath}.infinity.json`);
     if (!res.ok) return [];
     const data = await res.json();
-    return extractPages(data, cleanPath, maxItems, sortOrder);
+
+    const pages = [];
+    Object.entries(data).forEach(([key, value]) => {
+      if (value && typeof value === 'object' && value['jcr:primaryType'] === 'cq:Page') {
+        const content = value['jcr:content'] || {};
+        const cfRef = findCfReference(content);
+        pages.push({
+          title: content['jcr:title'] || key,
+          path: `${cleanPath}/${key}`,
+          cfRef,
+          publishDate: '',
+        });
+      }
+    });
+
+    // CF日付を並行取得
+    await Promise.all(pages.map(async (p) => {
+      p.publishDate = await fetchCfDate(p.cfRef);
+    }));
+
+    pages.sort((a, b) => {
+      if (!a.publishDate) return 1;
+      if (!b.publishDate) return -1;
+      return sortOrder === 'asc'
+        ? new Date(a.publishDate) - new Date(b.publishDate)
+        : new Date(b.publishDate) - new Date(a.publishDate);
+    });
+
+    return pages.slice(0, maxItems);
   } catch (e) {
     console.error('List 2col fetch error:', e);
     return [];
   }
 }
 
-function extractPages(data, basePath, maxItems, sortOrder) {
-  const pages = [];
-  Object.entries(data).forEach(([key, value]) => {
-    if (value && typeof value === 'object' && value['jcr:primaryType'] === 'cq:Page') {
-      const content = value['jcr:content'] || {};
-      // CF内で設定された公開日を優先して取得
-      const cfDate = content['publishDate'] || content['date'] || '';
-      pages.push({
-        title: content['jcr:title'] || key,
-        path: `${basePath}/${key}`,
-        publishDate: cfDate,
-        hasCfDate: !!cfDate,
-      });
-    }
-  });
-  pages.sort((a, b) => {
-    if (!a.publishDate) return 1;
-    if (!b.publishDate) return -1;
-    return sortOrder === 'asc'
-      ? new Date(a.publishDate) - new Date(b.publishDate)
-      : new Date(b.publishDate) - new Date(a.publishDate);
-  });
-  return pages.slice(0, maxItems);
-}
-
+// タイムゾーン問題を避けるため文字列から直接抽出
 function formatDate(dateStr) {
   if (!dateStr) return '';
-  const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return '';
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}.${m}.${day}`;
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) return `${match[1]}.${match[2]}.${match[3]}`;
+  return '';
 }
 
 export default async function decorate(block) {
@@ -66,7 +95,7 @@ export default async function decorate(block) {
     if (label && id) anchors.push({ label, id });
   }
 
-  // 左カラム：日付付きページリスト生成
+  // 左カラム：CF日付付きページリスト生成
   let leftItems = '';
   if (folderPath) {
     const pages = await fetchPages(folderPath, maxItems, sortOrder);
