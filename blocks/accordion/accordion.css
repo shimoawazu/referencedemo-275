@@ -64,19 +64,27 @@
   background-color: var(--background-color);
 }
 
-/* リンクをテキストリンクに戻す */
-.accordion-item-body a {
-  display: inline;
-  background: none;
-  border: none;
-  padding: 0;
-  color: #0057b8;
-  text-decoration: underline;
-  font-size: inherit;
-  border-radius: 0;
+/* リンクをテキストリンクに戻す（EDS .button クラス上書き） */
+.accordion-item-body a,
+.accordion-item-body a.button,
+.accordion-item-body a.button:any-link {
+  display: inline !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: #0057b8 !important;
+  text-decoration: underline !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  border-radius: 0 !important;
+  line-height: inherit !important;
 }
 
-.accordion-item-body a:hover {
-  color: #003087;
-  background: none;
+.accordion-item-body a:hover,
+.accordion-item-body a.button:hover {
+  color: #003087 !important;
+  background: none !important;
+  background-color: transparent !important;
 }
