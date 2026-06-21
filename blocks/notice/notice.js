@@ -1,30 +1,47 @@
+async function fetchCfData(reference) {
+  const cleanRef = reference.replace(/\.html$/, '');
+  const url = cleanRef + '/jcr:content/data/master.json';
+  try {
+    const res = await fetch(url);
+    if (res.ok) return res.json();
+  } catch (e) { /* fallthrough */ }
+  return null;
+}
+
+function getCfFieldValue(cfData, fieldName) {
+  if (cfData && typeof cfData[fieldName] === 'string') {
+    return cfData[fieldName];
+  }
+  return '';
+}
+
 export default async function decorate(block) {
   const link = block.querySelector('a');
   if (!link) return;
 
-  const cfPath = link.getAttribute('href');
-  if (!cfPath) return;
+  const reference = link.getAttribute('href');
+  if (!reference) return;
 
-  try {
-    const response = await fetch(`${cfPath}.model.json`);
-    const data = await response.json();
+  const cfData = await fetchCfData(reference);
+  if (!cfData) return;
 
-    const title = data.title || '';
-    const date = data.date ? new Date(data.date).toLocaleDateString('ja-JP') : '';
-    const summary = data.summary || '';
-    const body = data.body || '';
-    const linkUrl = data.linkUrl || '';
+  const title = getCfFieldValue(cfData, 'title');
+  const date = getCfFieldValue(cfData, 'date');
+  const summary = getCfFieldValue(cfData, 'summary');
+  const body = getCfFieldValue(cfData, 'body');
+  const linkUrl = getCfFieldValue(cfData, 'linkUrl');
 
-    block.innerHTML = `
-      <div class="notice-content">
-        <p class="notice-date">${date}</p>
-        <h1 class="notice-title">${title}</h1>
-        <div class="notice-summary">${summary}</div>
-        ${body ? `<div class="notice-body">${body}</div>` : ''}
-        ${linkUrl ? `<p><a href="${linkUrl}">詳細はこちら</a></p>` : ''}
-      </div>
-    `;
-  } catch (e) {
-    console.error('Notice CF fetch error:', e);
-  }
+  const dateFormatted = date
+    ? new Date(date).toLocaleDateString('ja-JP')
+    : '';
+
+  block.innerHTML = `
+    <div class="notice-content">
+      ${dateFormatted ? `<p class="notice-date">${dateFormatted}</p>` : ''}
+      ${title ? `<h1 class="notice-title">${title}</h1>` : ''}
+      ${summary ? `<div class="notice-summary">${summary}</div>` : ''}
+      ${body ? `<div class="notice-body">${body}</div>` : ''}
+      ${linkUrl ? `<p><a href="${linkUrl}">詳細はこちら</a></p>` : ''}
+    </div>
+  `;
 }
