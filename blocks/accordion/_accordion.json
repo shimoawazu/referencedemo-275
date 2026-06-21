@@ -11,8 +11,8 @@
               "name": "Accordion",
               "model": "accordion",
               "filter": "accordion",
-              "accordion-item": {
-                "name": "Accordion Item",
+              "item": {
+                "name": "Item",
                 "model": "accordion-item"
               }
             }
