@@ -312,6 +312,21 @@
           }
         },
         {
+          "title": "List 2col",
+          "id": "list-2col",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "List 2col",
+                  "model": "list-2col"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "List 1col",
           "id": "list-1col",
           "plugins": {

@@ -1,0 +1,126 @@
+{
+  "definitions": [
+    {
+      "title": "List 2col",
+      "id": "list-2col",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "List 2col",
+              "model": "list-2col"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "list-2col",
+      "fields": [
+        {
+          "component": "aem-content",
+          "name": "folderPath",
+          "label": "左：フォルダーパス",
+          "valueType": "string"
+        },
+        {
+          "component": "number",
+          "name": "maxItems",
+          "label": "左：表示件数",
+          "valueType": "number",
+          "value": 5
+        },
+        {
+          "component": "select",
+          "name": "sortOrder",
+          "label": "左：並び順",
+          "valueType": "string",
+          "options": [
+            { "name": "公開日 降順（新しい順）", "value": "desc" },
+            { "name": "公開日 昇順（古い順）", "value": "asc" }
+          ]
+        },
+        {
+          "component": "aem-content",
+          "name": "rightPage",
+          "label": "右：リンク先ページ",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "anchor1Label",
+          "label": "右：アンカー1 ラベル",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "anchor1Id",
+          "label": "右：アンカー1 ID",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "anchor2Label",
+          "label": "右：アンカー2 ラベル",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "anchor2Id",
+          "label": "右：アンカー2 ID",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "anchor3Label",
+          "label": "右：アンカー3 ラベル",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "anchor3Id",
+          "label": "右：アンカー3 ID",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "anchor4Label",
+          "label": "右：アンカー4 ラベル",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "anchor4Id",
+          "label": "右：アンカー4 ID",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "anchor5Label",
+          "label": "右：アンカー5 ラベル",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "anchor5Id",
+          "label": "右：アンカー5 ID",
+          "valueType": "string",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "filters": []
+}
