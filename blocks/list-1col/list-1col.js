@@ -1,17 +1,8 @@
 async function fetchPages(folderPath, maxItems, sortOrder) {
   const cleanPath = folderPath.replace(/\.html$/, '');
-
-  // Sling直接パスでページ一覧を取得
-  const url = `${cleanPath}.model.json`;
   try {
-    const res = await fetch(url);
-    if (!res.ok) {
-      // fallback: sitemap.json を試みる
-      const res2 = await fetch(`${cleanPath}.infinity.json`);
-      if (!res2.ok) return [];
-      const data2 = await res2.json();
-      return extractPages(data2, cleanPath, maxItems, sortOrder);
-    }
+    const res = await fetch(`${cleanPath}.infinity.json`);
+    if (!res.ok) return [];
     const data = await res.json();
     return extractPages(data, cleanPath, maxItems, sortOrder);
   } catch (e) {
@@ -23,11 +14,7 @@ async function fetchPages(folderPath, maxItems, sortOrder) {
 function extractPages(data, basePath, maxItems, sortOrder) {
   const pages = [];
   Object.entries(data).forEach(([key, value]) => {
-    if (
-      value &&
-      typeof value === 'object' &&
-      value['jcr:primaryType'] === 'cq:Page'
-    ) {
+    if (value && typeof value === 'object' && value['jcr:primaryType'] === 'cq:Page') {
       const content = value['jcr:content'] || {};
       pages.push({
         title: content['jcr:title'] || key,
@@ -74,18 +61,22 @@ export default async function decorate(block) {
 
   pages.forEach((page) => {
     const li = document.createElement('li');
-    const date = page.publishDate
-      ? new Date(page.publishDate).toLocaleDateString('ja-JP')
-      : '';
     li.innerHTML = `
       <a href="${page.path}.html" class="list-1col-link">
-        ${date ? `<span class="list-1col-date">${date}</span>` : ''}
+        <span class="list-1col-arrow">›</span>
         <span class="list-1col-title">${page.title}</span>
       </a>
     `;
     ul.appendChild(li);
   });
 
-  block.innerHTML = '';
-  block.appendChild(ul);
+  block.innerHTML = `
+    <div class="list-1col-header">
+      <span class="list-1col-icon">ⓘ</span>
+      <span class="list-1col-label">重要なお知らせ</span>
+    </div>
+    <div class="list-1col-body">
+      ${ul.outerHTML}
+    </div>
+  `;
 }

@@ -8,11 +8,7 @@
   margin: 1rem auto;
   max-width: 900px;
   background-color: #fff;
-  gap: 2rem;
-}
-
-.list-1col > div {
-  display: contents;
+  gap: 0;
 }
 
 .list-1col-header {
@@ -20,10 +16,13 @@
   flex-direction: row;
   align-items: center;
   gap: 0.5rem;
-  min-width: 140px;
+  min-width: 160px;
+  max-width: 160px;
   white-space: nowrap;
   padding-top: 0.2rem;
   flex-shrink: 0;
+  padding-right: 1.5rem;
+  border-right: 1px solid #e0e0e0;
 }
 
 .list-1col-icon {
@@ -39,8 +38,7 @@
 
 .list-1col-body {
   flex: 1;
-  border-left: 1px solid #e0e0e0;
-  padding-left: 2rem;
+  padding-left: 1.5rem;
 }
 
 .list-1col-items {
@@ -69,28 +67,29 @@
 .list-1col-arrow {
   font-size: 1rem;
   color: #0057b8;
+  flex-shrink: 0;
 }
 
-/* タブレット以下でも横並びを維持 */
+/* スマホ：縦並び */
 @media (max-width: 768px) {
   .list-1col {
-    flex-direction: row;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.8rem;
     padding: 1rem;
   }
 
   .list-1col-header {
-    min-width: 80px;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    min-width: unset;
+    max-width: unset;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    padding-right: 0;
+    padding-bottom: 0.8rem;
+    width: 100%;
   }
 
   .list-1col-body {
-    padding-left: 1rem;
-  }
-
-  .list-1col-link {
-    font-size: 0.85rem;
+    padding-left: 0;
+    width: 100%;
   }
 }
