@@ -1,33 +1,64 @@
-/*
- * Accordion Block
- * Recreate an accordion
- * https://www.hlx.live/developer/block-collection/accordion
- */
-
 function hasWrapper(el) {
-  return !!el.firstElementChild && window.getComputedStyle(el.firstElementChild).display === 'block';
+  return !!el.firstElementChild
+    && window.getComputedStyle(el.firstElementChild).display === 'block';
 }
 
 export default function decorate(block) {
   [...block.children].forEach((row) => {
-    // decorate accordion item label
     const label = row.children[0];
+    const body = row.children[1];
+
+    if (!label) return;
+
     const summary = document.createElement('summary');
     summary.className = 'accordion-item-label';
     summary.append(...label.childNodes);
     if (!hasWrapper(summary)) {
       summary.innerHTML = `<p>${summary.innerHTML}</p>`;
     }
-    // decorate accordion item body
-    const body = row.children[1];
-    body.className = 'accordion-item-body';
-    if (!hasWrapper(body)) {
-      body.innerHTML = `<p>${body.innerHTML}</p>`;
-    }
-    // decorate accordion item
+
     const details = document.createElement('details');
     details.className = 'accordion-item';
-    details.append(summary, body);
+
+    if (body) {
+      body.className = 'accordion-item-body';
+      if (!hasWrapper(body)) {
+        body.innerHTML = `<p>${body.innerHTML}</p>`;
+      }
+      details.append(summary, body);
+    } else {
+      details.append(summary);
+    }
+
     row.replaceWith(details);
   });
+
+  // アンカーID付与
+  const anchorMap = {
+    'フィッシング詐欺': 'phishing',
+    '繁華街': 'downtown',
+    'なりすまし': 'police',
+    'スパイウェア': 'spyware',
+  };
+
+  block.querySelectorAll('details').forEach((detail) => {
+    const summary = detail.querySelector('summary');
+    if (!summary) return;
+    const text = summary.textContent.trim();
+    Object.entries(anchorMap).forEach(([keyword, id]) => {
+      if (text.includes(keyword)) {
+        detail.setAttribute('id', id);
+      }
+    });
+  });
+
+  // アンカーリンクで該当セクションを自動展開
+  const hash = window.location.hash.slice(1);
+  if (hash) {
+    const target = block.querySelector(`#${hash}`);
+    if (target) {
+      target.setAttribute('open', '');
+      setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  }
 }
