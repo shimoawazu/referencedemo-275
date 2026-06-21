@@ -1,0 +1,38 @@
+{
+  "definitions": [
+    {
+      "title": "Press Article Page",
+      "id": "press-article",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/page/v1/page",
+            "template": {
+              "jcr:title": "Press Article Page",
+              "jcr:content/root/page-content": {
+                "sling:resourceType": "core/franklin/components/root/v1/root",
+                "hero": {
+                  "sling:resourceType": "core/franklin/components/block/v1/block",
+                  "name": "Hero",
+                  "model": "hero"
+                },
+                "notice": {
+                  "sling:resourceType": "core/franklin/components/block/v1/block",
+                  "name": "Notice",
+                  "model": "notice"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [],
+  "filters": [
+    {
+      "id": "press-article",
+      "components": ["hero", "notice"]
+    }
+  ]
+}
