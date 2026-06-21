@@ -28,3 +28,41 @@
   font-size: 1rem;
   line-height: 1.8;
 }
+
+/* テーブルスタイル */
+.notice table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+.notice table th,
+.notice table td {
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.notice table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  width: 30%;
+  white-space: nowrap;
+}
+
+.notice table td {
+  width: 70%;
+}
+
+/* スマホ対応 */
+@media (max-width: 768px) {
+  .notice table th {
+    white-space: normal;
+    width: 35%;
+  }
+}
