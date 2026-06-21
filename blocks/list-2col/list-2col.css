@@ -1,9 +1,11 @@
 .list-2col {
   display: flex;
   flex-direction: row;
-  gap: 1.5rem;
+  gap: 0;
   margin: 1rem auto;
-  max-width: 900px;
+  max-width: 960px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
 }
 
 .list-2col-left,
@@ -11,33 +13,24 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
   padding: 1.2rem 1.5rem;
-  background-color: #fff;
   min-width: 0;
 }
 
-.list-2col-header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-  padding-bottom: 0.8rem;
-  margin-bottom: 0.8rem;
-  border-bottom: 1px solid #e0e0e0;
-  white-space: nowrap;
+.list-2col-left {
+  border-right: 1px solid #e0e0e0;
 }
 
-.list-2col-icon {
-  font-size: 1.1rem;
-  color: #003087;
+.list-2col-header {
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.4rem;
+  border-bottom: 2px solid #003087;
 }
 
 .list-2col-label {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: bold;
-  color: #333;
+  color: #003087;
 }
 
 .list-2col-body {
@@ -50,35 +43,65 @@
   margin: 0;
 }
 
-.list-2col-items li {
-  padding: 0.3rem 0;
+.list-2col-item {
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.list-2col-item:last-child {
+  border-bottom: none;
 }
 
 .list-2col-link {
   display: flex;
-  align-items: flex-start;
-  gap: 0.4rem;
-  text-decoration: underline;
-  color: #0057b8;
+  align-items: baseline;
+  gap: 0.8rem;
+  padding: 0.6rem 0;
+  text-decoration: none;
+  color: #333;
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
-.list-2col-link:hover {
-  color: #003087;
+.list-2col-link:hover .list-2col-title {
+  text-decoration: underline;
+  color: #0057b8;
+}
+
+.list-2col-date {
+  flex-shrink: 0;
+  width: 80px;
+  font-size: 0.82rem;
+  color: #888;
+  letter-spacing: 0.02em;
 }
 
 .list-2col-arrow {
-  font-size: 1rem;
-  color: #0057b8;
   flex-shrink: 0;
+  font-size: 1rem;
+  color: #003087;
   line-height: 1.5;
+}
+
+.list-2col-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 /* スマホ：縦並び */
 @media (max-width: 768px) {
   .list-2col {
     flex-direction: column;
+    border: none;
     gap: 1rem;
+  }
+
+  .list-2col-left,
+  .list-2col-right {
+    border: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
   }
 }

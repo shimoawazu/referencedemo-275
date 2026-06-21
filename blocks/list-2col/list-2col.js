@@ -33,6 +33,16 @@ function extractPages(data, basePath, maxItems, sortOrder) {
   return pages.slice(0, maxItems);
 }
 
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}.${m}.${day}`;
+}
+
 export default async function decorate(block) {
   const rows = [...block.children];
 
@@ -53,14 +63,14 @@ export default async function decorate(block) {
     if (label && id) anchors.push({ label, id });
   }
 
-  // 左カラム：ページリスト生成
+  // 左カラム：日付付きページリスト生成
   let leftItems = '';
   if (folderPath) {
     const pages = await fetchPages(folderPath, maxItems, sortOrder);
     leftItems = pages.map((p) => `
-      <li>
+      <li class="list-2col-item">
         <a href="${p.path}.html" class="list-2col-link">
-          <span class="list-2col-arrow">›</span>
+          <span class="list-2col-date">${formatDate(p.publishDate)}</span>
           <span class="list-2col-title">${p.title}</span>
         </a>
       </li>`).join('');
@@ -68,7 +78,7 @@ export default async function decorate(block) {
 
   // 右カラム：アンカーリスト生成
   const rightItems = anchors.map((a) => `
-    <li>
+    <li class="list-2col-item">
       <a href="${rightPage}.html#${a.id}" class="list-2col-link">
         <span class="list-2col-arrow">›</span>
         <span class="list-2col-title">${a.label}</span>
@@ -78,7 +88,6 @@ export default async function decorate(block) {
   block.innerHTML = `
     <div class="list-2col-left">
       <div class="list-2col-header">
-        <span class="list-2col-icon">ⓘ</span>
         <span class="list-2col-label">お知らせ</span>
       </div>
       <div class="list-2col-body">
@@ -87,7 +96,6 @@ export default async function decorate(block) {
     </div>
     <div class="list-2col-right">
       <div class="list-2col-header">
-        <span class="list-2col-icon">🔒</span>
         <span class="list-2col-label">ご確認ください</span>
       </div>
       <div class="list-2col-body">
