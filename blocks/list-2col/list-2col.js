@@ -1,31 +1,3 @@
-// CF参照パスを再帰的に検索
-function findCfReference(obj) {
-  if (!obj || typeof obj !== 'object') return '';
-  if (typeof obj.reference === 'string' && obj.reference.startsWith('/content/dam/')) {
-    return obj.reference;
-  }
-  for (const key of Object.keys(obj)) {
-    if (key === 'jcr:primaryType' || key === 'jcr:uuid' || key === 'jcr:created') continue;
-    const found = findCfReference(obj[key]);
-    if (found) return found;
-  }
-  return '';
-}
-
-// CF の publishDate を取得
-async function fetchCfDate(cfRef) {
-  if (!cfRef) return '';
-  try {
-    const cleanRef = cfRef.replace(/\.html$/, '');
-    const res = await fetch(`${cleanRef}/jcr:content/data/master.json`);
-    if (!res.ok) return '';
-    const data = await res.json();
-    return data['publishDate'] || data['date'] || '';
-  } catch (e) {
-    return '';
-  }
-}
-
 async function fetchPages(folderPath, maxItems, sortOrder) {
   const cleanPath = folderPath.replace(/\.html$/, '');
   try {
@@ -37,21 +9,13 @@ async function fetchPages(folderPath, maxItems, sortOrder) {
     Object.entries(data).forEach(([key, value]) => {
       if (value && typeof value === 'object' && value['jcr:primaryType'] === 'cq:Page') {
         const content = value['jcr:content'] || {};
-        const cfRef = findCfReference(content);
         pages.push({
           title: content['jcr:title'] || key,
           path: `${cleanPath}/${key}`,
-          cfRef,
-          publishDate: '',
-          fileDate: content['cq:lastPublished'] || content['jcr:created'] || '',
+          publishDate: content['cq:lastPublished'] || content['jcr:created'] || '',
         });
       }
     });
-
-    // CF日付を並行取得
-    await Promise.all(pages.map(async (p) => {
-      p.publishDate = await fetchCfDate(p.cfRef);
-    }));
 
     pages.sort((a, b) => {
       if (!a.publishDate) return 1;
@@ -68,7 +32,6 @@ async function fetchPages(folderPath, maxItems, sortOrder) {
   }
 }
 
-// タイムゾーン問題を避けるため文字列から直接抽出
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -96,14 +59,14 @@ export default async function decorate(block) {
     if (label && id) anchors.push({ label, id });
   }
 
-  // 左カラム：CF日付付きページリスト生成
+  // 左カラム：ファイル公開日付きページリスト生成
   let leftItems = '';
   if (folderPath) {
     const pages = await fetchPages(folderPath, maxItems, sortOrder);
     leftItems = pages.map((p) => `
       <li class="list-2col-item">
         <a href="${p.path}.html" class="list-2col-link">
-          <span class="list-2col-date">${formatDate(p.fileDate)}</span>
+          <span class="list-2col-date">${formatDate(p.publishDate)}</span>
           <span class="list-2col-title">${p.title}</span>
         </a>
       </li>`).join('');
