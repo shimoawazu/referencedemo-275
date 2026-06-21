@@ -5,9 +5,9 @@ function hasWrapper(el) {
 
 export default function decorate(block) {
   [...block.children].forEach((row) => {
-    const label = row.children[0];
-    const body = row.children[1];
-
+    const cols = [...row.children];
+    const label = cols[0];
+    const body = cols[1];
     if (!label) return;
 
     const summary = document.createElement('summary');
@@ -29,7 +29,6 @@ export default function decorate(block) {
     } else {
       details.append(summary);
     }
-
     row.replaceWith(details);
   });
 
@@ -40,7 +39,6 @@ export default function decorate(block) {
     'なりすまし': 'police',
     'スパイウェア': 'spyware',
   };
-
   block.querySelectorAll('details').forEach((detail) => {
     const s = detail.querySelector('summary');
     if (!s) return;
@@ -50,7 +48,7 @@ export default function decorate(block) {
     });
   });
 
-  // アンカーリンクで自動展開
+  // アンカーで自動展開
   const hash = window.location.hash.slice(1);
   if (hash) {
     const target = block.querySelector(`#${hash}`);
