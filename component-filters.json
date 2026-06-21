@@ -61,7 +61,7 @@
   },
   {
     "id": "accordion",
-    "components": ["accordion"]
+    "components": ["accordion-item"]
   },
   {
     "id": "press-article",
