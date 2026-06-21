@@ -55,5 +55,9 @@
   {
     "id": "smtc-notices-2col",
     "components": ["smtc-notices-2col-item"]
+  },
+  {
+    "id": "accordion",
+    "components": ["accordion"]
   }
 ]
