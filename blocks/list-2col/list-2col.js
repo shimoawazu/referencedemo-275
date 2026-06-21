@@ -43,6 +43,7 @@ async function fetchPages(folderPath, maxItems, sortOrder) {
           path: `${cleanPath}/${key}`,
           cfRef,
           publishDate: '',
+          fileDate: content['cq:lastPublished'] || content['jcr:created'] || '',
         });
       }
     });
@@ -102,7 +103,7 @@ export default async function decorate(block) {
     leftItems = pages.map((p) => `
       <li class="list-2col-item">
         <a href="${p.path}.html" class="list-2col-link">
-          <span class="list-2col-date">${formatDate(p.publishDate)}</span>
+          <span class="list-2col-date">${formatDate(p.fileDate)}</span>
           <span class="list-2col-title">${p.title}</span>
         </a>
       </li>`).join('');
