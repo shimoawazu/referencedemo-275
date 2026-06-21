@@ -1,33 +1,51 @@
 async function fetchPages(folderPath, maxItems, sortOrder) {
   const cleanPath = folderPath.replace(/\.html$/, '');
-  const url = `${cleanPath}/jcr:content/children.json`;
+
+  // Sling直接パスでページ一覧を取得
+  const url = `${cleanPath}.model.json`;
   try {
     const res = await fetch(url);
-    if (!res.ok) return [];
+    if (!res.ok) {
+      // fallback: sitemap.json を試みる
+      const res2 = await fetch(`${cleanPath}.infinity.json`);
+      if (!res2.ok) return [];
+      const data2 = await res2.json();
+      return extractPages(data2, cleanPath, maxItems, sortOrder);
+    }
     const data = await res.json();
-
-    const pages = Object.entries(data)
-      .filter(([, v]) => v['jcr:primaryType'] === 'cq:Page')
-      .map(([key, v]) => ({
-        name: key,
-        title: v['jcr:content']?.['jcr:title'] || key,
-        publishDate: v['jcr:content']?.['cq:lastPublished'] || '',
-        path: `${cleanPath}/${key}`,
-      }));
-
-    pages.sort((a, b) => {
-      if (!a.publishDate) return 1;
-      if (!b.publishDate) return -1;
-      return sortOrder === 'asc'
-        ? new Date(a.publishDate) - new Date(b.publishDate)
-        : new Date(b.publishDate) - new Date(a.publishDate);
-    });
-
-    return pages.slice(0, maxItems);
+    return extractPages(data, cleanPath, maxItems, sortOrder);
   } catch (e) {
     console.error('List 1col fetch error:', e);
     return [];
   }
+}
+
+function extractPages(data, basePath, maxItems, sortOrder) {
+  const pages = [];
+  Object.entries(data).forEach(([key, value]) => {
+    if (
+      value &&
+      typeof value === 'object' &&
+      value['jcr:primaryType'] === 'cq:Page'
+    ) {
+      const content = value['jcr:content'] || {};
+      pages.push({
+        title: content['jcr:title'] || key,
+        path: `${basePath}/${key}`,
+        publishDate: content['cq:lastPublished'] || content['jcr:created'] || '',
+      });
+    }
+  });
+
+  pages.sort((a, b) => {
+    if (!a.publishDate) return 1;
+    if (!b.publishDate) return -1;
+    return sortOrder === 'asc'
+      ? new Date(a.publishDate) - new Date(b.publishDate)
+      : new Date(b.publishDate) - new Date(a.publishDate);
+  });
+
+  return pages.slice(0, maxItems);
 }
 
 export default async function decorate(block) {
