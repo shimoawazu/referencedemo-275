@@ -405,18 +405,19 @@
         "valueType": "string",
         "name": "summary",
         "value": "",
-        "label": "タイトル"
+        "label": "Summary"
       },
       {
         "component": "richtext",
         "name": "text",
         "value": "",
-        "label": "本文",
+        "label": "Text",
         "valueType": "string"
       }
     ]
   }
 ]
+
 
 
 
