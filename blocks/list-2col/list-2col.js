@@ -9,6 +9,14 @@ async function fetchPages(folderPath, maxItems, sortOrder) {
     Object.entries(data).forEach(([key, value]) => {
       if (value && typeof value === 'object' && value['jcr:primaryType'] === 'cq:Page') {
         const content = value['jcr:content'] || {};
+        // DEBUG: check available date properties
+        // eslint-disable-next-line no-console
+        console.log(`[list-2col] ${key}`, {
+          'cq:lastPublished': content['cq:lastPublished'],
+          'cq:lastModified': content['cq:lastModified'],
+          'jcr:lastModified': content['jcr:lastModified'],
+          'jcr:created': content['jcr:created'],
+        });
         pages.push({
           title: content['jcr:title'] || key,
           path: `${cleanPath}/${key}`,
