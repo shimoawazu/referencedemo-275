@@ -2,13 +2,16 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  // First row may be the style model property (from UE). Detect by: single cell, no picture/p/a.
+  // First row may be the style model property (from UE block model).
+  // Detected by: no picture element, and text matches a known style class OR is empty.
   const firstRow = block.children[0];
-  if (firstRow) {
-    const cells = [...firstRow.children];
-    if (cells.length === 1 && !cells[0].querySelector('picture, p, a')) {
-      const styleValue = cells[0].textContent.trim();
-      if (styleValue) block.classList.add(styleValue);
+  if (firstRow && !firstRow.querySelector('picture')) {
+    const rowText = firstRow.textContent.trim();
+    if (rowText.includes('image-contain')) {
+      block.classList.add('image-contain');
+      firstRow.remove();
+    } else if (!rowText) {
+      // Empty style row (default "cover" selected), remove silently.
       firstRow.remove();
     }
   }
