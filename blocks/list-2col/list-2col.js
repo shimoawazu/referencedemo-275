@@ -9,18 +9,16 @@ async function fetchPages(folderPath, maxItems, sortOrder) {
     Object.entries(data).forEach(([key, value]) => {
       if (value && typeof value === 'object' && value['jcr:primaryType'] === 'cq:Page') {
         const content = value['jcr:content'] || {};
-        // DEBUG: check available date properties
-        // eslint-disable-next-line no-console
-        console.log(`[list-2col] ${key}`, {
-          'cq:lastPublished': content['cq:lastPublished'],
-          'cq:lastModified': content['cq:lastModified'],
-          'jcr:lastModified': content['jcr:lastModified'],
-          'jcr:created': content['jcr:created'],
-        });
+        // Extract publish date from page name (e.g. inf-20260601 → 2026-06-01).
+        // cq:lastPublished is not set by EDS Sidekick, so page name is the reliable source.
+        const nameDate = key.match(/(\d{4})(\d{2})(\d{2})/);
+        const publishDate = nameDate
+          ? `${nameDate[1]}-${nameDate[2]}-${nameDate[3]}`
+          : (content['cq:lastModified'] || content['jcr:created'] || '');
         pages.push({
           title: content['jcr:title'] || key,
           path: `${cleanPath}/${key}`,
-          publishDate: content['cq:lastPublished'] || content['jcr:created'] || '',
+          publishDate,
         });
       }
     });
