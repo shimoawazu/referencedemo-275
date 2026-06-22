@@ -143,6 +143,21 @@
     ]
   },
   {
+    "id": "cards",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "label": "Image Fit",
+        "valueType": "string",
+        "options": [
+          { "name": "cover（デフォルト）", "value": "" },
+          { "name": "contain（全体表示）", "value": "image-contain" }
+        ]
+      }
+    ]
+  },
+  {
     "id": "card",
     "fields": [
       {
