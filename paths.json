@@ -1,8 +1,11 @@
 {
   "mappings": [
-    "/content/referencedemo-275/:/"
+    "/content/referencedemo-275/configuration:/.helix/config.json",
+    "/content/referencedemo-275/metadata:/metadata.json",
+    "/content/referencedemo-275/language-masters/ja:/",
+    "/content/referencedemo-275/language-masters/ja:/"
   ],
   "includes": [
-    "/content/referencedemo-275/"
+    "/content/referencedemo-275/language-masters/ja/"
   ]
 }
