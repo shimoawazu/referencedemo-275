@@ -446,6 +446,53 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "persona-intro",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "label": "Eyebrow（上部ラベル）",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "metaList",
+        "label": "Meta情報（複数セル → リスト）",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "body",
+        "label": "本文",
+        "value": ""
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "portraitImage",
+        "label": "人物画像",
+        "multi": false
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "logo",
+        "label": "ロゴ画像",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "legalNote",
+        "label": "著作権・注記テキスト",
+        "value": ""
+      }
+    ]
   }
 ]
 

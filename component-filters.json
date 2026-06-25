@@ -22,7 +22,8 @@
       "notice",
       "list-1col",
       "list-2col",
-      "accordion"
+      "accordion",
+      "persona-intro"
     ]
   },
   {
@@ -57,5 +58,9 @@
   {
     "id": "press-article",
     "components": ["hero", "notice"]
+  },
+  {
+    "id": "persona-intro",
+    "components": []
   }
 ]
