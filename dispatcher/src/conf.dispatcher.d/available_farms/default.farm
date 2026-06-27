@@ -1,0 +1,48 @@
+/farms {
+  /default {
+
+    /virtualhosts {
+      /include "conf.dispatcher.d/vhosts/default_vhosts.any"
+    }
+
+    /renders {
+      /include "conf.dispatcher.d/renders/default_renders.any"
+    }
+
+    /filter {
+      /include "conf.dispatcher.d/filters/filters.any"
+    }
+
+    /cache {
+
+      /docroot "/var/www/html"
+
+      /headers {
+        "Cache-Control"
+        "Content-Disposition"
+        "Content-Type"
+        "Expires"
+        "Last-Modified"
+        "X-Content-Type-Options"
+        "Access-Control-Allow-Origin"
+        "Access-Control-Allow-Methods"
+        "Access-Control-Allow-Headers"
+        "Access-Control-Max-Age"
+      }
+
+      /rules {
+        /include "conf.dispatcher.d/cache/default_rules.any"
+      }
+
+      /invalidate {
+        /include "conf.dispatcher.d/cache/default_invalidate.any"
+      }
+
+    }
+
+    /clientheaders {
+      /include "conf.dispatcher.d/clientheaders/clientheaders.any"
+    }
+
+  }
+}
