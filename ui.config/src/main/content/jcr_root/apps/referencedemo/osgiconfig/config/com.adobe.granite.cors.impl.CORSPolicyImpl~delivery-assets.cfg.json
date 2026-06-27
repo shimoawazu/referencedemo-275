@@ -1,0 +1,27 @@
+{
+  "alloworigin": [
+    "https://claude.ai"
+  ],
+  "alloworiginregexp": [],
+  "allowedpaths": [
+    "/adobe/assets/.*"
+  ],
+  "supportedmethods": [
+    "GET",
+    "HEAD",
+    "OPTIONS"
+  ],
+  "supportedheaders": [
+    "Origin",
+    "Accept",
+    "X-Requested-With",
+    "Content-Type",
+    "Access-Control-Request-Method",
+    "Access-Control-Request-Headers"
+  ],
+  "exposedheaders": [
+    ""
+  ],
+  "supportscredentials": false,
+  "maxage:Integer": 1800
+}
