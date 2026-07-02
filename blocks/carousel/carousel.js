@@ -23,8 +23,6 @@ export default function decorate(block) {
   dots.setAttribute('role', 'tablist');
   dots.setAttribute('aria-label', 'スライドナビゲーション');
 
-  let current = 0;
-
   function goTo(index) {
     track.querySelectorAll('.carousel-slide').forEach((s, i) => {
       s.setAttribute('aria-hidden', i !== index ? 'true' : 'false');
@@ -34,7 +32,6 @@ export default function decorate(block) {
       d.setAttribute('aria-selected', String(i === index));
     });
     track.style.transform = `translateX(-${index * 100}%)`;
-    current = index;
   }
 
   for (let i = 0; i < total; i += 1) {
