@@ -1,0 +1,37 @@
+.wknd-cards > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
+  gap: 24px;
+}
+
+.wknd-cards > ul > li {
+  border: 1px solid #dadada;
+  background-color: var(--background-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.wknd-cards .wknd-cards-card-body {
+  margin: 16px;
+}
+
+.wknd-cards .wknd-cards-card-body > *:first-child {
+  margin-top: 0;
+}
+
+.wknd-cards .wknd-cards-card-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.wknd-cards .wknd-cards-card-image {
+  line-height: 0;
+}
+
+.wknd-cards > ul > li img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}

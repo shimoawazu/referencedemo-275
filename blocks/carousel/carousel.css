@@ -1,0 +1,53 @@
+.carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.4s ease;
+  will-change: transform;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.carousel-slide > div {
+  padding: 32px;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background-color: #dadada; /* TODO: align with design tokens */
+  transition: background-color 0.2s;
+}
+
+.carousel-dot.active,
+.carousel-dot:hover {
+  background-color: var(--link-color);
+}
+
+.carousel-dot:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+}
