@@ -1,0 +1,32 @@
+.wknd-columns > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.wknd-columns .wknd-columns-col-image {
+  line-height: 0;
+}
+
+.wknd-columns .wknd-columns-col-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+}
+
+.wknd-columns .wknd-columns-col-text > *:first-child {
+  margin-top: 0;
+}
+
+.wknd-columns .wknd-columns-col-text > *:last-child {
+  margin-bottom: 0;
+}
+
+@media (width < 900px) {
+  .wknd-columns > div {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

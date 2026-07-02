@@ -23,7 +23,14 @@
       "list-1col",
       "list-2col",
       "accordion",
-      "persona-intro"
+      "persona-intro",
+      "wknd-cards",
+      "wknd-hero",
+      "wknd-accordion",
+      "wknd-columns",
+      "carousel",
+      "table",
+      "tabs"
     ]
   },
   {
@@ -62,5 +69,25 @@
   {
     "id": "persona-intro",
     "components": []
+  },
+  {
+    "id": "wknd-cards",
+    "components": ["wknd-card"]
+  },
+  {
+    "id": "wknd-accordion",
+    "components": ["wknd-accordion-item"]
+  },
+  {
+    "id": "carousel",
+    "components": ["carousel-slide"]
+  },
+  {
+    "id": "table",
+    "components": ["table-row"]
+  },
+  {
+    "id": "tabs",
+    "components": ["tab-item"]
   }
 ]
