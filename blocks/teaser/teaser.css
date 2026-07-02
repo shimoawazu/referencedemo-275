@@ -1,0 +1,94 @@
+.teaser {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #dadada;
+  border-radius: 4px;
+}
+
+.teaser .teaser-image {
+  line-height: 0;
+}
+
+.teaser .teaser-image picture {
+  display: block;
+  height: 100%;
+}
+
+.teaser .teaser-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.teaser .teaser-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 40px;
+  background-color: var(--background-color);
+}
+
+.teaser .teaser-content > *:first-child {
+  margin-top: 0;
+}
+
+.teaser .teaser-content > *:last-child {
+  margin-bottom: 0;
+}
+
+.teaser .teaser-content p {
+  margin: 0;
+  font-size: var(--body-font-size-xs);
+  color: var(--dark-color);
+  line-height: 1.6;
+}
+
+/* Eyebrow — first <p> before a heading, short uppercase label */
+/* stylelint-disable-next-line no-descending-specificity */
+.teaser .teaser-content > p:first-of-type:not(:has(a)) {
+  font-size: var(--body-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--link-color);
+  margin: 0;
+}
+
+.teaser .teaser-content h1,
+.teaser .teaser-content h2,
+.teaser .teaser-content h3 {
+  font-size: var(--heading-font-size-l);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.teaser .teaser-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 0 0;
+}
+
+/* Override EDS default button margin when inside teaser-ctas */
+.teaser .teaser-ctas a.button {
+  margin: 0;
+}
+
+@media (width < 900px) {
+  .teaser {
+    grid-template-columns: 1fr;
+  }
+
+  .teaser .teaser-image {
+    max-height: 260px;
+    overflow: hidden;
+  }
+
+  .teaser .teaser-content {
+    padding: 24px;
+  }
+}

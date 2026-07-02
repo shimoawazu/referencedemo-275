@@ -666,6 +666,65 @@
         "value": ""
       }
     ]
+  },
+  {
+    "id": "teaser",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "画像",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "label": "Eyebrow（小見出し）",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "label": "見出し",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "body",
+        "label": "本文",
+        "value": ""
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "cta1Link",
+        "label": "CTA1 リンク先（アウトライン）"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1Label",
+        "label": "CTA1 ラベル",
+        "value": ""
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "cta2Link",
+        "label": "CTA2 リンク先（塗りつぶし）"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2Label",
+        "label": "CTA2 ラベル",
+        "value": ""
+      }
+    ]
   }
 ]
 
