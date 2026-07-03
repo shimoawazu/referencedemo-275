@@ -8,53 +8,41 @@ export default function decorate(block) {
     const li = document.createElement('li');
     moveInstrumentation(row, li);
 
-    const fieldDivs = [...row.children];
-    let imagePicture = null;
-    let ctaLinkEl = null;
-    const textDivs = [];
+    // Field order matches wknd-card model: image(0), heading(1), body(2), cta(3), ctaText(4)
+    const [imageFd, headingFd, bodyFd, ctaFd, ctaTextFd] = [...row.children];
 
-    fieldDivs.forEach((div) => {
-      if (div.querySelector('picture')) {
-        imagePicture = div.querySelector('picture');
-      } else if (div.querySelector('a') && !div.querySelector('picture')) {
-        ctaLinkEl = div.querySelector('a');
-      } else if (div.textContent.trim()) {
-        textDivs.push(div);
-      }
-    });
-
-    // ctaText (last text div) collapses into cta group → merge as button label
-    const ctaTextDiv = ctaLinkEl && textDivs.length > 0 ? textDivs.pop() : null;
-    if (ctaLinkEl && ctaTextDiv) {
-      ctaLinkEl.textContent = ctaTextDiv.textContent.trim();
-    }
-    if (ctaLinkEl) ctaLinkEl.classList.add('button');
-
-    // Image wrapper
     const imageDiv = document.createElement('div');
     imageDiv.className = 'wknd-cards-card-image';
-    if (imagePicture) imageDiv.append(imagePicture);
+    const pic = imageFd?.querySelector('picture');
+    if (pic) imageDiv.append(pic);
 
-    // Single body div: heading + body copy + CTA
+    const ctaLink = ctaFd?.querySelector('a');
+    if (ctaLink) {
+      const label = ctaTextFd?.textContent?.trim();
+      if (label) ctaLink.textContent = label;
+      ctaLink.classList.add('button', 'tertiary');
+    }
+
     const body = document.createElement('div');
     body.className = 'wknd-cards-card-body';
 
-    const [headingDiv, ...bodyDivs] = textDivs;
-    if (headingDiv) {
-      let headingEl = headingDiv.querySelector('h1, h2, h3');
-      if (!headingEl && headingDiv.textContent.trim()) {
-        headingEl = document.createElement('h3');
-        headingEl.textContent = headingDiv.textContent.trim();
+    if (headingFd) {
+      let h = headingFd.querySelector('h1, h2, h3');
+      if (!h && headingFd.textContent.trim()) {
+        h = document.createElement('h3');
+        h.textContent = headingFd.textContent.trim();
       }
-      if (headingEl) body.append(headingEl);
+      if (h) body.append(h);
     }
-    bodyDivs.forEach((div) => {
-      [...div.childNodes].forEach((node) => body.append(node.cloneNode(true)));
-    });
-    if (ctaLinkEl) {
+
+    if (bodyFd) {
+      [...bodyFd.childNodes].forEach((n) => body.append(n.cloneNode(true)));
+    }
+
+    if (ctaLink) {
       const btnWrap = document.createElement('p');
       btnWrap.className = 'button-container';
-      btnWrap.append(ctaLinkEl);
+      btnWrap.append(ctaLink);
       body.append(btnWrap);
     }
 
