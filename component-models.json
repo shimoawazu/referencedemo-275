@@ -519,17 +519,17 @@
         "value": ""
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "ctaLabel",
-        "label": "CTAラベル",
-        "value": ""
-      },
-      {
         "component": "aem-content",
         "valueType": "string",
-        "name": "ctaLink",
+        "name": "cta",
         "label": "CTAリンク先"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTAラベル",
+        "value": ""
       }
     ]
   },
@@ -558,17 +558,17 @@
         "value": ""
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "ctaLabel",
-        "label": "CTAラベル",
-        "value": ""
-      },
-      {
         "component": "aem-content",
         "valueType": "string",
-        "name": "ctaLink",
+        "name": "cta",
         "label": "CTAリンク先"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTAラベル",
+        "value": ""
       }
     ]
   },
@@ -680,13 +680,6 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "eyebrow",
-        "label": "Eyebrow（小見出し）",
-        "value": ""
-      },
-      {
-        "component": "text",
-        "valueType": "string",
         "name": "heading",
         "label": "見出し",
         "value": ""
@@ -701,27 +694,27 @@
       {
         "component": "aem-content",
         "valueType": "string",
-        "name": "cta1Link",
-        "label": "CTA1 リンク先（アウトライン）"
+        "name": "cta_primary",
+        "label": "CTA プライマリ リンク先（アウトライン）"
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta1Label",
-        "label": "CTA1 ラベル",
+        "name": "cta_primaryText",
+        "label": "CTA プライマリ ラベル",
         "value": ""
       },
       {
         "component": "aem-content",
         "valueType": "string",
-        "name": "cta2Link",
-        "label": "CTA2 リンク先（塗りつぶし）"
+        "name": "cta_secondary",
+        "label": "CTA セカンダリ リンク先（塗りつぶし）"
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta2Label",
-        "label": "CTA2 ラベル",
+        "name": "cta_secondaryText",
+        "label": "CTA セカンダリ ラベル",
         "value": ""
       }
     ]
