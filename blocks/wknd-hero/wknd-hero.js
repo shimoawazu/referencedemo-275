@@ -2,12 +2,12 @@
  * WKND Hero block — full-bleed background image with overlay text + CTA.
  *
  * UE model renders 5 separate rows (one per field):
- *   row with <picture>  → background image
- *   row with <a>        → ctaLink (aem-content shows path as link text)
- *   remaining text rows → in order: heading, body paragraphs, ctaLabel
+ *   row with <picture>  → background image (image field)
+ *   row with <a>        → cta (aem-content, renders path as link text)
+ *   remaining text rows → in order: heading, body paragraphs, ctaText
  *
- * Differs from teaser: overlay layout vs side-by-side, single large hero
- * vs general-purpose promotional component.
+ * ctaText (text) collapses into cta group via xwalk/max-cells suffix rule,
+ * keeping the model within the 4-cell limit.
  */
 import { moveInstrumentation } from '../../scripts/scripts.js';
 

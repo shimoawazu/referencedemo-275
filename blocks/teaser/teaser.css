@@ -47,16 +47,6 @@
   line-height: 1.6;
 }
 
-/* Eyebrow — first <p> before a heading, short uppercase label */
-/* stylelint-disable-next-line no-descending-specificity */
-.teaser .teaser-content > p:first-of-type:not(:has(a)) {
-  font-size: var(--body-font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--link-color);
-  margin: 0;
-}
 
 .teaser .teaser-content h1,
 .teaser .teaser-content h2,
