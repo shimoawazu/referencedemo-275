@@ -1,14 +1,16 @@
-import { moveInstrumentation } from '../../scripts/scripts.js';
-
 export default function decorate(block) {
+  const cols = [...block.firstElementChild.children];
+  block.classList.add(`wknd-columns-${cols.length}-cols`);
+
   [...block.children].forEach((row) => {
-    [...row.children].forEach((cell) => {
-      if (cell.querySelector('picture')) {
-        cell.className = 'wknd-columns-col-image';
-      } else {
-        cell.className = 'wknd-columns-col-text';
+    [...row.children].forEach((col) => {
+      const pic = col.querySelector('picture');
+      if (pic) {
+        const picWrapper = pic.closest('div');
+        if (picWrapper && picWrapper.children.length === 1) {
+          picWrapper.classList.add('wknd-columns-img-col');
+        }
       }
     });
-    moveInstrumentation(row, row);
   });
 }

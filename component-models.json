@@ -597,6 +597,10 @@
   },
   {
     "id": "wknd-columns",
+    "fields": []
+  },
+  {
+    "id": "wknd-column",
     "fields": [
       {
         "component": "reference",

@@ -76,6 +76,10 @@
     "components": ["wknd-card"]
   },
   {
+    "id": "wknd-columns",
+    "components": ["wknd-column"]
+  },
+  {
     "id": "wknd-accordion",
     "components": ["wknd-accordion-item"]
   },
