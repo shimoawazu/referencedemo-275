@@ -27,7 +27,6 @@
       "wknd-cards",
       "wknd-hero",
       "wknd-accordion",
-      "wknd-columns",
       "carousel",
       "table",
       "tabs",
@@ -74,10 +73,6 @@
   {
     "id": "wknd-cards",
     "components": ["wknd-card"]
-  },
-  {
-    "id": "wknd-columns",
-    "components": ["wknd-column"]
   },
   {
     "id": "wknd-accordion",
