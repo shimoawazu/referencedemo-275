@@ -596,29 +596,6 @@
     ]
   },
   {
-    "id": "wknd-columns",
-    "fields": []
-  },
-  {
-    "id": "wknd-column",
-    "fields": [
-      {
-        "component": "reference",
-        "valueType": "string",
-        "name": "image",
-        "label": "画像",
-        "multi": false
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "text",
-        "label": "テキスト",
-        "value": ""
-      }
-    ]
-  },
-  {
     "id": "carousel",
     "fields": [
       {
