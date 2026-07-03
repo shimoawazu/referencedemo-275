@@ -210,6 +210,20 @@ button.secondary {
   color: var(--text-color);
 }
 
+a.button.tertiary,
+button.tertiary {
+  background-color: #f8ea36;
+  border-color: transparent;
+  color: #000;
+}
+
+a.button.tertiary:hover,
+a.button.tertiary:focus,
+button.tertiary:hover,
+button.tertiary:focus {
+  background-color: #e0d130;
+}
+
 main img {
   max-width: 100%;
   width: auto;
