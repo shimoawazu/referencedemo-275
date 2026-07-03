@@ -496,6 +496,10 @@
   },
   {
     "id": "wknd-cards",
+    "fields": []
+  },
+  {
+    "id": "wknd-card",
     "fields": [
       {
         "component": "reference",
