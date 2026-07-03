@@ -1,32 +1,33 @@
 .wknd-columns > div {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
-.wknd-columns .wknd-columns-col-image {
-  line-height: 0;
-}
-
-.wknd-columns .wknd-columns-col-image img {
+.wknd-columns img {
   width: 100%;
-  height: auto;
+}
+
+.wknd-columns > div > div {
+  order: 1;
+}
+
+.wknd-columns > div > .wknd-columns-img-col {
+  order: 0;
+}
+
+.wknd-columns > div > .wknd-columns-img-col img {
   display: block;
-  border-radius: 4px;
 }
 
-.wknd-columns .wknd-columns-col-text > *:first-child {
-  margin-top: 0;
-}
-
-.wknd-columns .wknd-columns-col-text > *:last-child {
-  margin-bottom: 0;
-}
-
-@media (width < 900px) {
+@media (width >= 900px) {
   .wknd-columns > div {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    align-items: center;
+    flex-direction: unset;
+    gap: 24px;
+  }
+
+  .wknd-columns > div > div {
+    flex: 1;
+    order: unset;
   }
 }
